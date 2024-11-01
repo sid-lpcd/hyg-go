@@ -1,7 +1,51 @@
 @font-face {
-  font-family: "News Reader";
-  src: url("./assets/fonts/woff/Newsreader-Regular.woff") format("woff"),
-    url("./assets/fonts/woff2/Newsreader-Regular.woff2") format("woff2");
+  font-family: "Montserrat";
+  src: url("./assets/fonts/tff/Montserrat-Light.ttf") format("ttf");
+  font-weight: lighter;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/tff/Montserrat-Regular.ttf") format("ttf");
   font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/tff/Montserrat-Italic.ttf") format("ttf");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/tff/Montserrat-Bold.ttf") format("ttf");
+  font-weight: bold;
+  font-style: normal;
+}
+
+/*****************************/
+
+@font-face {
+  font-family: "Karla";
+  src: url("./assets/fonts/tff/Karla-Light.ttf") format("ttf");
+  font-weight: lighter;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Karla";
+  src: url("./assets/fonts/tff/Karla-LightItalic.ttf") format("ttf");
+  font-weight: lighter;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Karla";
+  src: url("./assets/fonts/tff/Karla-Regular.ttf") format("ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Karla";
+  src: url("./assets/fonts/tff/Karla-Bold.ttf") format("ttf");
+  font-weight: bold;
   font-style: normal;
 }

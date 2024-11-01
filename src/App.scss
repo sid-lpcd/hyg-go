@@ -12,7 +12,7 @@ body,
 input,
 textarea,
 *::placeholder {
-  font-family: "Outfit", Arial, Helvetica, sans-serif;
+  font-family: $body-fonts;
   color: $primary-color;
   background-color: $primary-background-color;
 }
@@ -53,7 +53,7 @@ h1 {
   font-size: 2rem;
   line-height: 2rem;
   font-weight: 400;
-  font-family: "News Reader", Arial, Helvetica, sans-serif;
+  font-family: $title-fonts;
 
   @include tablet {
     font-size: 2.5rem;
@@ -66,7 +66,7 @@ h2 {
   font-size: 1.625rem;
   line-height: 2.375rem;
   font-weight: lighter;
-  font-family: "News Reader", Arial, Helvetica, sans-serif;
+  font-family: $title-fonts;
 
   @include tablet {
     font-size: 3.25rem;
