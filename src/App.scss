@@ -1,0 +1,120 @@
+@use "./styles/partials/fonts";
+@use "./styles/partials/resets";
+@use "./styles/partials/variables" as *;
+@use "./styles/partials/mixins" as *;
+@use "./styles/partials/animations" as *;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body,
+input,
+textarea,
+*::placeholder {
+  font-family: "Outfit", Arial, Helvetica, sans-serif;
+  color: $primary-color;
+  background-color: $primary-background-color;
+}
+
+/**************** Default Padding Wrapper ******************/
+
+*[class*="wrapper"] {
+  padding: 0 calc($min-padding * 2);
+
+  @include tablet {
+    padding: 0 calc($min-padding * 3);
+  }
+
+  @include desktop {
+    margin: 0 auto;
+    padding: 0 calc($min-padding * 3);
+    max-width: 63.75rem;
+  }
+}
+
+/****************** Default Paddings ***************/
+
+h1,
+h2,
+h3 {
+  padding-top: calc($min-padding * 3);
+  padding-bottom: calc($min-padding * 2);
+
+  @include tablet {
+    padding-top: calc($min-padding * 4);
+    padding-bottom: calc($min-padding * 3);
+  }
+}
+
+/***************** FONTS ************************/
+// WordMark
+h1 {
+  font-size: 2rem;
+  line-height: 2rem;
+  font-weight: 400;
+  font-family: "News Reader", Arial, Helvetica, sans-serif;
+
+  @include tablet {
+    font-size: 2.5rem;
+    line-height: 2.5rem;
+  }
+}
+
+// Title
+h2 {
+  font-size: 1.625rem;
+  line-height: 2.375rem;
+  font-weight: lighter;
+  font-family: "News Reader", Arial, Helvetica, sans-serif;
+
+  @include tablet {
+    font-size: 3.25rem;
+    line-height: 4.125rem;
+  }
+}
+
+// Heading
+h3 {
+  font-size: 1.125rem;
+  line-height: 1.4375rem;
+  font-weight: 500;
+
+  @include tablet {
+    font-size: 1.5rem;
+    line-height: 1.875rem;
+    font-weight: 500;
+  }
+}
+
+// Body
+body,
+*[class*="btn"] {
+  font-size: 0.75rem;
+  line-height: 0.9375rem;
+  font-weight: 500;
+
+  @include tablet {
+    font-size: 1.25rem;
+    line-height: 1.625rem;
+  }
+}
+
+*[class*="--small"] {
+  font-size: 0.625rem;
+  line-height: 0.75rem;
+  font-weight: 500;
+
+  @include tablet {
+    font-size: 0.75rem;
+    line-height: 0.9375rem;
+  }
+}
+
+*[class*="label"] {
+  @extend body;
+  @include tablet {
+    font-size: 0.875rem;
+    line-height: 1.0938rem;
+  }
+}

@@ -1,0 +1,27 @@
+@use "./variables" as *;
+@use "./animations" as *;
+
+@mixin tablet {
+  @media screen and (min-width: $tablet-breakpoint) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (min-width: $desktop-breakpoint) {
+    @content;
+  }
+}
+
+@mixin flex($justify: center, $align: center) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin background-center-img($url, $contain: unset) {
+  background-image: url($url);
+  background-position: center;
+  background-size: $contain;
+  background-repeat: no-repeat;
+}
