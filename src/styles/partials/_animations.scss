@@ -1,12 +1,1 @@
 @use "./variables" as *;
-
-*[class*="btn"]:not(*:disabled) {
-  &:hover {
-    background-color: $secondary-background-color;
-    color: $secondary-color;
-
-    & path {
-      fill: $secondary-color;
-    }
-  }
-}
