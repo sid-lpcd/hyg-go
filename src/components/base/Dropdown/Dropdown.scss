@@ -4,28 +4,32 @@
 .dropdown {
   position: relative;
 
-  &__btn {
-    padding: $min-padding;
-    border-radius: 20px;
-    background: #f2f4f8;
-
-    @include flex(space-around);
+  &__selection {
+    @include btn-styling;
+    & {
+      @include flex(space-around);
+    }
   }
 
   &__options {
     position: absolute;
+    overflow: hidden;
     top: 100%;
-    background: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+    box-shadow: $primary-background-btn-color 0 15px 30px -5px;
     border-radius: 5px;
-    width: 100%;
+    min-width: 9rem;
     z-index: 1;
+    @include tablet {
+      min-width: 12.5rem;
+    }
   }
   &__item {
-    padding: 8px;
+    padding: $min-padding;
 
     &:hover {
-      background: #e0e0e0;
+      background-color: #c3a3c7;
     }
   }
 }

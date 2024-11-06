@@ -89,7 +89,8 @@ h3 {
 
 // Body
 body,
-*[class*="btn"] {
+*[class*="btn"],
+button {
   font-size: 0.75rem;
   line-height: 0.9375rem;
   font-weight: 500;

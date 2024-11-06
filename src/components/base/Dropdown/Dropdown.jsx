@@ -2,18 +2,21 @@ import "./Dropdown.scss";
 import { useState } from "react";
 import DropdownIcon from "../../../assets/icons/dropdown-icon.svg?react";
 
-const Dropdown = ({ options, onSelect }) => {
+const Dropdown = ({ options, selectHandler }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(options[0]);
 
   const handleSelect = (option) => {
     setSelected(option);
     setIsOpen(false);
-    onSelect(option);
+    selectHandler(option);
   };
   return (
     <div className="dropdown">
-      <button onClick={() => setIsOpen(!isOpen)} className="dropdown__btn">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="dropdown__selection"
+      >
         {selected} <DropdownIcon />
       </button>
       {isOpen && (

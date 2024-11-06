@@ -3,27 +3,5 @@
 
 button[class*="btn"],
 a[class*="btn"] {
-  background-color: $primary-background-btn-color;
-  color: $primary-btn-color;
-  box-shadow: $primary-background-btn-color 0 15px 30px -5px;
-  border: 1px solid $border-color;
-  border-radius: $min-padding;
-  @include flex(center);
-  max-width: 100%;
-  min-width: 9rem;
-  padding: $min-padding;
-  position: relative;
-  overflow: hidden;
-  transition: background-color 0.2s ease-in-out;
-
-  @include tablet {
-    min-width: 12.5rem;
-  }
-
-  @include desktop {
-  }
-
-  &:hover {
-    background-color: $border-color;
-  }
+  @include btn-styling;
 }
