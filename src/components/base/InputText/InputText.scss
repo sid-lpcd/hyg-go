@@ -1,0 +1,79 @@
+@use "../../../styles/partials/variables" as *;
+@use "../../../styles/partials/mixins" as *;
+
+.input-text {
+  @include btn-styling;
+  position: relative;
+  width: 100%;
+  max-width: 18.75rem;
+  border-radius: 4px;
+  gap: calc($min-padding/4);
+  height: 2.5rem;
+
+  &:has(> .input-text__input:focus) {
+    border: 2px solid $light-color;
+  }
+
+  &__input {
+    height: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+
+    &::placeholder {
+      background: transparent;
+    }
+
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+
+  &__search {
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+    box-shadow: rgba(205, 172, 210, 0.2) 0px 0px 2px 2px;
+    border: 0px;
+    border-radius: $border-radius;
+    max-width: 30%;
+    min-width: 5rem;
+    height: 1.5rem;
+    padding: calc($min-padding/2);
+    &:hover {
+      background-color: #debae3;
+    }
+  }
+
+  &__search-icon * {
+    fill: $primary-color;
+  }
+
+  &__autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 0 0 4px 4px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  &__options {
+    position: absolute;
+    overflow: hidden;
+    top: 100%;
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+    box-shadow: $primary-background-btn-color 0 15px 30px -5px;
+    border-radius: 5px;
+    min-width: 9rem;
+    z-index: 1;
+    @include tablet {
+      min-width: 12.5rem;
+    }
+  }
+}

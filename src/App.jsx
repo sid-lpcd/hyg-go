@@ -1,6 +1,7 @@
 import "./App.scss";
 import Button from "./components/base/Button/Button";
 import Dropdown from "./components/base/Dropdown/Dropdown";
+import InputText from "./components/base/InputText/InputText";
 
 function App() {
   const clickHandler = () => {
@@ -17,6 +18,12 @@ function App() {
       <p>Testing text</p>
       <Button classProp="test" btnText="Start" clickHandler={clickHandler} />
       <Dropdown options={sortOptions} selectHandler={selectHandler} />
+      <InputText
+        isAutocomplete={true}
+        options={["Option1", "Option2", "Option3"]}
+        placeholder="Search..."
+      />
+      <InputText isAutocomplete={false} placeholder="Search..." />
     </>
   );
 }

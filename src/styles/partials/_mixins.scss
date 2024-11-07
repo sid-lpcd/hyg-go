@@ -33,8 +33,9 @@
   border: 1px solid $border-color;
   border-radius: $border-radius;
   max-width: 100%;
-  min-width: 9rem;
-  padding: $min-padding;
+  min-width: 7rem;
+  height: 2rem;
+  padding: calc($min-padding/2);
   position: relative;
   overflow: hidden;
   transition: background-color 0.2s ease-in-out;
