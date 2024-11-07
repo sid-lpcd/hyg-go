@@ -1,21 +1,41 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./InputText.scss";
 import SearchIcon from "../../../assets/icons/search-icon.svg?react";
+import { v4 as uuidv4 } from "uuid";
 
 const InputText = ({ isAutocomplete, options, placeholder }) => {
   const [inputValue, setInputValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState([]);
+  const [autocompleteActive, setAutocompleteActive] = useState(false);
+
+  const dropdownRef = useRef();
 
   const handleChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
 
-    if (isAutocomplete && options) {
+    if (isAutocomplete && options && value.length > 2) {
+      //potentially an api call
       const filtered = options.filter((option) =>
         option.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredOptions(filtered);
+      setAutocompleteActive(true);
     }
+  };
+  const handleFocus = () => {
+    if (isAutocomplete && options && inputValue.length > 2) {
+      setAutocompleteActive(true);
+    }
+  };
+  const handleBlur = (event) => {
+    if (
+      dropdownRef.current &&
+      dropdownRef.current.contains(event.relatedTarget)
+    ) {
+      return;
+    }
+    setAutocompleteActive(false);
   };
 
   const handleOptionClick = (option) => {
@@ -32,15 +52,22 @@ const InputText = ({ isAutocomplete, options, placeholder }) => {
         onChange={handleChange}
         placeholder={placeholder}
         className="input-text__input"
+        onFocus={handleFocus}
+        onBlur={handleBlur}
       />
       <button className="input-text__search">Search</button>
       {isAutocomplete && filteredOptions.length > 0 && (
-        <div className="input-text__autocomplete">
-          {filteredOptions.map((option, index) => (
+        <div
+          className={`input-text__autocomplete ${
+            autocompleteActive ? "input-text__autocomplete--active" : ""
+          }`}
+          ref={dropdownRef}
+        >
+          {filteredOptions.map((option) => (
             <div
-              key={index}
+              key={uuidv4()}
               className="input-text__options"
-              onClick={() => handleOptionClick(option)}
+              onMouseDown={() => handleOptionClick(option)}
             >
               {option}
             </div>

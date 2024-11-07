@@ -9,6 +9,7 @@
   border-radius: 4px;
   gap: calc($min-padding/4);
   height: 2.5rem;
+  overflow: visible;
 
   &:has(> .input-text__input:focus) {
     border: 2px solid $light-color;
@@ -50,30 +51,31 @@
   }
 
   &__autocomplete {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 0 0 4px 4px;
-    max-height: 150px;
-    overflow-y: auto;
-    z-index: 10;
+    display: none;
+    &--active {
+      @include flex(start);
+      flex-direction: column;
+      position: absolute;
+      width: 100%;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: $secondary-background-color;
+      color: $secondary-color;
+      box-shadow: $primary-background-btn-color 0 15px 30px -5px;
+      border-radius: 5px;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 1;
+    }
   }
 
   &__options {
-    position: absolute;
-    overflow: hidden;
-    top: 100%;
-    background-color: $secondary-background-color;
-    color: $secondary-color;
-    box-shadow: $primary-background-btn-color 0 15px 30px -5px;
-    border-radius: 5px;
-    min-width: 9rem;
-    z-index: 1;
-    @include tablet {
-      min-width: 12.5rem;
+    width: 100%;
+    padding: $min-padding/2;
+
+    &:hover {
+      background-color: #debae3;
     }
   }
 }
