@@ -1,0 +1,10 @@
+.header {
+  &__logo {
+    width: 100%;
+    &-link {
+      display: block;
+      max-width: 6.25rem;
+      margin: 0 auto;
+    }
+  }
+}

@@ -4,6 +4,7 @@ import Button from "./components/base/Button/Button";
 import Dropdown from "./components/base/Dropdown/Dropdown";
 import InputText from "./components/base/InputText/InputText";
 import CreatePlanPage from "./pages/CreatePlanPage/CreatePlanPage";
+import Header from "./components/sections/Header/Header";
 
 function App() {
   const clickHandler = () => {
@@ -16,6 +17,7 @@ function App() {
   const sortOptions = ["Sort by date", "Sort alphabetically"];
   return (
     <>
+      <Header />
       <h1>Hyg-go</h1>
       <p>Testing text</p>
       <Button classProp="test" btnText="Start" clickHandler={clickHandler} />
