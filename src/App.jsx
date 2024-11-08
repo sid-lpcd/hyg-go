@@ -1,7 +1,9 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.scss";
 import Button from "./components/base/Button/Button";
 import Dropdown from "./components/base/Dropdown/Dropdown";
 import InputText from "./components/base/InputText/InputText";
+import CreatePlanPage from "./pages/CreatePlanPage/CreatePlanPage";
 
 function App() {
   const clickHandler = () => {
@@ -24,6 +26,9 @@ function App() {
         placeholder="Search..."
       />
       <InputText isAutocomplete={false} placeholder="Search..." />
+      <Routes>
+        <Route path="/create-plan" element={<CreatePlanPage />} />
+      </Routes>
     </>
   );
 }
