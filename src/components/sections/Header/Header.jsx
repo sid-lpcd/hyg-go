@@ -2,7 +2,7 @@ import "./Header.scss";
 import logo from "../../../assets/logo/logo-hyggo.png";
 import { Link } from "react-router-dom";
 
-const Header = ({ leftElement, rightElement }) => {
+const Header = ({ leftElement = null, rightElement = null }) => {
   return (
     <header className="header">
       {leftElement}
