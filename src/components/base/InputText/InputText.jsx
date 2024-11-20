@@ -3,8 +3,13 @@ import "./InputText.scss";
 import SearchIcon from "../../../assets/icons/search-icon.svg?react";
 import { v4 as uuidv4 } from "uuid";
 
-const InputText = ({ isAutocomplete, options, placeholder }) => {
-  const [inputValue, setInputValue] = useState("");
+const InputText = ({
+  isAutocomplete,
+  options,
+  placeholder,
+  inputValue,
+  setInputValue,
+}) => {
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [autocompleteActive, setAutocompleteActive] = useState(false);
 

@@ -119,3 +119,18 @@ button {
     line-height: 1.0938rem;
   }
 }
+
+/*********** Modal ************/
+
+.react-responsive-modal {
+  &-modal {
+    min-width: 80%;
+    border-radius: $border-radius;
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+    text-align: center;
+  }
+  &-closeButton * {
+    fill: $secondary-color;
+  }
+}

@@ -1,0 +1,14 @@
+@use "../../styles/partials/mixins" as *;
+@use "../../styles/partials/variables" as *;
+@use "../../styles/partials/animations";
+
+.react-responsive-modal__btn-container {
+  @include flex(space-between);
+  & > button.react-responsive-modal__btn {
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+    &:hover {
+      background-color: #c4a7c9;
+    }
+  }
+}

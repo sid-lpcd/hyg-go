@@ -1,10 +1,23 @@
+@use "../../../styles/partials/mixins" as *;
+@use "../../../styles/partials/variables" as *;
+@use "../../../styles/partials/animations";
 .header {
+  @include flex(space-between);
+  padding: $min-padding;
   &__logo {
     width: 100%;
     &-link {
       display: block;
       max-width: 6.25rem;
       margin: 0 auto;
+    }
+  }
+  &__icon {
+    width: 30px;
+    height: 30px;
+    & * {
+      fill: $primary-color;
+      stroke: $primary-color;
     }
   }
 }

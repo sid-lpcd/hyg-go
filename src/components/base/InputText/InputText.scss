@@ -3,13 +3,15 @@
 
 .input-text {
   @include btn-styling;
-  position: relative;
-  width: 100%;
-  max-width: 18.75rem;
-  border-radius: 4px;
-  gap: calc($min-padding/4);
-  height: 2.5rem;
-  overflow: visible;
+  & {
+    position: relative;
+    width: 100%;
+    max-width: 18.75rem;
+    border-radius: 4px;
+    gap: calc($min-padding / 4);
+    height: 2.5rem;
+    overflow: visible;
+  }
 
   &:has(> .input-text__input:focus) {
     border: 2px solid $light-color;
@@ -72,7 +74,7 @@
 
   &__options {
     width: 100%;
-    padding: $min-padding/2;
+    padding: calc($min-padding / 2);
 
     &:hover {
       background-color: #debae3;
