@@ -114,6 +114,7 @@ button {
 
 *[class*="label"] {
   @extend body;
+  background-color: transparent;
   @include tablet {
     font-size: 0.875rem;
     line-height: 1.0938rem;
