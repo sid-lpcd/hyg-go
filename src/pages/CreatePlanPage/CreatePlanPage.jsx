@@ -10,8 +10,7 @@ import axios from "axios";
 import Form from "../../components/base/Form/Form";
 
 const CreatePlanPage = () => {
-  const [selected, setSelected] = useState("");
-  const [locations, setLocations] = useState(null);
+  const [location, setLocation] = useState("");
   const [open, setOpen] = useState(false);
   const [tripData, setTripData] = useState({
     user_id: 1,
@@ -50,12 +49,17 @@ const CreatePlanPage = () => {
 
   const navigate = useNavigate();
 
+  const handleSelectLocation = (location) => {
+    setLocation(location);
+    setTripData({ ...tripData, location_id: location.id });
+  };
+
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => {
     setOpen(false);
   };
 
-  const handleChange = (e) => {
+  const handleChangeForm = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrorData({ ...errorData, [name]: false });
@@ -79,7 +83,6 @@ const CreatePlanPage = () => {
     });
 
     setErrorData(newErrorData);
-    console.log(newErrorData);
 
     if (hasErrors) return;
     try {
@@ -91,14 +94,21 @@ const CreatePlanPage = () => {
     navigate("/");
   };
 
-  const getLocations = async () => {
-    //axios call
-    setLocations(["Porto"]);
-  };
+  const getLocations = async (name) => {
+    let query = "";
+    if (name) {
+      query = `?search=${name}`;
+    }
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_HYGGO_API_URL}/locations${query}`
+      );
 
-  useEffect(() => {
-    getLocations();
-  }, []);
+      return response.data;
+    } catch (error) {
+      return ["No locations found"];
+    }
+  };
 
   return (
     <>
@@ -113,9 +123,9 @@ const CreatePlanPage = () => {
       <main className="main">
         <InputText
           isAutocomplete={true}
-          options={locations}
-          inputValue={selected}
-          setInputValue={setSelected}
+          getOptions={getLocations}
+          inputValue={location}
+          setInputValue={handleSelectLocation}
           placeholder="Where are you going?"
         />
       </main>
@@ -126,7 +136,7 @@ const CreatePlanPage = () => {
           labels={labels}
           formData={formData}
           errorData={errorData}
-          handleChange={handleChange}
+          handleChange={handleChangeForm}
           handleCancel={handleCancel}
           handleSubmit={handleSubmit}
         />

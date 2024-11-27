@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const InputText = ({
   isAutocomplete,
-  options,
+  getOptions,
   placeholder,
   inputValue,
   setInputValue,
@@ -15,21 +15,19 @@ const InputText = ({
 
   const dropdownRef = useRef();
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const value = e.target.value;
     setInputValue(value);
 
-    if (isAutocomplete && options && value.length > 2) {
+    if (isAutocomplete && value.length > 2) {
       //potentially an api call
-      const filtered = options.filter((option) =>
-        option.toLowerCase().includes(value.toLowerCase())
-      );
+      const filtered = await getOptions(value);
       setFilteredOptions(filtered);
       setAutocompleteActive(true);
     }
   };
   const handleFocus = () => {
-    if (isAutocomplete && options && inputValue.length > 2) {
+    if (isAutocomplete && filteredOptions && inputValue.length > 2) {
       setAutocompleteActive(true);
     }
   };
@@ -53,7 +51,7 @@ const InputText = ({
       <SearchIcon className="input-text__search-icon" />
       <input
         type="text"
-        value={inputValue}
+        value={inputValue.name}
         onChange={handleChange}
         placeholder={placeholder}
         className="input-text__input"
@@ -74,7 +72,7 @@ const InputText = ({
               className="input-text__options"
               onMouseDown={() => handleOptionClick(option)}
             >
-              {option}
+              {option.name}
             </div>
           ))}
         </div>
