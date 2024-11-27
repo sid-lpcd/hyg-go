@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Modal } from "react-responsive-modal";
 import { DayPicker } from "react-day-picker";
 import Header from "../../components/sections/Header/Header";
+import { PeopleDropdown } from "../../components/base/PeopleDropdown/PeopleDropdown";
 import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../assets/icons/close-icon.svg?react";
 import InputText from "../../components/base/InputText/InputText";
@@ -22,6 +23,7 @@ const CreatePlanPage = () => {
     location_id: null,
     start_date: null,
     end_date: null,
+    people: { adults: 1, children: 0, infant: 0 },
   });
   const [formData, setFormData] = useState({
     title: "",
@@ -77,6 +79,33 @@ const CreatePlanPage = () => {
       date.getDate()
     );
     setTripData({ ...tripData, [type]: newDate });
+  };
+
+  const handleChangePeople = (field, value) => {
+    if (field === "adults")
+      setTripData({
+        ...tripData,
+        people: {
+          ...tripData.people,
+          adults: Math.max(0, tripData.people.adults + value),
+        },
+      });
+    if (field === "children")
+      setTripData({
+        ...tripData,
+        people: {
+          ...tripData.people,
+          children: Math.max(0, tripData.people.children + value),
+        },
+      });
+    if (field === "infant")
+      setTripData({
+        ...tripData,
+        people: {
+          ...tripData.people,
+          infant: Math.max(0, tripData.people.infant + value),
+        },
+      });
   };
 
   const handleChangeForm = (e) => {
@@ -184,6 +213,7 @@ const CreatePlanPage = () => {
               }
               onFocus={() => setDatesDisplay(true)}
               ref={startRef}
+              readOnly
             />
           </div>
           <div className="dates__end-container">
@@ -203,6 +233,7 @@ const CreatePlanPage = () => {
               }
               onFocus={() => setDatesDisplay(true)}
               ref={endRef}
+              readOnly
             />
           </div>
           {datesDisplay && (
@@ -248,6 +279,10 @@ const CreatePlanPage = () => {
             </div>
           )}
         </section>
+        <PeopleDropdown
+          changeCount={handleChangePeople}
+          people={tripData.people}
+        />
       </main>
 
       <Modal open={open} onClose={onCloseModal} center>
