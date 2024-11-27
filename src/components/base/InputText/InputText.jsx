@@ -20,8 +20,15 @@ const InputText = ({
     setInputValue(value);
 
     if (isAutocomplete && value.length > 2) {
-      //potentially an api call
       const filtered = await getOptions(value);
+      setFilteredOptions(filtered);
+      setAutocompleteActive(true);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (isAutocomplete) {
+      const filtered = await getOptions(inputValue.name);
       setFilteredOptions(filtered);
       setAutocompleteActive(true);
     }
@@ -58,7 +65,9 @@ const InputText = ({
         onFocus={handleFocus}
         onBlur={handleBlur}
       />
-      <button className="input-text__search">Search</button>
+      <button className="input-text__search" onClick={handleSearch}>
+        Search
+      </button>
       {isAutocomplete && filteredOptions.length > 0 && (
         <div
           className={`input-text__autocomplete ${

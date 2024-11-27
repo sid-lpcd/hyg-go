@@ -173,11 +173,15 @@ const CreatePlanPage = () => {
               type="text"
               className="dates__start-input"
               placeholder="DD/MM/YYYY"
-              value={tripData.start_date?.toLocaleDateString("en-GB", {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-              })}
+              value={
+                tripData.start_date
+                  ? new Date(tripData.start_date)?.toLocaleDateString("en-GB", {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                    })
+                  : ""
+              }
               onFocus={() => setDatesDisplay(true)}
               ref={startRef}
             />
@@ -188,11 +192,15 @@ const CreatePlanPage = () => {
               type="text"
               className="dates__end-input"
               placeholder="DD/MM/YYYY"
-              value={tripData.end_date?.toLocaleDateString("en-GB", {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-              })}
+              value={
+                tripData.end_date
+                  ? new Date(tripData.end_date)?.toLocaleDateString("en-GB", {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                    })
+                  : ""
+              }
               onFocus={() => setDatesDisplay(true)}
               ref={endRef}
             />
@@ -216,7 +224,6 @@ const CreatePlanPage = () => {
                   range_end: tripData?.end_date,
                 }}
                 onDayClick={(day, modifiers) => {
-                  console.log(modifiers);
                   if (tripData.start_date && tripData.end_date) {
                     setTripData({ start_date: day, end_date: null });
                     return;
