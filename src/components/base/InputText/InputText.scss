@@ -14,6 +14,26 @@
     height: 2.5rem;
     overflow: visible;
   }
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  &--error {
+    border-color: $color-error;
+  }
+  &__error {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: $color-error;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 0.5rem;
+    }
+  }
 
   &:has(> .input-text__input:focus) {
     border: 2px solid $light-color;
@@ -21,6 +41,7 @@
 
   &__input {
     height: 100%;
+    width: 70%;
     padding: 0px 12px;
     border: none;
     background: transparent;

@@ -3,15 +3,31 @@
 @use "../../styles/partials/animations";
 
 .main {
-  @include flex(center);
+  min-height: 90vh;
+  @include flex(space-around);
   flex-direction: column;
   gap: 2rem;
   max-width: 67.5rem;
+  padding: 1rem;
 }
 .plan-container {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  width: 100%;
+  &__title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+  }
+  &__subtitle {
+    font-size: 1rem;
+    line-height: 1rem;
+    font-weight: 400;
+    margin: 0.5rem 0 0;
+    padding: 0;
+  }
 }
 .dates {
   &-container {

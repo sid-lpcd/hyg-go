@@ -7,15 +7,19 @@ import { PeopleDropdown } from "../../components/base/PeopleDropdown/PeopleDropd
 import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../assets/icons/close-icon.svg?react";
 import InputText from "../../components/base/InputText/InputText";
+import Error from "../../assets/icons/error-icon.svg?react";
 import CalendarIcon from "../../assets/icons/calendar-icon.svg?react";
 import ProfileIcon from "../../assets/icons/profile-icon.svg?react";
 import Form from "../../components/base/Form/Form";
 import "./CreatePlanPage.scss";
 import { formatDate } from "../../utils/dateFormat";
 import DatePicker from "../../components/base/DatePicker/DatePicker";
+import InspirationSection from "../../components/sections/InspirationSection/InspirationSection";
+import { tr } from "react-day-picker/locale";
 
 const CreatePlanPage = () => {
   const [location, setLocation] = useState("");
+  const [nextLocationUrl, setNextLocationUrl] = useState("");
   const [openTripModal, setOpenTripModal] = useState(false);
   const [openDatesModal, setOpenDatesModal] = useState(false);
   const [openPeopleModal, setOpenPeopleModal] = useState(false);
@@ -77,7 +81,7 @@ const CreatePlanPage = () => {
     navigate("/");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, location) => {
     e.preventDefault();
 
     let hasErrors = false;
@@ -99,7 +103,7 @@ const CreatePlanPage = () => {
         { ...tripData, ...formData }
       );
     } catch (error) {}
-    navigate("/");
+    navigate(`/${location ? location : ""}`);
   };
 
   const getLocations = async (name) => {
@@ -118,6 +122,29 @@ const CreatePlanPage = () => {
     }
   };
 
+  const handleCreatePlan = () => {
+    let hasErrors = false;
+    const { title, description, ...newErrorData } = errorData;
+    const {
+      title: newTitle,
+      description: newDescription,
+      ...newFormData
+    } = tripData;
+    Object.keys(newFormData).forEach((key) => {
+      if (!newFormData[key]) {
+        newErrorData[key] = true;
+        hasErrors = true;
+      }
+    });
+
+    setErrorData({ ...errorData, ...newErrorData });
+
+    if (hasErrors) return;
+
+    setNextLocationUrl("create-plan/activities");
+    setOpenTripModal(true);
+  };
+
   return (
     <>
       <Header
@@ -130,12 +157,18 @@ const CreatePlanPage = () => {
       />
       <main className="main">
         <section className="plan-container">
+          <div>
+            <h1 className="plan-container__title">Plan your trip</h1>
+            <h2 className="plan-container__subtitle">Where are you going?</h2>
+          </div>
           <InputText
             isAutocomplete={true}
             getOptions={getLocations}
             inputValue={location}
             setInputValue={handleSelectLocation}
             placeholder="Where are you going?"
+            error={errorData.location_id}
+            setError={() => setErrorData({ ...errorData, location_id: false })}
           />
           <article
             className="dates-container"
@@ -159,7 +192,11 @@ const CreatePlanPage = () => {
               {`${tripData.people.adults} Adults, ${tripData.people.children} Children, ${tripData.people.infant} Infants`}
             </p>
           </article>
+
+          <button onClick={handleCreatePlan}>Create plan</button>
         </section>
+
+        <InspirationSection />
       </main>
 
       <Modal
@@ -213,7 +250,7 @@ const CreatePlanPage = () => {
           errorData={errorData}
           handleChange={handleChangeForm}
           handleCancel={handleCancel}
-          handleSubmit={handleSubmit}
+          handleSubmit={(e) => handleSubmit(e, nextLocationUrl)}
         />
       </Modal>
     </>
