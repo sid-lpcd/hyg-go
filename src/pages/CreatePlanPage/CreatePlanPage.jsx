@@ -8,6 +8,7 @@ import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../assets/icons/close-icon.svg?react";
 import InputText from "../../components/base/InputText/InputText";
 import CalendarIcon from "../../assets/icons/calendar-icon.svg?react";
+import ProfileIcon from "../../assets/icons/profile-icon.svg?react";
 import Form from "../../components/base/Form/Form";
 import "./CreatePlanPage.scss";
 import { formatDate } from "../../utils/dateFormat";
@@ -15,8 +16,9 @@ import DatePicker from "../../components/base/DatePicker/DatePicker";
 
 const CreatePlanPage = () => {
   const [location, setLocation] = useState("");
-  const [open, setOpen] = useState(false);
-  const [datesDisplay, setDatesDisplay] = useState(false);
+  const [openTripModal, setOpenTripModal] = useState(false);
+  const [openDatesModal, setOpenDatesModal] = useState(false);
+  const [openPeopleModal, setOpenPeopleModal] = useState(false);
   const [tripData, setTripData] = useState({
     user_id: 1,
     title: "",
@@ -55,41 +57,14 @@ const CreatePlanPage = () => {
 
   const navigate = useNavigate();
 
-  const onOpenModal = () => setOpen(true);
+  const onOpenModal = () => setOpenTripModal(true);
   const onCloseModal = () => {
-    setOpen(false);
+    setOpenTripModal(false);
   };
 
   const handleSelectLocation = (location) => {
     setLocation(location);
     setTripData({ ...tripData, location_id: location.id });
-  };
-
-  const handleChangePeople = (field, value) => {
-    if (field === "adults")
-      setTripData({
-        ...tripData,
-        people: {
-          ...tripData.people,
-          adults: Math.max(1, tripData.people.adults + value),
-        },
-      });
-    if (field === "children")
-      setTripData({
-        ...tripData,
-        people: {
-          ...tripData.people,
-          children: Math.max(0, tripData.people.children + value),
-        },
-      });
-    if (field === "infant")
-      setTripData({
-        ...tripData,
-        people: {
-          ...tripData.people,
-          infant: Math.max(0, tripData.people.infant + value),
-        },
-      });
   };
 
   const handleChangeForm = (e) => {
@@ -164,7 +139,7 @@ const CreatePlanPage = () => {
           />
           <article
             className="dates-container"
-            onClick={() => setDatesDisplay(true)}
+            onClick={() => setOpenDatesModal(true)}
           >
             <CalendarIcon className="dates__icon" />
             <p className="dates__text">
@@ -175,16 +150,37 @@ const CreatePlanPage = () => {
             </p>
           </article>
 
-          <PeopleDropdown
-            changeCount={handleChangePeople}
-            people={tripData.people}
-          />
+          <article
+            className="people-dropdown"
+            onClick={() => setOpenPeopleModal(true)}
+          >
+            <ProfileIcon className="people-dropdown__icon" />
+            <p className="people-dropdown__summary">
+              {`${tripData.people.adults} Adults, ${tripData.people.children} Children, ${tripData.people.infant} Infants`}
+            </p>
+          </article>
         </section>
       </main>
 
       <Modal
-        open={datesDisplay}
-        onClose={() => setDatesDisplay(false)}
+        open={openPeopleModal}
+        onClose={() => setOpenPeopleModal(false)}
+        classNames={{
+          modalAnimationIn: "modalInBottom",
+          modalAnimationOut: "modalOutBottom",
+        }}
+        animationDuration={500}
+      >
+        <PeopleDropdown
+          tripData={tripData}
+          setTripData={setTripData}
+          onClose={() => setOpenPeopleModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        open={openDatesModal}
+        onClose={() => setOpenDatesModal(false)}
         showCloseIcon={false}
         classNames={{
           modal: "react-responsive-modal-modal--dates",
@@ -196,12 +192,12 @@ const CreatePlanPage = () => {
         <DatePicker
           tripData={tripData}
           setTripData={setTripData}
-          onClose={() => setDatesDisplay(false)}
+          onClose={() => setOpenDatesModal(false)}
         />
       </Modal>
 
       <Modal
-        open={open}
+        open={openTripModal}
         onClose={onCloseModal}
         classNames={{
           modal: "react-responsive-modal-modal--save-trip",

@@ -1,54 +1,72 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./PeopleDropdown.scss";
-import ProfileIcon from "../../../assets/icons/profile-icon.svg?react";
 import Modal from "react-responsive-modal";
 
-export const PeopleDropdown = ({ people, changeCount }) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const PeopleDropdown = ({ tripData, setTripData, onClose }) => {
+  const [localPeople, setLocalPeople] = useState({
+    adults: tripData.adults || 1,
+    children: tripData.children || 0,
+    infant: tripData.infant || 0,
+  });
+  const handleChangePeople = (field, value) => {
+    if (field === "adults")
+      setLocalPeople({
+        ...localPeople,
+        adults: Math.max(1, localPeople.adults + value),
+      });
+    if (field === "children")
+      setLocalPeople({
+        ...localPeople,
+        children: Math.max(0, localPeople.children + value),
+      });
+    if (field === "infant")
+      setLocalPeople({
+        ...localPeople,
+        infant: Math.max(0, localPeople.infant + value),
+      });
+  };
 
+  useEffect(() => {
+    setLocalPeople(tripData.people);
+  }, [tripData]);
   return (
-    <div className="people-dropdown" onClick={() => setIsOpen(!isOpen)}>
-      <ProfileIcon className="people-dropdown__icon" />
-      <p className="people-dropdown__summary">
-        {`${people.adults} Adults, ${people.children} Children, ${people.infant} Infants`}
-      </p>
-      <Modal
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        showCloseIcon={false}
-        classNames={{
-          modalAnimationIn: "modalInBottom",
-          modalAnimationOut: "modalOutBottom",
-        }}
-        animationDuration={500}
-      >
-        <article className="people-dropdown__container">
-          <PeopleControl
-            label="Adults (+16yrs):"
-            count={people.adults}
-            onChange={(val) => changeCount("adults", val)}
-            min={1}
-          />
-          <PeopleControl
-            label="Children (2-16yrs):"
-            count={people.children}
-            onChange={(val) => changeCount("children", val)}
-          />
-          <PeopleControl
-            label="Infant (0-2yrs):"
-            count={people.infant}
-            onChange={(val) => changeCount("infant", val)}
-          />
-
+    <>
+      <article className="people-dropdown__container">
+        <PeopleControl
+          label="Adults (+16yrs):"
+          count={localPeople.adults}
+          onChange={(val) => handleChangePeople("adults", val)}
+          min={1}
+        />
+        <PeopleControl
+          label="Children (2-16yrs):"
+          count={localPeople.children}
+          onChange={(val) => handleChangePeople("children", val)}
+        />
+        <PeopleControl
+          label="Infant (0-2yrs):"
+          count={localPeople.infant}
+          onChange={(val) => handleChangePeople("infant", val)}
+        />
+        <div className="people-dropdown__btn-container">
           <button
-            onClick={() => setIsOpen(false)}
-            className="people-dropdown__btn-done"
+            onClick={onClose}
+            className="people-dropdown__btn people-dropdown__btn--inactive"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              setTripData({ ...tripData, people: localPeople });
+              onClose();
+            }}
+            className="people-dropdown__btn"
           >
             Done
           </button>
-        </article>
-      </Modal>
-    </div>
+        </div>
+      </article>
+    </>
   );
 };
 

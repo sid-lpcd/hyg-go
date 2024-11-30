@@ -58,20 +58,17 @@
     border: none;
     background-color: $secondary-background-color;
   }
-  &__btn-done {
-    width: 100%;
-  }
-}
-
-.react-responsive-modal {
-  &-modal {
-    min-height: 80%;
-    max-height: 100%;
-    width: 100%;
-    margin: 0;
-    position: fixed;
-    top: 60%;
-    left: 0;
-    padding: 5rem 1rem;
+  &__btn {
+    &-container {
+      width: 100%;
+      @include flex(space-between);
+      & button.people-dropdown__btn {
+        width: 45%;
+        &--inactive {
+          background-color: $secondary-background-color;
+          color: $secondary-color;
+        }
+      }
+    }
   }
 }
