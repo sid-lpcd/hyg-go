@@ -28,6 +28,10 @@
     margin: 0.5rem 0 0;
     padding: 0;
   }
+  & button.plan-container__create-plan-btn {
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+  }
 }
 .dates {
   &-container {

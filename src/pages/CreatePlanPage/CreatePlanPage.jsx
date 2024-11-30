@@ -193,7 +193,12 @@ const CreatePlanPage = () => {
             </p>
           </article>
 
-          <button onClick={handleCreatePlan}>Create plan</button>
+          <button
+            className="plan-container__create-plan-btn"
+            onClick={handleCreatePlan}
+          >
+            Create plan
+          </button>
         </section>
 
         <InspirationSection />
