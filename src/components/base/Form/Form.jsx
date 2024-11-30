@@ -79,10 +79,13 @@ export default function Form({
         })}
       </div>
       <div className="form__btn-container">
-        <button className="form__btn" onClick={handleCancel}>
+        <button
+          className="form__btn form__btn--inactive"
+          onClick={handleCancel}
+        >
           No
         </button>
-        <button className="form__btn-active" onClick={handleSubmit}>
+        <button className="form__btn" onClick={handleSubmit}>
           Yes
         </button>
       </div>

@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "react-responsive-modal";
-import { DayPicker } from "react-day-picker";
 import Header from "../../components/sections/Header/Header";
 import { PeopleDropdown } from "../../components/base/PeopleDropdown/PeopleDropdown";
 import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
@@ -10,9 +9,9 @@ import CloseIcon from "../../assets/icons/close-icon.svg?react";
 import InputText from "../../components/base/InputText/InputText";
 import CalendarIcon from "../../assets/icons/calendar-icon.svg?react";
 import Form from "../../components/base/Form/Form";
-import "react-day-picker/style.css";
 import "./CreatePlanPage.scss";
 import { formatDate } from "../../utils/dateFormat";
+import DatePicker from "../../components/base/DatePicker/DatePicker";
 
 const CreatePlanPage = () => {
   const [location, setLocation] = useState("");
@@ -55,10 +54,6 @@ const CreatePlanPage = () => {
   ];
 
   const navigate = useNavigate();
-
-  const datepickerRef = useRef(null);
-  const startRef = useRef(null);
-  const endRef = useRef(null);
 
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => {
@@ -148,24 +143,6 @@ const CreatePlanPage = () => {
     }
   };
 
-  const handleClickOutside = (event) => {
-    if (
-      !datepickerRef?.current?.contains(event.target) &&
-      !startRef?.current?.contains(event.target) &&
-      !endRef?.current?.contains(event.target)
-    ) {
-      setDatesDisplay(false); // Close the date picker
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <>
       <Header
@@ -187,7 +164,6 @@ const CreatePlanPage = () => {
           />
           <article
             className="dates-container"
-            ref={startRef}
             onClick={() => setDatesDisplay(true)}
           >
             <CalendarIcon className="dates__icon" />
@@ -204,55 +180,36 @@ const CreatePlanPage = () => {
             people={tripData.people}
           />
         </section>
-
-        <section
-          className={`datepicker-container${
-            !datesDisplay ? " datepicker-container--hidden" : ""
-          }`}
-          ref={datepickerRef}
-        >
-          <DayPicker
-            modifiers={{
-              selected: tripData.start_date
-                ? {
-                    after: tripData.start_date,
-                    before: tripData.end_date,
-                  }
-                : undefined,
-              range_start: tripData?.start_date,
-              range_end: tripData?.end_date,
-            }}
-            onDayClick={(day) => {
-              if (tripData.start_date && tripData.end_date) {
-                setTripData({
-                  ...tripData,
-                  start_date: day,
-                  end_date: null,
-                });
-                return;
-              }
-              if (!tripData.start_date) {
-                setTripData({ ...tripData, start_date: day });
-                return;
-              } else {
-                setTripData({ ...tripData, end_date: day });
-                return;
-              }
-            }}
-            disabled={{
-              before: !tripData.end_date
-                ? new Date() < tripData.start_date
-                  ? tripData.start_date
-                  : new Date()
-                : new Date(),
-            }}
-            showOutsideDays
-            numberOfMonths={2}
-          />
-        </section>
       </main>
 
-      <Modal open={open} onClose={onCloseModal} center>
+      <Modal
+        open={datesDisplay}
+        onClose={() => setDatesDisplay(false)}
+        showCloseIcon={false}
+        classNames={{
+          modal: "react-responsive-modal-modal--dates",
+          modalAnimationIn: "modalInBottom",
+          modalAnimationOut: "modalOutBottom",
+        }}
+        animationDuration={500}
+      >
+        <DatePicker
+          tripData={tripData}
+          setTripData={setTripData}
+          onClose={() => setDatesDisplay(false)}
+        />
+      </Modal>
+
+      <Modal
+        open={open}
+        onClose={onCloseModal}
+        classNames={{
+          modal: "react-responsive-modal-modal--save-trip",
+          modalAnimationIn: "modalInBottom",
+          modalAnimationOut: "modalOutBottom",
+        }}
+        animationDuration={500}
+      >
         <Form
           title="Do you want to save this trip?"
           labels={labels}

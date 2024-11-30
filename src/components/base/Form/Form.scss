@@ -62,11 +62,14 @@
   }
 
   &__btn-container {
-    margin-top: 1rem;
+    margin-top: 2rem;
     @include flex(space-between);
     & > button.form__btn {
-      background-color: $secondary-background-color;
-      color: $secondary-color;
+      width: 45%;
+      &--inactive {
+        background-color: $secondary-background-color;
+        color: $secondary-color;
+      }
       &:hover {
         background-color: #c4a7c9;
       }

@@ -16,11 +16,13 @@
 .dates {
   &-container {
     @include btn-styling;
-    @include flex(start);
-    gap: 1rem;
-    width: 100%;
-    height: unset;
-    border-radius: 4px;
+    & {
+      @include flex(start);
+      gap: 1rem;
+      width: 100%;
+      height: unset;
+      border-radius: 4px;
+    }
   }
   &__icon {
     width: 2rem;
@@ -31,62 +33,13 @@
   }
 }
 
-.datepicker-container {
-  display: grid;
-  width: 100vw;
-  grid-template-rows: 1fr;
-  transition: all 0.4s ease-in-out;
-  opacity: 1;
-  overflow: hidden;
-  max-height: 31.25rem;
-
-  &--hidden {
-    max-height: 0;
-  }
-}
-
-.rdp {
-  &-root {
-    --rdp-day-height: 1.6rem;
-    --rdp-day-width: 1.6rem;
-    --rdp-day_button-height: 1.6rem;
-    --rdp-day_button-width: 1.6rem;
-    --rdp-today-color: #5d1376;
-    --rdp-accent-color: #5d1376;
-    --rdp-nav_button-width: 2rem;
-    --rdp-nav_button-height: 2rem;
-    --rdp-nav-height: 2.1rem;
-    --rdp-range_middle-background-color: #6e4176;
-
-    padding: 1rem;
-    background-color: $secondary-background-color;
-    color: $secondary-color;
-    box-shadow: $primary-background-btn-color 0 15px 30px -5px;
-    width: 100%;
-    max-width: 67.5rem;
-  }
-  &-day {
-    padding: 0;
-    &:hover {
-      background-color: $light-color;
-      color: $secondary-color;
-      cursor: pointer;
-      border-radius: 50%;
+.react-responsive-modal {
+  &-modal {
+    &--save-trip {
+      top: 50%;
     }
-  }
-  &-caption_label {
-    color: $secondary-color;
-  }
-  &-nav {
-    gap: 0.5rem;
-  }
-  &-selected {
-    font-size: unset;
-    font-weight: unset;
-    background-color: $primary-background-color;
-    color: $primary-color;
-    & > .rdp-day_button {
-      border: none;
+    &--dates {
+      top: 20%;
     }
   }
 }

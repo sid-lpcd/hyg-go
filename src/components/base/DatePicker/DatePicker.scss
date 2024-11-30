@@ -1,0 +1,69 @@
+@use "../../../styles/partials/mixins" as *;
+@use "../../../styles/partials/variables" as *;
+@use "../../../styles/partials/animations";
+
+.datepicker {
+  &-container {
+    width: 100%;
+    height: 35rem;
+    overflow-y: scroll;
+    &__load-more {
+      border: none;
+      background-color: transparent;
+      color: $secondary-color;
+      text-decoration: underline;
+    }
+  }
+  &-actions {
+    @include flex(space-between);
+    & button.datepicker-actions__btn {
+      width: 45%;
+      &--inactive {
+        background-color: $secondary-background-color;
+        color: $secondary-color;
+      }
+    }
+  }
+}
+.rdp {
+  &-root {
+    --rdp-day-height: 3.5rem;
+    --rdp-day-width: 3.5rem;
+    --rdp-day_button-height: 3.5rem;
+    --rdp-day_button-width: 3.5rem;
+    --rdp-today-color: #5d1376;
+    --rdp-accent-color: #5d1376;
+    --rdp-nav_button-width: 2rem;
+    --rdp-nav_button-height: 2rem;
+    --rdp-nav-height: 2.1rem;
+    --rdp-range_middle-background-color: #6e4176;
+
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+    width: 100%;
+  }
+  &-day {
+    padding: 0;
+    &:hover {
+      background-color: $light-color;
+      color: $secondary-color;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+  }
+  &-caption_label {
+    color: $secondary-color;
+  }
+  &-nav {
+    gap: 0.5rem;
+  }
+  &-selected {
+    font-size: unset;
+    font-weight: unset;
+    background-color: $primary-background-color;
+    color: $primary-color;
+    & > .rdp-day_button {
+      border: none;
+    }
+  }
+}
