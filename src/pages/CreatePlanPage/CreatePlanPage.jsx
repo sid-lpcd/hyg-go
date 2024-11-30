@@ -8,9 +8,11 @@ import { PeopleDropdown } from "../../components/base/PeopleDropdown/PeopleDropd
 import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../assets/icons/close-icon.svg?react";
 import InputText from "../../components/base/InputText/InputText";
+import CalendarIcon from "../../assets/icons/calendar-icon.svg?react";
 import Form from "../../components/base/Form/Form";
 import "react-day-picker/style.css";
 import "./CreatePlanPage.scss";
+import { formatDate } from "../../utils/dateFormat";
 
 const CreatePlanPage = () => {
   const [location, setLocation] = useState("");
@@ -68,26 +70,13 @@ const CreatePlanPage = () => {
     setTripData({ ...tripData, location_id: location.id });
   };
 
-  const handleDaySelect = (type, date) => {
-    if (!date) {
-      setTripData({ ...tripData, [type]: newDate });
-      return;
-    }
-    const newDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-    setTripData({ ...tripData, [type]: newDate });
-  };
-
   const handleChangePeople = (field, value) => {
     if (field === "adults")
       setTripData({
         ...tripData,
         people: {
           ...tripData.people,
-          adults: Math.max(0, tripData.people.adults + value),
+          adults: Math.max(1, tripData.people.adults + value),
         },
       });
     if (field === "children")
@@ -170,7 +159,7 @@ const CreatePlanPage = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside); // Attach event listener
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -188,101 +177,79 @@ const CreatePlanPage = () => {
         }
       />
       <main className="main">
-        <InputText
-          isAutocomplete={true}
-          getOptions={getLocations}
-          inputValue={location}
-          setInputValue={handleSelectLocation}
-          placeholder="Where are you going?"
-        />
-        <section className="dates-container">
-          <div className="dates__start-container">
-            <p className="dates__start-label">Start Date</p>
-            <input
-              type="text"
-              className="dates__start-input"
-              placeholder="DD/MM/YYYY"
-              value={
-                tripData.start_date
-                  ? new Date(tripData.start_date)?.toLocaleDateString("en-GB", {
-                      year: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                    })
-                  : ""
-              }
-              onFocus={() => setDatesDisplay(true)}
-              ref={startRef}
-              readOnly
-            />
-          </div>
-          <div className="dates__end-container">
-            <p className="dates__end-label">End Date</p>
-            <input
-              type="text"
-              className="dates__end-input"
-              placeholder="DD/MM/YYYY"
-              value={
-                tripData.end_date
-                  ? new Date(tripData.end_date)?.toLocaleDateString("en-GB", {
-                      year: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                    })
-                  : ""
-              }
-              onFocus={() => setDatesDisplay(true)}
-              ref={endRef}
-              readOnly
-            />
-          </div>
-          {datesDisplay && (
-            <div className="datepicker-container" ref={datepickerRef}>
-              <DayPicker
-                selected={tripData.start_date}
-                onSelect={(date) => {
-                  handleDaySelect("start_date", date);
-                  setDatesDisplay({ ...datesDisplay, startDate: false });
-                }}
-                modifiers={{
-                  selected: tripData.start_date
-                    ? {
-                        after: tripData.start_date,
-                        before: tripData.end_date,
-                      }
-                    : undefined,
-                  range_start: tripData?.start_date,
-                  range_end: tripData?.end_date,
-                }}
-                onDayClick={(day, modifiers) => {
-                  if (tripData.start_date && tripData.end_date) {
-                    setTripData({ start_date: day, end_date: null });
-                    return;
-                  }
-                  if (!tripData.start_date) {
-                    setTripData({ ...tripData, start_date: day });
-                    return;
-                  } else {
-                    setTripData({ ...tripData, end_date: day });
-                    return;
-                  }
-                }}
-                disabled={{
-                  before: !tripData.end_date
-                    ? new Date() < tripData.start_date
-                      ? tripData.start_date
-                      : new Date()
-                    : new Date(),
-                }}
-                showOutsideDays
-              />
-            </div>
-          )}
+        <section className="plan-container">
+          <InputText
+            isAutocomplete={true}
+            getOptions={getLocations}
+            inputValue={location}
+            setInputValue={handleSelectLocation}
+            placeholder="Where are you going?"
+          />
+          <article
+            className="dates-container"
+            ref={startRef}
+            onClick={() => setDatesDisplay(true)}
+          >
+            <CalendarIcon className="dates__icon" />
+            <p className="dates__text">
+              {`${formatDate(tripData.start_date)} - ${formatDate(
+                tripData.end_date,
+                Date.now() + 24 * 60 * 60 * 1000
+              )}`}
+            </p>
+          </article>
+
+          <PeopleDropdown
+            changeCount={handleChangePeople}
+            people={tripData.people}
+          />
         </section>
-        <PeopleDropdown
-          changeCount={handleChangePeople}
-          people={tripData.people}
-        />
+
+        <section
+          className={`datepicker-container${
+            !datesDisplay ? " datepicker-container--hidden" : ""
+          }`}
+          ref={datepickerRef}
+        >
+          <DayPicker
+            modifiers={{
+              selected: tripData.start_date
+                ? {
+                    after: tripData.start_date,
+                    before: tripData.end_date,
+                  }
+                : undefined,
+              range_start: tripData?.start_date,
+              range_end: tripData?.end_date,
+            }}
+            onDayClick={(day) => {
+              if (tripData.start_date && tripData.end_date) {
+                setTripData({
+                  ...tripData,
+                  start_date: day,
+                  end_date: null,
+                });
+                return;
+              }
+              if (!tripData.start_date) {
+                setTripData({ ...tripData, start_date: day });
+                return;
+              } else {
+                setTripData({ ...tripData, end_date: day });
+                return;
+              }
+            }}
+            disabled={{
+              before: !tripData.end_date
+                ? new Date() < tripData.start_date
+                  ? tripData.start_date
+                  : new Date()
+                : new Date(),
+            }}
+            showOutsideDays
+            numberOfMonths={2}
+          />
+        </section>
       </main>
 
       <Modal open={open} onClose={onCloseModal} center>

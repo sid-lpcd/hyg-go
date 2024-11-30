@@ -1,42 +1,37 @@
 @use "../../../styles/partials/mixins" as *;
 @use "../../../styles/partials/variables" as *;
 @use "../../../styles/partials/animations";
+@use "../../../styles/partials/animations" as *;
 
 .people-dropdown {
-  position: relative;
-  @include flex(space-between);
-  gap: 0.5rem;
-  &__summary {
-    @include btn-styling;
-    & {
-      width: 60%;
-      max-width: 18.75rem;
-      border-radius: 4px;
-      height: 2.5rem;
-      text-align: center;
-      cursor: pointer;
+  @include btn-styling;
+  & {
+    @include flex(start);
+    border-radius: 4px;
+    gap: 1rem;
+  }
+  &__icon {
+    width: 2rem;
+    height: 2rem;
+    & * {
+      fill: $primary-color;
     }
   }
   &__container {
-    position: absolute;
-    top: 100%;
-    right: 0;
     width: 100%;
     padding: 0.5rem;
     text-align: left;
-    color: $secondary-color;
-    background-color: $secondary-background-color;
-    box-shadow: $primary-background-btn-color 0 15px 30px -5px;
-    border: 1px solid $border-color;
-    border-radius: 5px;
-    z-index: 1;
+    @include flex(start);
+    flex-direction: column;
+    gap: 1.5rem;
   }
   &__control {
     @include flex(space-between);
-    margin-bottom: 10px;
+    width: 100%;
   }
   &__label {
     flex: 1;
+    color: $secondary-color;
   }
   &__action {
     @include btn-styling;
@@ -44,14 +39,16 @@
       padding: 0.3rem;
       border-radius: 50%;
       font-size: 1.25rem;
+      line-height: 1.25rem;
       cursor: pointer;
       min-width: unset;
       max-width: unset;
-      width: 2rem;
+      width: 2.5rem;
     }
 
     &:disabled {
       background-color: #ccc;
+      color: $secondary-color;
       cursor: not-allowed;
     }
   }
@@ -60,5 +57,21 @@
     text-align: center;
     border: none;
     background-color: $secondary-background-color;
+  }
+  &__btn-done {
+    width: 100%;
+  }
+}
+
+.react-responsive-modal {
+  &-modal {
+    min-height: 80%;
+    max-height: 100%;
+    width: 100%;
+    margin: 0;
+    position: fixed;
+    top: 60%;
+    left: 0;
+    padding: 5rem 1rem;
   }
 }

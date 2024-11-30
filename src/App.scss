@@ -89,10 +89,11 @@ h3 {
 
 // Body
 body,
+input,
 *[class*="btn"],
 button {
-  font-size: 0.75rem;
-  line-height: 0.9375rem;
+  font-size: 1rem;
+  line-height: 1.1rem;
   font-weight: 500;
 
   @include tablet {
@@ -102,12 +103,12 @@ button {
 }
 
 *[class*="--small"] {
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   line-height: 0.75rem;
   font-weight: 500;
 
   @include tablet {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     line-height: 0.9375rem;
   }
 }
@@ -131,7 +132,13 @@ button {
     color: $secondary-color;
     text-align: center;
   }
-  &-closeButton * {
-    fill: $secondary-color;
+  &-closeButton {
+    height: 2.5rem;
+    width: 2.5rem;
+    & * {
+      height: 2.5rem;
+      width: 2.5rem;
+      fill: $secondary-color;
+    }
   }
 }

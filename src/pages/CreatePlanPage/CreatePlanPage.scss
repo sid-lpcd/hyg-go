@@ -5,80 +5,65 @@
 .main {
   @include flex(center);
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
   max-width: 67.5rem;
+}
+.plan-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 .dates {
   &-container {
-    @include flex(space-between);
-    gap: 0.2rem;
-    width: 90%;
-    position: relative;
+    @include btn-styling;
+    @include flex(start);
+    gap: 1rem;
+    width: 100%;
+    height: unset;
+    border-radius: 4px;
   }
-
-  &__start,
-  &__end {
-    &-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      width: 45%;
-    }
-    &-input {
-      @include btn-styling;
-      & {
-        width: 100%;
-        max-width: 18.75rem;
-        border-radius: 4px;
-        height: 2.5rem;
-      }
-      &::placeholder {
-        background: transparent;
-      }
+  &__icon {
+    width: 2rem;
+    height: 2rem;
+    & * {
+      stroke: $primary-color;
     }
   }
 }
 
 .datepicker-container {
-  position: absolute;
-  top: 125%;
-  left: 0;
-  z-index: 1;
+  display: grid;
+  width: 100vw;
+  grid-template-rows: 1fr;
+  transition: all 0.4s ease-in-out;
+  opacity: 1;
+  overflow: hidden;
+  max-height: 31.25rem;
+
+  &--hidden {
+    max-height: 0;
+  }
 }
+
 .rdp {
   &-root {
-    --rdp-day-height: 1.25rem;
-    --rdp-day-width: 1.25rem;
-    --rdp-day_button-height: 1.25rem;
-    --rdp-day_button-width: 1.25rem;
+    --rdp-day-height: 1.6rem;
+    --rdp-day-width: 1.6rem;
+    --rdp-day_button-height: 1.6rem;
+    --rdp-day_button-width: 1.6rem;
     --rdp-today-color: #5d1376;
     --rdp-accent-color: #5d1376;
-    --rdp-nav_button-width: 1rem;
-    --rdp-nav_button-height: 1rem;
-    --rdp-nav-height: 1.2rem;
+    --rdp-nav_button-width: 2rem;
+    --rdp-nav_button-height: 2rem;
+    --rdp-nav-height: 2.1rem;
     --rdp-range_middle-background-color: #6e4176;
 
     padding: 1rem;
     background-color: $secondary-background-color;
     color: $secondary-color;
     box-shadow: $primary-background-btn-color 0 15px 30px -5px;
-    border-radius: 5px;
-    max-width: 20rem;
-    @include tablet {
-      min-width: 12.5rem;
-    }
-
-    &:before {
-      content: "";
-      position: absolute;
-      bottom: 100%;
-      left: 10px;
-      width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-bottom: 10px solid $secondary-background-color; /* Bubble background color */
-    }
+    width: 100%;
+    max-width: 67.5rem;
   }
   &-day {
     padding: 0;
