@@ -63,7 +63,7 @@ const InputText = ({
         <SearchIcon className="input-text__search-icon" />
         <input
           type="text"
-          value={inputValue.name}
+          value={inputValue}
           onChange={handleChange}
           placeholder={placeholder}
           className="input-text__input"
@@ -86,7 +86,7 @@ const InputText = ({
                 className="input-text__options"
                 onMouseDown={() => handleOptionClick(option)}
               >
-                {option.name}
+                {option.name}, {option.time_zone}
               </div>
             ))}
           </div>

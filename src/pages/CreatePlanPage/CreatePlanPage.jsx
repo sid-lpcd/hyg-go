@@ -15,12 +15,11 @@ import "./CreatePlanPage.scss";
 import { formatDateDisplay } from "../../utils/dateFormat";
 import DatePicker from "../../components/base/DatePicker/DatePicker";
 import InspirationSection from "../../components/sections/InspirationSection/InspirationSection";
-import { tr } from "react-day-picker/locale";
 import { addPlan, getAllLocations } from "../../utils/apiHelper";
 
 const CreatePlanPage = () => {
   const [location, setLocation] = useState("");
-  const [nextLocationUrl, setNextLocationUrl] = useState("");
+  const [nextLocationUrl, setNextLocationUrl] = useState(false);
   const [openTripModal, setOpenTripModal] = useState(false);
   const [openDatesModal, setOpenDatesModal] = useState(false);
   const [openPeopleModal, setOpenPeopleModal] = useState(false);
@@ -69,7 +68,11 @@ const CreatePlanPage = () => {
   };
 
   const handleSelectLocation = (location) => {
-    setLocation(location);
+    if (typeof location === "string") {
+      setLocation(location);
+    } else {
+      setLocation(`${location.name}, ${location.time_zone}`);
+    }
     setTripData({ ...tripData, location_id: location.location_id });
   };
 
@@ -108,7 +111,7 @@ const CreatePlanPage = () => {
         setTimeout(() => {
           setMessage("");
           setIsSuccess(false);
-          navigate(`/${location ? location : ""}`);
+          navigate(`/${location ? `create-plan/${response}/activities` : ""}`);
         }, 5000);
       }
     } catch (error) {
@@ -152,7 +155,7 @@ const CreatePlanPage = () => {
 
     if (hasErrors) return;
 
-    setNextLocationUrl("create-plan/activities");
+    setNextLocationUrl(true);
     setOpenTripModal(true);
   };
 
