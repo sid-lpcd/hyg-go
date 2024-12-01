@@ -12,10 +12,11 @@ import CalendarIcon from "../../assets/icons/calendar-icon.svg?react";
 import ProfileIcon from "../../assets/icons/profile-icon.svg?react";
 import Form from "../../components/base/Form/Form";
 import "./CreatePlanPage.scss";
-import { formatDate } from "../../utils/dateFormat";
+import { formatDateDisplay } from "../../utils/dateFormat";
 import DatePicker from "../../components/base/DatePicker/DatePicker";
 import InspirationSection from "../../components/sections/InspirationSection/InspirationSection";
 import { tr } from "react-day-picker/locale";
+import { addPlan, getAllLocations } from "../../utils/apiHelper";
 
 const CreatePlanPage = () => {
   const [location, setLocation] = useState("");
@@ -28,8 +29,8 @@ const CreatePlanPage = () => {
     title: "",
     description: "",
     location_id: null,
-    start_date: null,
-    end_date: null,
+    start_date: formatDateDisplay(null),
+    end_date: formatDateDisplay(null, Date.now() + 24 * 60 * 60 * 1000),
     people: { adults: 1, children: 0, infant: 0 },
   });
   const [formData, setFormData] = useState({
@@ -43,7 +44,8 @@ const CreatePlanPage = () => {
     start_date: false,
     end_date: false,
   });
-
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const labels = [
     {
       name: "title",
@@ -68,7 +70,7 @@ const CreatePlanPage = () => {
 
   const handleSelectLocation = (location) => {
     setLocation(location);
-    setTripData({ ...tripData, location_id: location.id });
+    setTripData({ ...tripData, location_id: location.location_id });
   };
 
   const handleChangeForm = (e) => {
@@ -98,25 +100,32 @@ const CreatePlanPage = () => {
 
     if (hasErrors) return;
     try {
-      const response = axios.post(
-        `${import.meta.env.VITE_HYGGO_API_URL}/plans/`,
-        { ...tripData, ...formData }
-      );
-    } catch (error) {}
-    navigate(`/${location ? location : ""}`);
+      const response = await addPlan({ ...tripData, ...formData });
+      if (response) {
+        setOpenTripModal(false);
+        setMessage("Your plan was created successfully!");
+        setIsSuccess(true);
+        setTimeout(() => {
+          setMessage("");
+          setIsSuccess(false);
+          navigate(`/${location ? location : ""}`);
+        }, 5000);
+      }
+    } catch (error) {
+      setOpenTripModal(false);
+      setMessage("Failed to create the plan. Please try again.");
+      setIsSuccess(false);
+      setTimeout(() => {
+        setMessage("");
+        setIsSuccess(false);
+      }, 5000);
+    }
   };
 
   const getLocations = async (name) => {
-    let query = "";
-    if (name) {
-      query = `?search=${name}`;
-    }
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_HYGGO_API_URL}/locations${query}`
-      );
-
-      return response.data;
+      const response = await getAllLocations(name);
+      return response;
     } catch (error) {
       return ["No locations found"];
     }
@@ -130,6 +139,8 @@ const CreatePlanPage = () => {
       description: newDescription,
       ...newFormData
     } = tripData;
+    console.log(tripData);
+    console.log(errorData);
     Object.keys(newFormData).forEach((key) => {
       if (!newFormData[key]) {
         newErrorData[key] = true;
@@ -176,7 +187,7 @@ const CreatePlanPage = () => {
           >
             <CalendarIcon className="dates__icon" />
             <p className="dates__text">
-              {`${formatDate(tripData.start_date)} - ${formatDate(
+              {`${formatDateDisplay(tripData.start_date)} - ${formatDateDisplay(
                 tripData.end_date,
                 Date.now() + 24 * 60 * 60 * 1000
               )}`}
@@ -199,6 +210,17 @@ const CreatePlanPage = () => {
           >
             Create plan
           </button>
+          {message && (
+            <div
+              className={`plan-container__message${
+                isSuccess
+                  ? " plan-container__message--success"
+                  : " plan-container__message--error"
+              }`}
+            >
+              {message}
+            </div>
+          )}
         </section>
 
         <InspirationSection />
