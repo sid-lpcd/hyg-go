@@ -1,0 +1,44 @@
+@use "../../../styles/partials/variables" as *;
+@use "../../../styles/partials/mixins" as *;
+
+.bottom-navigation {
+  @include flex(space-around);
+  background-color: $nav-background-color;
+  padding: 0.5rem 1rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 999;
+
+  &__item {
+    text-align: center;
+    text-decoration: none;
+    & svg * {
+      fill: $nav-color;
+      stroke: $nav-color;
+    }
+    &--active {
+      & svg * {
+        fill: $nav-active-color;
+        stroke: $nav-active-color;
+      }
+
+      & > .bottom-navigation__label {
+        color: $nav-active-color;
+      }
+    }
+  }
+
+  &__icon {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  &__label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1rem;
+    color: $nav-color;
+  }
+}

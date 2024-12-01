@@ -1,23 +1,21 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "react-responsive-modal";
-import Header from "../../components/sections/Header/Header";
-import { PeopleDropdown } from "../../components/base/PeopleDropdown/PeopleDropdown";
-import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
-import CloseIcon from "../../assets/icons/close-icon.svg?react";
-import InputText from "../../components/base/InputText/InputText";
-import Error from "../../assets/icons/error-icon.svg?react";
-import CalendarIcon from "../../assets/icons/calendar-icon.svg?react";
-import ProfileIcon from "../../assets/icons/profile-icon.svg?react";
-import Form from "../../components/base/Form/Form";
-import "./CreatePlanPage.scss";
-import { formatDateDisplay } from "../../utils/dateFormat";
-import DatePicker from "../../components/base/DatePicker/DatePicker";
-import InspirationSection from "../../components/sections/InspirationSection/InspirationSection";
-import { addPlan, getAllLocations } from "../../utils/apiHelper";
+import Header from "../../../components/sections/Header/Header";
+import { PeopleDropdown } from "../../../components/base/PeopleDropdown/PeopleDropdown";
+import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
+import CloseIcon from "../../../assets/icons/close-icon.svg?react";
+import InputText from "../../../components/base/InputText/InputText";
+import CalendarIcon from "../../../assets/icons/calendar-icon.svg?react";
+import ProfileIcon from "../../../assets/icons/profile-icon.svg?react";
+import Form from "../../../components/base/Form/Form";
+import "./MainCreatePage.scss";
+import { formatDateDisplay } from "../../../utils/dateFormat";
+import DatePicker from "../../../components/base/DatePicker/DatePicker";
+import InspirationSection from "../../../components/sections/InspirationSection/InspirationSection";
+import { addPlan, getAllLocations } from "../../../utils/apiHelper";
 
-const CreatePlanPage = () => {
+const MainCreatePage = () => {
   const [location, setLocation] = useState("");
   const [nextLocationUrl, setNextLocationUrl] = useState(false);
   const [openTripModal, setOpenTripModal] = useState(false);
@@ -287,4 +285,4 @@ const CreatePlanPage = () => {
   );
 };
 
-export default CreatePlanPage;
+export default MainCreatePage;
