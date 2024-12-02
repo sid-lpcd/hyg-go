@@ -28,6 +28,8 @@ const DatePicker = ({ tripData, setTripData, onClose }) => {
     if (!localDates.start_date) {
       setLocalDates({ ...localDates, start_date: day });
       return;
+    } else if (day < localDates.start_date) {
+      setLocalDates({ ...localDates, start_date: day, end_date: null });
     } else {
       setLocalDates({ ...localDates, end_date: day });
     }
@@ -58,11 +60,7 @@ const DatePicker = ({ tripData, setTripData, onClose }) => {
           }}
           onDayClick={handleDayClick}
           disabled={{
-            before: !localDates.end_date
-              ? new Date() < localDates.start_date
-                ? localDates.start_date
-                : new Date()
-              : new Date(),
+            before: new Date(),
           }}
           numberOfMonths={months}
           hideNavigation
