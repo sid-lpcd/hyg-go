@@ -1,9 +1,8 @@
-import { InfinitySpin } from "react-loader-spinner";
+import { v4 as uuidv4 } from "uuid";
 import StarIcon from "../../../assets/icons/star-icon.svg?react";
 import HalfStarIcon from "../../../assets/icons/star-half-icon.svg?react";
 import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
 import "./ActivityCard.scss";
-import { act } from "react";
 
 const ActivityCard = ({ activity, openActivity }) => {
   function roundHalf(num) {
@@ -15,19 +14,19 @@ const ActivityCard = ({ activity, openActivity }) => {
     for (let i = 0; i < maxRating; i++) {
       if (i < roundRating) {
         stars.push(
-          <div key={i}>
+          <div key={uuidv4()}>
             <FullStarIcon className="activity-card__star-icon activity-card__star-icon--full" />
           </div>
         );
       } else if (i + 0.5 === roundRating) {
         stars.push(
-          <div key={i}>
+          <div key={uuidv4()}>
             <HalfStarIcon className="activity-card__star-icon" />
           </div>
         );
       } else {
         stars.push(
-          <div key={i}>
+          <div key={uuidv4()}>
             <StarIcon className="activity-card__star-icon" />
           </div>
         );
@@ -37,18 +36,8 @@ const ActivityCard = ({ activity, openActivity }) => {
   };
 
   if (!activity) {
-    return (
-      <div className="loader-overlay">
-        <InfinitySpin
-          visible={true}
-          width="200"
-          color="#1e6655"
-          ariaLabel="infinity-spin-loading"
-        />
-      </div>
-    );
+    return;
   }
-  console.log(activity);
 
   return (
     <article className="activity-card">

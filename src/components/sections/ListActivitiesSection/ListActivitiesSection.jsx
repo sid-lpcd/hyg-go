@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { getAllAttractionsForLocation } from "../../../utils/apiHelper";
+import { InfinitySpin } from "react-loader-spinner";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import ActivityCard from "../../base/ActivityCard/ActivityCard";
 import "./ListActivitiesSection.scss";
-import { getAllAttractionsForLocation } from "../../../utils/apiHelper";
+import Modal from "react-responsive-modal";
+import ActivityModal from "../ActivityModal/ActivityModal";
 
 const ListActivitiesSection = ({ locationId }) => {
   let filters = {};
@@ -11,7 +14,8 @@ const ListActivitiesSection = ({ locationId }) => {
     tags: [],
   });
   const [error, setError] = useState(false);
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getAllActivities = async () => {
     try {
@@ -60,6 +64,20 @@ const ListActivitiesSection = ({ locationId }) => {
     getAllActivities();
     filters = getAllFilters() || {};
   }, []);
+
+  if (!activities) {
+    return (
+      <div className="loader-overlay">
+        <InfinitySpin
+          visible={true}
+          width="200"
+          color="#1e6655"
+          ariaLabel="infinity-spin-loading"
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="list-activities">
@@ -67,10 +85,30 @@ const ListActivitiesSection = ({ locationId }) => {
         <div className="list-activities__filters"></div>
         <div className="list-activities__list">
           {activities.map((activity) => {
-            return <ActivityCard key={activity.id} activity={activity} />;
+            return (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                openActivity={() => setSelectedActivity(activity)}
+              />
+            );
           })}
         </div>
       </div>
+
+      <Modal
+        open={selectedActivity}
+        onClose={() => setSelectedActivity(null)}
+        center
+        classNames={{
+          modal: "activity-modal activity-modal--activity",
+          modalAnimationIn: "modalInBottom",
+          modalAnimationOut: "modalOutBottom",
+        }}
+        animationDuration={500}
+      >
+        <ActivityModal activityId={selectedActivity?.activity_id} />
+      </Modal>
 
       {error && (
         <p className="main__error">

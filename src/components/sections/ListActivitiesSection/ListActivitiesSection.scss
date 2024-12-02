@@ -3,4 +3,19 @@
 
 .list-activities {
   width: 100%;
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.activity-modal--activity {
+  top: 10%;
+  min-height: 95%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
