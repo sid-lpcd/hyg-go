@@ -1,0 +1,22 @@
+@use "../../../styles/partials/variables" as *;
+@use "../../../styles/partials/mixins" as *;
+
+.main {
+  &__error {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    background-color: $color-background-error;
+    color: $color-error;
+    border: 1px solid $color-border-error;
+    padding: 0.5rem;
+    border-radius: 5px;
+    z-index: 1;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 0.5rem;
+    }
+  }
+}

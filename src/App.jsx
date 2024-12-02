@@ -3,9 +3,7 @@ import "react-responsive-modal/styles.css";
 import "./App.scss";
 import MainCreatePage from "./pages/CreatePlanPages/MainCreatePage/MainCreatePage";
 import { MainPage } from "./pages/MainPage/MainPage";
-import ListPage from "./pages/CreatePlanPages/ListPage/ListPage";
-import MapPage from "./pages/CreatePlanPages/MapPage/MapPage";
-import BasketPage from "./pages/CreatePlanPages/BasketPage/BasketPage";
+import SelectActivitiesPage from "./pages/CreatePlanPages/SelectActivitiesPage/SelectActivitiesPage";
 
 function App() {
   return (
@@ -13,9 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/create-plan" element={<MainCreatePage />} />
-        <Route path="/create-plan/:id/activities" element={<ListPage />} />
-        <Route path="/create-plan/:id/map" element={<MapPage />} />
-        <Route path="/create-plan/:id/basket" element={<BasketPage />} />
+        <Route path="/create-plan/:id/*" element={<SelectActivitiesPage />} />
       </Routes>
     </>
   );
