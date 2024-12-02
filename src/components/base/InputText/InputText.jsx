@@ -86,7 +86,9 @@ const InputText = ({
                 className="input-text__options"
                 onMouseDown={() => handleOptionClick(option)}
               >
-                {option.name}, {option.time_zone}
+                {option.name}
+                {option.region && `, ${option.region}`}
+                {option.country && `, ${option.country}`}
               </div>
             ))}
           </div>

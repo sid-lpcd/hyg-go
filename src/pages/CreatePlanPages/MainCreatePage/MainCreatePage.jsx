@@ -68,8 +68,14 @@ const MainCreatePage = () => {
   const handleSelectLocation = (location) => {
     if (typeof location === "string") {
       setLocation(location);
+    } else if (location.error) {
+      setLocation(location.error);
     } else {
-      setLocation(`${location.name}, ${location.time_zone}`);
+      setLocation(
+        `${location.name}${location.region ? `, ${location.region}` : ""} ${
+          location.country ? `, ${location.country}` : ""
+        }`
+      );
     }
     setTripData({ ...tripData, location_id: location.location_id });
   };
@@ -128,7 +134,7 @@ const MainCreatePage = () => {
       const response = await getAllLocations(name);
       return response;
     } catch (error) {
-      return ["No locations found"];
+      return { error: "No locations found" };
     }
   };
 
@@ -140,8 +146,7 @@ const MainCreatePage = () => {
       description: newDescription,
       ...newFormData
     } = tripData;
-    console.log(tripData);
-    console.log(errorData);
+
     Object.keys(newFormData).forEach((key) => {
       if (!newFormData[key]) {
         newErrorData[key] = true;
