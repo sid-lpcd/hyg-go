@@ -65,39 +65,6 @@ export const deleteLocation = async (id) => {
   return response.data;
 };
 
-export const getAllPlans = async () => {
-  const response = await axios.get(`${API_BASE_URL}/plans`);
-  return response.data;
-};
-
-export const addPlan = async (plan) => {
-  const newPlan = {
-    ...plan,
-    start_date: formatDateApi(plan.start_date),
-    end_date: formatDateApi(plan.end_date),
-  };
-  const response = await axios.post(`${API_BASE_URL}/plans`, newPlan);
-  return response.data;
-};
-
-export const getPlanById = async (id) => {
-  const response = await axios.get(`${API_BASE_URL}/plans/${id}`);
-  return response.data;
-};
-
-export const updatePlan = async (id, updatedPlan) => {
-  const response = await axios.patch(
-    `${API_BASE_URL}/plans/${id}`,
-    updatedPlan
-  );
-  return response.data;
-};
-
-export const deletePlan = async (id) => {
-  const response = await axios.delete(`${API_BASE_URL}/plans/${id}`);
-  return response.data;
-};
-
 export const getAllCategoriesForLocation = async (locationId) => {
   const response = await axios.get(
     `${API_BASE_URL}/locations/${locationId}/categories`
@@ -133,6 +100,39 @@ export const getAllAttractionsForCategoryForLocation = async (
   const response = await axios.get(
     `${API_BASE_URL}/locations/${locationId}/categories/${category}/attractions`
   );
+  return response.data;
+};
+
+export const getAllPlans = async () => {
+  const response = await axios.get(`${API_BASE_URL}/plans`);
+  return response.data;
+};
+
+export const addPlan = async (plan) => {
+  const newPlan = {
+    ...plan,
+    start_date: formatDateApi(plan.start_date),
+    end_date: formatDateApi(plan.end_date),
+  };
+  const response = await axios.post(`${API_BASE_URL}/plans`, newPlan);
+  return response.data;
+};
+
+export const getPlanById = async (id) => {
+  const response = await axios.get(`${API_BASE_URL}/plans/${id}`);
+  return response.data;
+};
+
+export const updatePlan = async (id, updatedPlan) => {
+  const response = await axios.patch(
+    `${API_BASE_URL}/plans/${id}`,
+    updatedPlan
+  );
+  return response.data;
+};
+
+export const deletePlan = async (id) => {
+  const response = await axios.delete(`${API_BASE_URL}/plans/${id}`);
   return response.data;
 };
 
