@@ -1,0 +1,28 @@
+@use "../../../styles/partials/mixins" as *;
+@use "../../../styles/partials/variables" as *;
+
+.map {
+  &__container {
+    height: 20rem;
+    width: 100%;
+    /* temporarily set the background color so we can tell where the map container is positioned */
+    background-color: lightgrey;
+  }
+}
+
+button.map__reset-btn {
+  position: absolute;
+  z-index: 1;
+  top: 0.5rem;
+  right: 0.5rem;
+
+  &:disabled {
+    display: none;
+  }
+}
+
+.mapboxgl {
+  &-control-container {
+    display: none;
+  }
+}

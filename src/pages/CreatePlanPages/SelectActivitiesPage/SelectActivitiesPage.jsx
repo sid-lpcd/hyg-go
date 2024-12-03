@@ -14,6 +14,7 @@ import ListActivitiesPage from "../../../components/sections/ListActivitiesSecti
 import MapPage from "../../../components/sections/MapPage/MapPage";
 import BasketPage from "../../../components/sections/BasketPage/BasketPage";
 import "./SelectActivitiesPage.scss";
+import { InfinitySpin } from "react-loader-spinner";
 
 const SelectActivitiesPage = () => {
   const location = useLocation();
@@ -32,7 +33,6 @@ const SelectActivitiesPage = () => {
   const getPlanInfo = async () => {
     try {
       const response = await getPlanById(locationId);
-      console.log(response);
       setPlanInfo(response);
     } catch (error) {
       console.error(error);
@@ -46,6 +46,18 @@ const SelectActivitiesPage = () => {
   useEffect(() => {
     getPlanInfo();
   }, []);
+
+  if (!planInfo)
+    return (
+      <div className="loader-overlay">
+        <InfinitySpin
+          visible={true}
+          width="200"
+          color="#1e6655"
+          ariaLabel="infinity-spin-loading"
+        />
+      </div>
+    );
 
   return (
     <>
@@ -65,13 +77,16 @@ const SelectActivitiesPage = () => {
       />
       <main className="main">
         {page === "activities" && (
-          <ListActivitiesPage locationId={locationId} planInfo={planInfo} />
+          <ListActivitiesPage
+            locationId={planInfo?.location_id}
+            planInfo={planInfo}
+          />
         )}
         {page === "map" && (
-          <MapPage locationId={locationId} planInfo={planInfo} />
+          <MapPage locationId={planInfo?.location_id} planInfo={planInfo} />
         )}
         {page === "basket" && (
-          <BasketPage locationId={locationId} planInfo={planInfo} />
+          <BasketPage locationId={planInfo?.location_id} planInfo={planInfo} />
         )}
       </main>
       <Navigation />

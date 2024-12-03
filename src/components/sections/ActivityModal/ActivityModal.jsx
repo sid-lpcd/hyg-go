@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { v4 as uuidv4 } from "uuid";
@@ -12,7 +12,7 @@ import { getAttractionById } from "../../../utils/apiHelper";
 import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import { getNumbers } from "../../../utils/generalHelpers";
-import { se } from "react-day-picker/locale";
+import MapGL from "../../base/MapGL/MapGL";
 
 const ActivityModal = ({ activityId, planInfo }) => {
   const [activity, setActivity] = useState(null);
@@ -20,7 +20,7 @@ const ActivityModal = ({ activityId, planInfo }) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [labels, setLabels] = useState([]);
   const [ticketPrices, setTicketPrices] = useState({});
-
+  const [mapOverlay, setMapOverlay] = useState(false);
   function roundHalf(num) {
     return Math.round(num * 2) / 2;
   }
@@ -52,7 +52,6 @@ const ActivityModal = ({ activityId, planInfo }) => {
   };
 
   const initialRender = (prices) => {
-    // let sumPrice = 0;
     let tempLabels = [];
     let tempPrices = {};
     let count = {
@@ -66,13 +65,11 @@ const ActivityModal = ({ activityId, planInfo }) => {
         ? planInfo.people[price]
         : 0;
       count.people[price] = tickets;
-      // sumPrice += getNumbers(prices[price], 0) * tickets;
     }
 
     setTicketPrices(tempPrices);
     setLabels(tempLabels);
     setTicketCount(count);
-    // setTotalPrice(sumPrice);
   };
 
   const calcPrice = () => {
@@ -94,7 +91,7 @@ const ActivityModal = ({ activityId, planInfo }) => {
       const response = await getAttractionById(activityId);
       setActivity({ ...response, images: response.images.slice(1, 5) });
 
-      if (response?.freeAttraction) {
+      if (!response?.prices) {
         setTicketCount(1);
         // setTotalPrice(0);
       } else {
@@ -115,6 +112,12 @@ const ActivityModal = ({ activityId, planInfo }) => {
     });
   };
 
+  const handleMapClick = () => {};
+
+  const handleMapHover = () => {
+    setMapOverlay(!mapOverlay);
+  };
+
   const handleAddToBasket = () => {};
 
   useEffect(() => {
@@ -125,7 +128,7 @@ const ActivityModal = ({ activityId, planInfo }) => {
     calcPrice(activity?.prices);
   }, [ticketCount]);
 
-  if (!activity) {
+  if (!activity || !labels.length) {
     return (
       <div className="loader-overlay">
         <InfinitySpin
@@ -225,10 +228,28 @@ const ActivityModal = ({ activityId, planInfo }) => {
         )}
       </article>
 
-      <div className="activity__content"></div>
+      <div
+        className="activity__map"
+        onClick={handleMapClick}
+        onMouseEnter={handleMapHover}
+        onMouseLeave={handleMapHover}
+      >
+        <div className="activity__map-overlay">
+          <h3 className="activity__map-overlay-title">View on Map</h3>
+        </div>
+        <MapGL
+          initialLocation={[activity?.longitude, activity?.latitude]}
+          isResetVisible={true}
+          markersList={[activity]}
+        />
+      </div>
 
-      <div className="activity__content">
-        {!activity.freeAttraction && (
+      <div
+        className={`activity__content${
+          !activity?.prices ? " activity__content--hidden" : ""
+        }`}
+      >
+        {activity?.prices && (
           <div className="activity__basket">
             <h3 className="activity__subtitle">Tickets</h3>
             <div className="activity__ticket-count">

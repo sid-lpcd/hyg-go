@@ -19,7 +19,9 @@ const ListActivitiesSection = ({ locationId, planInfo }) => {
 
   const getAllActivities = async () => {
     try {
+      console.log("Location ID:", locationId);
       const response = await getAllAttractionsForLocation(locationId);
+      console.log(response);
 
       setActivities(response);
       setError(false);
