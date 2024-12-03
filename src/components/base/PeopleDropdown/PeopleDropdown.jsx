@@ -4,15 +4,15 @@ import Modal from "react-responsive-modal";
 
 export const PeopleDropdown = ({ tripData, setTripData, onClose }) => {
   const [localPeople, setLocalPeople] = useState({
-    adults: tripData.adults || 1,
+    adult: tripData.adult || 1,
     children: tripData.children || 0,
     infant: tripData.infant || 0,
   });
   const handleChangePeople = (field, value) => {
-    if (field === "adults")
+    if (field === "adult")
       setLocalPeople({
         ...localPeople,
-        adults: Math.max(1, localPeople.adults + value),
+        adult: Math.max(1, localPeople.adult + value),
       });
     if (field === "children")
       setLocalPeople({
@@ -34,8 +34,8 @@ export const PeopleDropdown = ({ tripData, setTripData, onClose }) => {
       <article className="people-dropdown__container">
         <PeopleControl
           label="Adults (+16yrs):"
-          count={localPeople.adults}
-          onChange={(val) => handleChangePeople("adults", val)}
+          count={localPeople.adult}
+          onChange={(val) => handleChangePeople("adult", val)}
           min={1}
         />
         <PeopleControl
@@ -70,7 +70,7 @@ export const PeopleDropdown = ({ tripData, setTripData, onClose }) => {
   );
 };
 
-const PeopleControl = ({ label, count, onChange, min = 0 }) => (
+export const PeopleControl = ({ label, count, onChange, min = 0 }) => (
   <div className="people-dropdown__control">
     <label className="people-dropdown__label">{label}</label>
     <button

@@ -7,7 +7,7 @@ import "./ListActivitiesSection.scss";
 import Modal from "react-responsive-modal";
 import ActivityModal from "../ActivityModal/ActivityModal";
 
-const ListActivitiesSection = ({ locationId }) => {
+const ListActivitiesSection = ({ locationId, planInfo }) => {
   let filters = {};
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
@@ -19,9 +19,8 @@ const ListActivitiesSection = ({ locationId }) => {
 
   const getAllActivities = async () => {
     try {
-      console.log("getting activities for location:", locationId);
       const response = await getAllAttractionsForLocation(locationId);
-      console.log(response);
+
       setActivities(response);
       setError(false);
     } catch (error) {
@@ -87,7 +86,7 @@ const ListActivitiesSection = ({ locationId }) => {
           {activities.map((activity) => {
             return (
               <ActivityCard
-                key={activity.id}
+                key={activity.activity_id}
                 activity={activity}
                 openActivity={() => setSelectedActivity(activity)}
               />
@@ -107,7 +106,10 @@ const ListActivitiesSection = ({ locationId }) => {
         }}
         animationDuration={500}
       >
-        <ActivityModal activityId={selectedActivity?.activity_id} />
+        <ActivityModal
+          activityId={selectedActivity?.activity_id}
+          planInfo={planInfo}
+        />
       </Modal>
 
       {error && (

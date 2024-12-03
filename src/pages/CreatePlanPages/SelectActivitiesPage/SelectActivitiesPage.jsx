@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getAllCategoriesForLocation } from "../../../utils/apiHelper";
+import {
+  getAllCategoriesForLocation,
+  getPlanById,
+} from "../../../utils/apiHelper";
 import Header from "../../../components/sections/Header/Header";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
@@ -17,6 +20,7 @@ const SelectActivitiesPage = () => {
   const locationId = location.pathname.split("/")[2];
   const [page, setPage] = useState(location.pathname.split("/").pop());
   const [openTripModal, setOpenTripModal] = useState(false);
+  const [planInfo, setPlanInfo] = useState(null);
 
   const navigate = useNavigate();
 
@@ -25,9 +29,23 @@ const SelectActivitiesPage = () => {
     setOpenTripModal(false);
   };
 
+  const getPlanInfo = async () => {
+    try {
+      const response = await getPlanById(locationId);
+      console.log(response);
+      setPlanInfo(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     setPage(location.pathname.split("/").pop());
   }, [location]);
+
+  useEffect(() => {
+    getPlanInfo();
+  }, []);
 
   return (
     <>
@@ -47,10 +65,14 @@ const SelectActivitiesPage = () => {
       />
       <main className="main">
         {page === "activities" && (
-          <ListActivitiesPage locationId={locationId} />
+          <ListActivitiesPage locationId={locationId} planInfo={planInfo} />
         )}
-        {page === "map" && <MapPage />}
-        {page === "basket" && <BasketPage />}
+        {page === "map" && (
+          <MapPage locationId={locationId} planInfo={planInfo} />
+        )}
+        {page === "basket" && (
+          <BasketPage locationId={locationId} planInfo={planInfo} />
+        )}
       </main>
       <Navigation />
 

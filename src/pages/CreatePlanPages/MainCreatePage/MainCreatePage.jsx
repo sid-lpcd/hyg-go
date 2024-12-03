@@ -28,7 +28,7 @@ const MainCreatePage = () => {
     location_id: null,
     start_date: formatDateDisplay(null),
     end_date: formatDateDisplay(null, Date.now() + 24 * 60 * 60 * 1000),
-    people: { adults: 1, children: 0, infant: 0 },
+    people: { adult: 1, children: 0, infant: 0 },
   });
   const [formData, setFormData] = useState({
     title: "",
@@ -206,7 +206,7 @@ const MainCreatePage = () => {
           >
             <ProfileIcon className="people-dropdown__icon" />
             <p className="people-dropdown__summary">
-              {`${tripData.people.adults} Adults, ${tripData.people.children} Children, ${tripData.people.infant} Infants`}
+              {`${tripData.people.adult} Adults, ${tripData.people.children} Children, ${tripData.people.infant} Infants`}
             </p>
           </article>
 
