@@ -10,6 +10,9 @@ const MapGL = ({
   markersList,
   labels,
   fetchMarkersWithinBounds,
+  isMarkerClickable = false,
+  onMarkerClick,
+  basketState,
 }) => {
   const [center, setCenter] = useState(initialLocation);
   const [zoom, setZoom] = useState(initialZoom);
@@ -64,13 +67,46 @@ const MapGL = ({
     return labelsWithColors[marker.category] || labelsWithColors.default;
   };
 
+  const checkBasket = (marker) => {
+    if (
+      basketState.activities.find(
+        (item) => item.activity_id === marker.activity_id
+      )
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const setMarkers = () => {
     markersList.forEach((marker) => {
-      const colorMarker = getMarkerCategory(marker);
+      let colorMarker = getMarkerCategory(marker);
 
-      new mapboxgl.Marker({ color: colorMarker })
+      if (checkBasket(marker)) {
+        colorMarker = "green";
+      }
+
+      const markerEl = new mapboxgl.Marker({ color: colorMarker })
         .setLngLat([marker.longitude, marker.latitude])
+        .addClassName(`marker-${marker.activity_id}`)
         .addTo(mapRef.current);
+
+      if (isMarkerClickable) {
+        markerEl.getElement().addEventListener("click", (e) => {
+          const markerTarget = e.target?.parentElement?.parentElement;
+
+          const classNames = markerTarget.className.split(" ");
+          const activityId = classNames[classNames.length - 1].split("-")[1];
+
+          const activity = markersList.find(
+            (item) => item.activity_id === parseInt(activityId)
+          );
+
+          console.log(activity);
+          onMarkerClick(activity);
+        });
+      }
     });
   };
 
@@ -114,6 +150,12 @@ const MapGL = ({
 
     setMarkers();
   }, [markersList]);
+
+  useEffect(() => {
+    if (!mapRef) return;
+    setMarkers();
+  }, [basketState]);
+
   return (
     <>
       {isResetVisible && (

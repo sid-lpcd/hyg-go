@@ -78,12 +78,18 @@
     top: 60%;
     left: 0;
     padding: 5rem 1rem;
+    overflow-x: scroll;
+    border-end-end-radius: 0px;
+    border-end-start-radius: 0px;
+    -webkit-overflow-scrolling: touch;
 
     &--save-trip {
       top: 50%;
+      height: 50%;
     }
     &--dates {
       top: 20%;
+      height: 20%;
     }
   }
 }

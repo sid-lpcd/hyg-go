@@ -69,7 +69,11 @@ const ActivityModal = ({
 
     for (let price in prices) {
       tempLabels.push(price);
-      tempPrices[price] = getNumbers(prices[price], 0);
+      try {
+        tempPrices[price] = getNumbers(prices[price], 0);
+      } catch (error) {
+        tempPrices[price] = 0;
+      }
       const tickets = planInfo.people.hasOwnProperty(price)
         ? planInfo.people[price]
         : 0;
@@ -87,8 +91,12 @@ const ActivityModal = ({
     if (!activity?.prices) return;
 
     for (let price in activity.prices) {
-      sumPrice +=
-        getNumbers(activity.prices[price], 0) * ticketCount.people[price];
+      try {
+        sumPrice +=
+          getNumbers(activity.prices[price], 0) * ticketCount.people[price];
+      } catch (error) {
+        sumPrice += 0 * ticketCount.people[price];
+      }
     }
 
     setTotalPrice(sumPrice);
@@ -102,7 +110,6 @@ const ActivityModal = ({
 
       if (!response?.prices) {
         setTicketCount(1);
-        // setTotalPrice(0);
       } else {
         initialRender(response.prices);
       }

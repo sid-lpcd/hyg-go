@@ -8,7 +8,6 @@ const DatePicker = ({ tripData, setTripData, onClose }) => {
     start_date: tripData.start_date || null,
     end_date: tripData.end_date || null,
   });
-  const [months, setMonths] = useState(2);
 
   useEffect(() => {
     setLocalDates({
@@ -62,17 +61,8 @@ const DatePicker = ({ tripData, setTripData, onClose }) => {
           disabled={{
             before: new Date(),
           }}
-          numberOfMonths={months}
-          hideNavigation
+          numberOfMonths={1}
         />
-        <button
-          onClick={() => {
-            setMonths(months + 2);
-          }}
-          className="datepicker-container__load-more"
-        >
-          Load more
-        </button>
       </div>
       <div className="datepicker-actions">
         <button
