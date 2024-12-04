@@ -9,6 +9,7 @@
   &__item {
     text-align: center;
     text-decoration: none;
+    position: relative;
     & svg * {
       fill: $nav-color;
       stroke: $nav-color;
@@ -36,5 +37,20 @@
     font-weight: 600;
     line-height: 1rem;
     color: $nav-color;
+  }
+
+  &__count {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.75rem;
+    font-size: 1.1rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    color: $primary-color;
+    background-color: darkred;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    @include flex(center);
   }
 }

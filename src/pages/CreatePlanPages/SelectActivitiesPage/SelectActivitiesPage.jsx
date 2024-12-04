@@ -164,7 +164,7 @@ const SelectActivitiesPage = () => {
       </main>
       <div className="bottom-fixed">
         <ProgressBar total={totalTripLength} current={progress} />
-        <Navigation basketState={basketState} setBasketState={setBasketState} />
+        <Navigation basketState={basketState} />
       </div>
 
       <Modal
