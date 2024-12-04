@@ -94,6 +94,8 @@ const ListActivitiesSection = ({
                 key={activity.activity_id}
                 activity={activity}
                 openActivity={() => setSelectedActivity(activity)}
+                basketState={basketState}
+                setBasketState={setBasketState}
               />
             );
           })}

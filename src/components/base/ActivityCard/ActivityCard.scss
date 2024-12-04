@@ -23,10 +23,23 @@
     padding: 0.5rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     gap: 0.2rem;
+    position: relative;
+  }
+  &__check-icon {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    height: 2rem;
+    width: 2rem;
+    & > * {
+      fill: $color-success;
+      stroke: $primary-color;
+    }
   }
   &__title {
+    width: 90%;
     font-weight: bold;
     margin: 0;
     padding: 0;
@@ -81,13 +94,18 @@
   }
   &__price {
     @include flex(space-between);
-    & > .activity-card__open-btn {
+    & > .activity-card__add-btn {
       background-color: $light-color;
       color: $secondary-color;
       font-size: 0.9rem;
       font-weight: bold;
       min-height: 1.25rem;
       box-shadow: none;
+
+      &--remove {
+        background-color: $color-error;
+        color: $primary-color;
+      }
     }
   }
 }
