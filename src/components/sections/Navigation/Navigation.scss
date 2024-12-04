@@ -5,10 +5,6 @@
   @include flex(space-around);
   background-color: $nav-background-color;
   padding: 0.5rem 1rem;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 999;
 
   &__item {
     text-align: center;

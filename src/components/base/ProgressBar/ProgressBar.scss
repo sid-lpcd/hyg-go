@@ -1,0 +1,23 @@
+@use "../../../styles/partials/mixins" as *;
+@use "../../../styles/partials/variables" as *;
+
+.progress-bar {
+  width: 85%;
+  height: 1rem;
+  background-color: transparent;
+  border: 2px solid $secondary-background-color;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+
+  &__fill {
+    height: 100%;
+    background-color: $secondary-background-color;
+    transition: width 1s ease-in-out 1s;
+  }
+  &__container {
+    @include flex(space-around);
+    width: 100%;
+    padding: 0.5rem;
+  }
+}

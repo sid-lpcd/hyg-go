@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   getAllCategoriesForLocation,
@@ -17,6 +17,8 @@ import BasketSection from "../../../components/sections/BasketSection/BasketSect
 import "./SelectActivitiesPage.scss";
 import { InfinitySpin } from "react-loader-spinner";
 import { getBasket, setBasket } from "../../../utils/sessionStorageHelper";
+import ProgressBar from "../../../components/base/ProgressBar/ProgressBar";
+import { calcLength, getNumbers } from "../../../utils/generalHelpers";
 
 const SelectActivitiesPage = () => {
   const location = useLocation();
@@ -25,6 +27,8 @@ const SelectActivitiesPage = () => {
   const [openTripModal, setOpenTripModal] = useState(false);
   const [planInfo, setPlanInfo] = useState(null);
   const [basketState, setBasketState] = useState(null);
+  const [progress, setProgress] = useState(null);
+  const [totalTripLength, setTotalTripLength] = useState(null);
 
   const navigate = useNavigate();
 
@@ -40,6 +44,34 @@ const SelectActivitiesPage = () => {
     setOpenTripModal(false);
   };
 
+  const getActivityDuration = (activity) => {
+    let duration = 1;
+    try {
+      duration = Math.floor(
+        (getNumbers(activity.duration, 0) + getNumbers(activity.duration, 1)) /
+          2
+      );
+    } catch (error) {
+      console.error(error);
+    }
+    return duration;
+  };
+
+  const updatedProgress = (basket) => {
+    let activityTime = 0;
+    if (basket.activities.length === 0) {
+      activityTime = 0;
+    } else if (basket.activities.length === 1) {
+      activityTime = getActivityDuration(basket.activities[0]);
+    } else {
+      activityTime = basket.activities.reduce(
+        (total, activity) => total + getActivityDuration(activity),
+        0
+      );
+    }
+
+    setProgress(activityTime);
+  };
   const compareBasket = (planId) => {
     const basket = getBasket();
 
@@ -47,6 +79,7 @@ const SelectActivitiesPage = () => {
       setBasketState({ plan_id: planId, activities: [] });
     } else {
       setBasketState(basket);
+      updatedProgress(basket);
     }
   };
 
@@ -54,6 +87,7 @@ const SelectActivitiesPage = () => {
     try {
       const response = await getPlanById(locationId);
       setPlanInfo(response);
+      setTotalTripLength(calcLength(response.start_date, response.end_date));
       compareBasket(response.plan_id);
     } catch (error) {
       console.error(error);
@@ -63,6 +97,7 @@ const SelectActivitiesPage = () => {
   useEffect(() => {
     if (!basketState) return;
     setBasket(basketState);
+    updatedProgress(basketState);
   }, [basketState]);
 
   useEffect(() => {
@@ -127,7 +162,10 @@ const SelectActivitiesPage = () => {
           />
         )}
       </main>
-      <Navigation basketState={basketState} setBasketState={setBasketState} />
+      <div className="bottom-fixed">
+        <ProgressBar total={totalTripLength} current={progress} />
+        <Navigation basketState={basketState} setBasketState={setBasketState} />
+      </div>
 
       <Modal
         open={openTripModal}
