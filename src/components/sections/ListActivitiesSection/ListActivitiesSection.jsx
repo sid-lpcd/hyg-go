@@ -23,9 +23,10 @@ const ListActivitiesSection = ({
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getAllActivities = async () => {
+    const limit = activities ? activities.length + 10 : 10;
     try {
-      const response = await getAllAttractionsForLocation(locationId);
-
+      const response = await getAllAttractionsForLocation(locationId, 0, limit);
+      console.log(response);
       setActivities(response);
       setError(false);
     } catch (error) {
@@ -100,6 +101,12 @@ const ListActivitiesSection = ({
             );
           })}
         </div>
+        <button
+          className="list-activities__load-more"
+          onClick={getAllActivities}
+        >
+          Load more
+        </button>
       </div>
 
       <Modal

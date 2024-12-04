@@ -72,9 +72,19 @@ export const getAllCategoriesForLocation = async (locationId) => {
   return response.data;
 };
 
-export const getAllAttractionsForLocation = async (locationId) => {
+export const getAllAttractionsForLocation = async (
+  locationId,
+  offset = 0,
+  limit = 10
+) => {
   const response = await axios.get(
-    `${API_BASE_URL}/locations/${locationId}/attractions`
+    `${API_BASE_URL}/locations/${locationId}/attractions`,
+    {
+      params: {
+        offset: offset,
+        limit: limit,
+      },
+    }
   );
   return response.data;
 };

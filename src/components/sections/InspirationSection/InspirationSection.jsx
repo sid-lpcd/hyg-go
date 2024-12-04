@@ -5,6 +5,7 @@ const InspirationSection = () => {
   //To get top trips based on likes and recent trips eventually
   const inspirations = [
     {
+      id: 1,
       title: "Tropical Paradise in Bora Bora",
       location: "Bora Bora, French Polynesia",
       likes: 246,
@@ -17,6 +18,7 @@ const InspirationSection = () => {
       },
     },
     {
+      id: 2,
       title: "Cultural Escape in Kyoto",
       location: "Kyoto, Japan",
       likes: 180,
@@ -29,6 +31,7 @@ const InspirationSection = () => {
       },
     },
     {
+      id: 3,
       title: "Desert Adventure in Dubai",
       location: "Dubai, UAE",
       likes: 312,
@@ -41,6 +44,7 @@ const InspirationSection = () => {
       },
     },
     {
+      id: 4,
       title: "Beach Bliss in the Maldives",
       location: "Maldives",
       likes: 374,

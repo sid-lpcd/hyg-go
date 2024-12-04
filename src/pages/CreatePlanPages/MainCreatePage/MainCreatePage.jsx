@@ -116,7 +116,7 @@ const MainCreatePage = () => {
           setMessage("");
           setIsSuccess(false);
           navigate(`/${location ? `create-plan/${response}/activities` : ""}`);
-        }, 5000);
+        }, 3000);
       }
     } catch (error) {
       setOpenTripModal(false);

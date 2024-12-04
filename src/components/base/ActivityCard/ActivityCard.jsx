@@ -6,6 +6,7 @@ import CheckIcon from "../../../assets/icons/check-icon.svg?react";
 import "./ActivityCard.scss";
 import { useEffect, useState } from "react";
 import { getBasket } from "../../../utils/sessionStorageHelper";
+import { getNumbers } from "../../../utils/generalHelpers";
 
 const ActivityCard = ({
   activity,
@@ -21,22 +22,22 @@ const ActivityCard = ({
     const stars = [];
     const roundRating = roundHalf(parseFloat(rating));
     for (let i = 0; i < maxRating; i++) {
-      if (i < roundRating) {
-        stars.push(
-          <div key={uuidv4()}>
-            <FullStarIcon className="activity-card__star-icon activity-card__star-icon--full" />
-          </div>
-        );
-      } else if (i + 0.5 === roundRating) {
+      if (i + 0.5 === roundRating) {
         stars.push(
           <div key={uuidv4()}>
             <HalfStarIcon className="activity-card__star-icon" />
           </div>
         );
+      } else if (i < roundRating) {
+        stars.push(
+          <div key={uuidv4()}>
+            <FullStarIcon className="activity-card__star-icon activity-card__star-icon--full" />
+          </div>
+        );
       } else {
         stars.push(
           <div key={uuidv4()}>
-            <StarIcon className="activity-card__star-icon" />
+            <StarIcon className="activity-card__star-icon activity-card__star-icon--empty" />
           </div>
         );
       }
@@ -62,6 +63,22 @@ const ActivityCard = ({
       setInBasket(true);
     } else {
       setInBasket(false);
+    }
+  };
+
+  const getDuration = (activity) => {
+    try {
+      return getNumbers(activity, 0) + " - " + getNumbers(activity, 1) + " hrs";
+    } catch (error) {
+      return "Free";
+    }
+  };
+
+  const getPrice = (activity) => {
+    try {
+      return "£" + getNumbers(activity, 0) + " - £" + getNumbers(activity, 1);
+    } catch (error) {
+      return "Free";
     }
   };
 
@@ -104,32 +121,14 @@ const ActivityCard = ({
             </p>
             {activity.duration && (
               <p className="activity-card__duration">
-                {activity.duration
-                  ?.match(/\d+\.?\d*/g)
-                  .map(Number)
-                  .map(Math.floor)[0] +
-                  " - " +
-                  activity.duration
-                    ?.match(/\d+\.?\d*/g)
-                    .map(Number)
-                    .map(Math.floor)[1] +
-                  " hrs"}
+                {getDuration(activity.duration)}
               </p>
             )}
           </div>
           <div className="activity-card__price">
             <span className="activity-card__price-value">
               {activity.prices?.adult
-                ? "£" +
-                  activity.prices?.adult
-                    ?.match(/\d+\.?\d*/g)
-                    .map(Number)
-                    .map(Math.floor)[0] +
-                  " - £" +
-                  activity.prices?.adult
-                    ?.match(/\d+\.?\d*/g)
-                    .map(Number)
-                    .map(Math.floor)[1]
+                ? getPrice(activity.prices.adult)
                 : "Free"}
             </span>
             {inBasket ? (
