@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   getAllCategoriesForLocation,
   getPlanById,
+  updatePlanWithActivities,
 } from "../../../utils/apiHelper";
 import Header from "../../../components/sections/Header/Header";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
@@ -10,11 +11,12 @@ import CloseIcon from "../../../assets/icons/close-icon.svg?react";
 import Navigation from "../../../components/sections/Navigation/Navigation";
 import Form from "../../../components/base/Form/Form";
 import Modal from "react-responsive-modal";
-import ListActivitiesPage from "../../../components/sections/ListActivitiesSection/ListActivitiesSection";
-import MapPage from "../../../components/sections/MapPage/MapPage";
-import BasketPage from "../../../components/sections/BasketPage/BasketPage";
+import ListActivitiesSection from "../../../components/sections/ListActivitiesSection/ListActivitiesSection";
+import MapSection from "../../../components/sections/MapPage/MapSection";
+import BasketSection from "../../../components/sections/BasketSection/BasketSection";
 import "./SelectActivitiesPage.scss";
 import { InfinitySpin } from "react-loader-spinner";
+import { getBasket, setBasket } from "../../../utils/sessionStorageHelper";
 
 const SelectActivitiesPage = () => {
   const location = useLocation();
@@ -22,22 +24,46 @@ const SelectActivitiesPage = () => {
   const [page, setPage] = useState(location.pathname.split("/").pop());
   const [openTripModal, setOpenTripModal] = useState(false);
   const [planInfo, setPlanInfo] = useState(null);
+  const [basketState, setBasketState] = useState(null);
 
   const navigate = useNavigate();
 
   const handleSaveTrip = () => {
-    console.log("Trip saved!");
+    if (basketState.length === 0) return;
+    try {
+      const response = updatePlanWithActivities(planInfo.plan_id, basketState);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+    // navigate(`/`);
     setOpenTripModal(false);
+  };
+
+  const compareBasket = (planId) => {
+    const basket = getBasket();
+
+    if (basket.plan_id !== planId) {
+      setBasketState({ plan_id: planId, activities: [] });
+    } else {
+      setBasketState(basket);
+    }
   };
 
   const getPlanInfo = async () => {
     try {
       const response = await getPlanById(locationId);
       setPlanInfo(response);
+      compareBasket(response.plan_id);
     } catch (error) {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (!basketState) return;
+    setBasket(basketState);
+  }, [basketState]);
 
   useEffect(() => {
     setPage(location.pathname.split("/").pop());
@@ -47,7 +73,7 @@ const SelectActivitiesPage = () => {
     getPlanInfo();
   }, []);
 
-  if (!planInfo)
+  if (!planInfo || !basketState)
     return (
       <div className="loader-overlay">
         <InfinitySpin
@@ -77,19 +103,31 @@ const SelectActivitiesPage = () => {
       />
       <main className="main">
         {page === "activities" && (
-          <ListActivitiesPage
+          <ListActivitiesSection
             locationId={planInfo?.location_id}
             planInfo={planInfo}
+            basketState={basketState}
+            setBasketState={setBasketState}
           />
         )}
         {page === "map" && (
-          <MapPage locationId={planInfo?.location_id} planInfo={planInfo} />
+          <MapSection
+            locationId={planInfo?.location_id}
+            planInfo={planInfo}
+            basketState={basketState}
+            setBasketState={setBasketState}
+          />
         )}
         {page === "basket" && (
-          <BasketPage locationId={planInfo?.location_id} planInfo={planInfo} />
+          <BasketSection
+            locationId={planInfo?.location_id}
+            planInfo={planInfo}
+            basketState={basketState}
+            setBasketState={setBasketState}
+          />
         )}
       </main>
-      <Navigation />
+      <Navigation basketState={basketState} setBasketState={setBasketState} />
 
       <Modal
         open={openTripModal}

@@ -101,36 +101,47 @@
     font-size: 1.25rem;
   }
 
-  &__add-btn {
-    width: 100%;
-    font-size: 1.1rem;
-    line-height: 1.3rem;
-  }
   &__map {
     width: 100%;
     height: 30rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
-    z-index: 2;
-
-    &-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      @include flex(center);
-      &-title {
-        padding: 0.5rem;
-        font-size: 2rem;
-        color: $secondary-color;
-        background-color: $secondary-background-color;
-        border-radius: 4px;
-      }
-    }
   }
+
+  &__total-price {
+    font-size: 1.5rem;
+    line-height: 1.625rem;
+    font-weight: bold;
+  }
+
+  &__in-basket {
+    padding: 1rem 0;
+    width: 100%;
+    @include flex(space-between);
+  }
+
+  &__add-btn {
+    width: 100%;
+    font-size: 1.1rem;
+    line-height: 1.3rem;
+  }
+  &__updated {
+    z-index: 1;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    background-color: $color-background-success;
+    color: $color-success;
+    border: 1px solid $color-border-success;
+  }
+}
+
+button.activity__remove-btn {
+  width: 100%;
+  font-size: 1.1rem;
+  line-height: 1.3rem;
+  background-color: darkred;
 }
 
 .swiper-wrapper {

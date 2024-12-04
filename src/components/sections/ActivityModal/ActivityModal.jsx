@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { act, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { v4 as uuidv4 } from "uuid";
@@ -13,14 +13,22 @@ import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import { getNumbers } from "../../../utils/generalHelpers";
 import MapGL from "../../base/MapGL/MapGL";
+import { getBasket } from "../../../utils/sessionStorageHelper";
 
-const ActivityModal = ({ activityId, planInfo }) => {
+const ActivityModal = ({
+  activityId,
+  planInfo,
+  basketState,
+  setBasketState,
+  onClose,
+}) => {
   const [activity, setActivity] = useState(null);
   const [ticketCount, setTicketCount] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [labels, setLabels] = useState([]);
   const [ticketPrices, setTicketPrices] = useState({});
-  const [mapOverlay, setMapOverlay] = useState(false);
+  const [inBasket, setInBasket] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
   function roundHalf(num) {
     return Math.round(num * 2) / 2;
   }
@@ -97,6 +105,7 @@ const ActivityModal = ({ activityId, planInfo }) => {
       } else {
         initialRender(response.prices);
       }
+      checkBasket(response);
     } catch (error) {
       console.error(error);
     }
@@ -112,13 +121,61 @@ const ActivityModal = ({ activityId, planInfo }) => {
     });
   };
 
-  const handleMapClick = () => {};
+  const handleAddToBasket = () => {
+    const basket = getBasket();
 
-  const handleMapHover = () => {
-    setMapOverlay(!mapOverlay);
+    const existingActivity = basket?.activities?.find(
+      (item) => item.activity_id === activity.activity_id
+    );
+    if (existingActivity) {
+      existingActivity.ticketCount = ticketCount;
+      existingActivity.totalPrice = totalPrice;
+      setBasketState(basket);
+      setIsUpdated(true);
+
+      setTimeout(() => {
+        setIsUpdated(false);
+      }, 5000);
+      return;
+    }
+
+    basket.activities.push({
+      ...activity,
+      ticketCount,
+      totalPrice,
+    });
+
+    setBasketState(basket);
+    onClose();
   };
 
-  const handleAddToBasket = () => {};
+  const handleRemoveFromBasket = () => {
+    const basket = getBasket();
+    basket.activities = basket.activities.filter(
+      (item) => item.activity_id !== activity.activity_id
+    );
+    setBasketState(basket);
+  };
+
+  const checkBasket = (activity) => {
+    if (basketState) {
+      const existingActivity = basketState.activities.find(
+        (item) => item.activity_id === activity.activity_id
+      );
+      if (existingActivity) {
+        setTicketCount(existingActivity.ticketCount);
+        setTotalPrice(existingActivity.totalPrice);
+        setInBasket(true);
+      } else {
+        setInBasket(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!activity) return;
+    checkBasket(activity);
+  }, [basketState]);
 
   useEffect(() => {
     activityRender();
@@ -128,7 +185,7 @@ const ActivityModal = ({ activityId, planInfo }) => {
     calcPrice(activity?.prices);
   }, [ticketCount]);
 
-  if (!activity || !labels.length) {
+  if (!activity || !labels.length || !basketState) {
     return (
       <div className="loader-overlay">
         <InfinitySpin
@@ -228,15 +285,7 @@ const ActivityModal = ({ activityId, planInfo }) => {
         )}
       </article>
 
-      <div
-        className="activity__map"
-        onClick={handleMapClick}
-        onMouseEnter={handleMapHover}
-        onMouseLeave={handleMapHover}
-      >
-        <div className="activity__map-overlay">
-          <h3 className="activity__map-overlay-title">View on Map</h3>
-        </div>
+      <div className="activity__map">
         <MapGL
           initialLocation={[activity?.longitude, activity?.latitude]}
           isResetVisible={true}
@@ -268,12 +317,36 @@ const ActivityModal = ({ activityId, planInfo }) => {
             </p>
           </div>
         )}
-        <button
-          className="activity__add-btn"
-          onClick={() => handleAddToBasket()}
-        >
-          Add to Trip
-        </button>
+        {inBasket ? (
+          <>
+            {isUpdated && (
+              <p className="activity__updated">
+                Activity was updated successfully
+              </p>
+            )}
+            <div className="activity__in-basket">
+              <button
+                className="activity__remove-btn"
+                onClick={() => handleRemoveFromBasket()}
+              >
+                Remove
+              </button>
+              <button
+                className="activity__add-btn"
+                onClick={() => handleAddToBasket()}
+              >
+                Update Basket
+              </button>
+            </div>
+          </>
+        ) : (
+          <button
+            className="activity__add-btn"
+            onClick={() => handleAddToBasket()}
+          >
+            Add to Trip
+          </button>
+        )}
       </div>
     </>
   );

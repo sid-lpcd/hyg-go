@@ -131,6 +131,14 @@ export const updatePlan = async (id, updatedPlan) => {
   return response.data;
 };
 
+export const updatePlanWithActivities = async (id, basket) => {
+  const response = await axios.patch(
+    `${API_BASE_URL}/plans/${id}/activities`,
+    basket
+  );
+  return response.data;
+};
+
 export const deletePlan = async (id) => {
   const response = await axios.delete(`${API_BASE_URL}/plans/${id}`);
   return response.data;

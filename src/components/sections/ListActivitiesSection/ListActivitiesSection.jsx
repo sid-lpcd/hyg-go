@@ -7,7 +7,12 @@ import "./ListActivitiesSection.scss";
 import Modal from "react-responsive-modal";
 import ActivityModal from "../ActivityModal/ActivityModal";
 
-const ListActivitiesSection = ({ locationId, planInfo }) => {
+const ListActivitiesSection = ({
+  locationId,
+  planInfo,
+  basketState,
+  setBasketState,
+}) => {
   let filters = {};
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
@@ -19,9 +24,7 @@ const ListActivitiesSection = ({ locationId, planInfo }) => {
 
   const getAllActivities = async () => {
     try {
-      console.log("Location ID:", locationId);
       const response = await getAllAttractionsForLocation(locationId);
-      console.log(response);
 
       setActivities(response);
       setError(false);
@@ -66,7 +69,7 @@ const ListActivitiesSection = ({ locationId, planInfo }) => {
     filters = getAllFilters() || {};
   }, []);
 
-  if (!activities) {
+  if (!activities || !basketState) {
     return (
       <div className="loader-overlay">
         <InfinitySpin
@@ -111,6 +114,9 @@ const ListActivitiesSection = ({ locationId, planInfo }) => {
         <ActivityModal
           activityId={selectedActivity?.activity_id}
           planInfo={planInfo}
+          basketState={basketState}
+          setBasketState={setBasketState}
+          onClose={() => setSelectedActivity(null)}
         />
       </Modal>
 
