@@ -89,6 +89,16 @@ export const getAllAttractionsForLocation = async (
   return response.data;
 };
 
+export const getAllAttractionsForBounds = async (locationId, bounds) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/locations/${locationId}/attractions/bounds`,
+    {
+      bounds: bounds,
+    }
+  );
+  return response.data;
+};
+
 export const getAllPlansForLocation = async (locationId) => {
   const response = await axios.get(
     `${API_BASE_URL}/locations/${locationId}/plans`

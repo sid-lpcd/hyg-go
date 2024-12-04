@@ -2,10 +2,17 @@ import { act, useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./MapGL.scss";
-import { de } from "react-day-picker/locale";
-const MapGL = ({ initialLocation, isResetVisible, markersList, labels }) => {
+
+const MapGL = ({
+  initialLocation,
+  initialZoom = 14,
+  isResetVisible,
+  markersList,
+  labels,
+  fetchMarkersWithinBounds,
+}) => {
   const [center, setCenter] = useState(initialLocation);
-  const [zoom, setZoom] = useState(14);
+  const [zoom, setZoom] = useState(initialZoom);
   const [isCentered, setIsCentered] = useState(true);
 
   const mapRef = useRef();
@@ -49,7 +56,7 @@ const MapGL = ({ initialLocation, isResetVisible, markersList, labels }) => {
     "crimson",
     "mint",
   ];
-  const labelsWithColors = labels
+  const labelsWithColors = labels?.length
     ? createLabelsObject(labels, colors)
     : { default: "red" };
 
@@ -60,8 +67,7 @@ const MapGL = ({ initialLocation, isResetVisible, markersList, labels }) => {
   const setMarkers = () => {
     markersList.forEach((marker) => {
       const colorMarker = getMarkerCategory(marker);
-      console.log(colorMarker);
-      console.log(marker);
+
       new mapboxgl.Marker({ color: colorMarker })
         .setLngLat([marker.longitude, marker.latitude])
         .addTo(mapRef.current);
@@ -85,6 +91,15 @@ const MapGL = ({ initialLocation, isResetVisible, markersList, labels }) => {
       setCenter([mapCenter.lng, mapCenter.lat]);
       setZoom(mapZoom);
       setIsCentered(false);
+
+      if (fetchMarkersWithinBounds) {
+        const { _sw: southwest, _ne: northeast } = mapRef.current.getBounds();
+
+        fetchMarkersWithinBounds({
+          southwest: [southwest.lng, southwest.lat],
+          northeast: [northeast.lng, northeast.lat],
+        });
+      }
     });
 
     markersList.length && setMarkers();
@@ -93,6 +108,12 @@ const MapGL = ({ initialLocation, isResetVisible, markersList, labels }) => {
       mapRef.current.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (!mapRef?.current) return;
+
+    setMarkers();
+  }, [markersList]);
   return (
     <>
       {isResetVisible && (

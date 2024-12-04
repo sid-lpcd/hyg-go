@@ -1,4 +1,4 @@
-import { act, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { v4 as uuidv4 } from "uuid";
@@ -21,6 +21,7 @@ const ActivityModal = ({
   basketState,
   setBasketState,
   onClose,
+  showMap,
 }) => {
   const [activity, setActivity] = useState(null);
   const [ticketCount, setTicketCount] = useState(1);
@@ -285,13 +286,15 @@ const ActivityModal = ({
         )}
       </article>
 
-      <div className="activity__map">
-        <MapGL
-          initialLocation={[activity?.longitude, activity?.latitude]}
-          isResetVisible={true}
-          markersList={[activity]}
-        />
-      </div>
+      {activity?.latitude && activity?.longitude && showMap && (
+        <div className="activity__map">
+          <MapGL
+            initialLocation={[activity?.longitude, activity?.latitude]}
+            isResetVisible={true}
+            markersList={[activity]}
+          />
+        </div>
+      )}
 
       <div
         className={`activity__content${

@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import { getAllAttractionsForLocation } from "../../../utils/apiHelper";
+import "./MapSection.scss";
 import { InfinitySpin } from "react-loader-spinner";
-import Error from "../../../assets/icons/error-icon.svg?react";
-import ActivityCard from "../../base/ActivityCard/ActivityCard";
-import "./ListActivitiesSection.scss";
-import Modal from "react-responsive-modal";
+import {
+  getAllAttractionsForBounds,
+  getAllAttractionsForLocation,
+  getAllCategoriesForLocation,
+  getLocationById,
+} from "../../../utils/apiHelper";
 import ActivityModal from "../ActivityModal/ActivityModal";
+import Modal from "react-responsive-modal";
+import MapGL from "../../base/MapGL/MapGL";
 
-const ListActivitiesSection = ({
-  locationId,
-  planInfo,
-  basketState,
-  setBasketState,
-}) => {
+const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
   let filters = {};
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
@@ -21,12 +20,21 @@ const ListActivitiesSection = ({
   const [error, setError] = useState(false);
   const [activities, setActivities] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [initialLocation, setInitialLocation] = useState(null);
+
+  const getLocationInfo = async () => {
+    try {
+      const response = await getLocationById(locationId);
+      setInitialLocation([response.longitude, response.latitude]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getAllActivities = async () => {
     const limit = activities ? activities.length + 10 : 10;
     try {
       const response = await getAllAttractionsForLocation(locationId, 0, limit);
-      console.log(response);
       setActivities(response);
       setError(false);
     } catch (error) {
@@ -61,16 +69,27 @@ const ListActivitiesSection = ({
     }
   };
 
+  const fetchMarkersWithinBounds = async (bounds) => {
+    try {
+      const response = await getAllAttractionsForBounds(locationId, bounds);
+
+      setActivities(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getActivitiesByFilter();
   }, [selectedFilters]);
 
   useEffect(() => {
+    getLocationInfo();
     getAllActivities();
-    filters = getAllFilters() || {};
+    filters = getAllFilters() || [];
   }, []);
 
-  if (!activities || !basketState) {
+  if (!activities || !basketState || !initialLocation) {
     return (
       <div className="loader-overlay">
         <InfinitySpin
@@ -85,30 +104,16 @@ const ListActivitiesSection = ({
 
   return (
     <>
-      <div className="list-activities">
-        <h2 className="list-activities__title">Activities</h2>
-        <div className="list-activities__filters"></div>
-        <div className="list-activities__list">
-          {activities.map((activity) => {
-            return (
-              <ActivityCard
-                key={activity.activity_id}
-                activity={activity}
-                openActivity={() => setSelectedActivity(activity)}
-                basketState={basketState}
-                setBasketState={setBasketState}
-              />
-            );
-          })}
-        </div>
-        <button
-          className="list-activities__load-more"
-          onClick={getAllActivities}
-        >
-          Load more
-        </button>
-      </div>
-
+      <section className="map-section">
+        <MapGL
+          initialLocation={initialLocation}
+          initialZoom={11}
+          isResetVisible={true}
+          markersList={activities}
+          labels={filters}
+          fetchMarkersWithinBounds={fetchMarkersWithinBounds}
+        />
+      </section>
       <Modal
         open={selectedActivity}
         onClose={() => setSelectedActivity(null)}
@@ -129,14 +134,13 @@ const ListActivitiesSection = ({
           showMap={true}
         />
       </Modal>
-
       {error && (
         <p className="main__error">
-          <Error /> Failed Loading Activities
+          <Error /> Failed Loading Map & Activities
         </p>
       )}
     </>
   );
 };
 
-export default ListActivitiesSection;
+export default MapSection;

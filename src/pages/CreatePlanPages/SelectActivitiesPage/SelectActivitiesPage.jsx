@@ -12,7 +12,7 @@ import Navigation from "../../../components/sections/Navigation/Navigation";
 import Form from "../../../components/base/Form/Form";
 import Modal from "react-responsive-modal";
 import ListActivitiesSection from "../../../components/sections/ListActivitiesSection/ListActivitiesSection";
-import MapSection from "../../../components/sections/MapPage/MapSection";
+import MapSection from "../../../components/sections/MapSection/MapSection";
 import BasketSection from "../../../components/sections/BasketSection/BasketSection";
 import "./SelectActivitiesPage.scss";
 import { InfinitySpin } from "react-loader-spinner";
