@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "api/:path*",
-      "destination": "http://104.248.169.15/hyggo-server/:path*"
+      "destination": "http://104.248.169.15/hyggo-server:path*"
     }
   ]
 }
