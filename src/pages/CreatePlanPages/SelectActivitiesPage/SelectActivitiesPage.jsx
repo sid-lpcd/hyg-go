@@ -25,14 +25,18 @@ import "react-toastify/dist/ReactToastify.css";
 const SelectActivitiesPage = () => {
   const location = useLocation();
   const locationId = location.pathname.split("/")[2];
+
+  const navigate = useNavigate();
+
   const [page, setPage] = useState(location.pathname.split("/").pop());
   const [openTripModal, setOpenTripModal] = useState(false);
   const [planInfo, setPlanInfo] = useState(null);
   const [basketState, setBasketState] = useState(null);
   const [progress, setProgress] = useState(null);
   const [totalTripLength, setTotalTripLength] = useState(null);
-
-  const navigate = useNavigate();
+  const [planStatus, setPlanStatus] = useState(
+    location.state?.planStatus || null
+  );
 
   const handleSaveTrip = () => {
     if (basketState.length === 0) return;
@@ -109,8 +113,15 @@ const SelectActivitiesPage = () => {
 
   useEffect(() => {
     getPlanInfo();
-    toast("Your plan was created successfully!");
+    if (planStatus) {
+      toast(`Your plan was ${planStatus} successfully!`);
+    }
   }, []);
+
+  useEffect(() => {
+    if (!location.state) return;
+    navigate("./activities", { replace: true }); // <-- redirect to current path w/o state
+  }, [navigate]);
 
   return (
     <>
@@ -150,7 +161,6 @@ const SelectActivitiesPage = () => {
         )}
         {page === "basket" && (
           <BasketSection
-            locationId={planInfo?.location_id}
             planInfo={planInfo}
             basketState={basketState}
             setBasketState={setBasketState}

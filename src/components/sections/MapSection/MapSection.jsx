@@ -21,11 +21,17 @@ const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
   const [activities, setActivities] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [initialLocation, setInitialLocation] = useState(null);
+  const [initialZoom, setInitialZoom] = useState(null);
 
   const getLocationInfo = async () => {
     try {
       const response = await getLocationById(locationId);
       setInitialLocation([response.longitude, response.latitude]);
+      if (response.type === "COUNTRY") {
+        setInitialZoom(6);
+      } else {
+        setInitialZoom(11);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -107,7 +113,7 @@ const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
       <section className="map-section">
         <MapGL
           initialLocation={initialLocation}
-          initialZoom={11}
+          initialZoom={initialZoom}
           isResetVisible={true}
           markersList={activities}
           labels={filters}

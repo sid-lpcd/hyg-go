@@ -52,6 +52,8 @@ const MainCreatePage = () => {
     end_date: false,
   });
   const [updateVisible, setUpdateVisible] = useState(false);
+  const [prevPlan, setPrevPlan] = useState(locationState.state || null);
+
   const labels = [
     {
       name: "title",
@@ -116,22 +118,26 @@ const MainCreatePage = () => {
     if (hasErrors) return;
     try {
       let response = null;
-      if (
-        tripData.location_id === locationState?.state?.planInfo?.location_id &&
-        update === true
-      ) {
-        await updatePlan(locationState?.state?.planInfo?.plan_id, {
+      let planStatus = null;
+      if (tripData.location_id === prevPlan?.location_id && update === true) {
+        await updatePlan(prevPlan?.plan_id, {
           ...tripData,
           ...newFormData,
         });
-        response = locationState?.state?.planInfo?.plan_id;
+        response = prevPlan?.plan_id;
+        planStatus = "updated";
       } else {
         response = await addPlan({ ...tripData, ...newFormData });
+        planStatus = "created";
       }
 
       if (response) {
         setOpenTripModal(false);
-        navigate(`/${location ? `create-plan/${response}/activities` : ""}`);
+        navigate(`/${location ? `create-plan/${response}/activities` : ""}`, {
+          state: {
+            planStatus: planStatus,
+          },
+        });
       }
     } catch (error) {
       setOpenTripModal(false);
@@ -140,7 +146,7 @@ const MainCreatePage = () => {
   };
 
   const openUpdate = () => {
-    let { title, description } = locationState?.state?.planInfo;
+    let { title, description } = prevPlan;
     setFormData({ ...formData, title, description, update: true });
     handleCreatePlan();
   };
@@ -190,6 +196,7 @@ const MainCreatePage = () => {
   useEffect(() => {
     if (!locationState.state) return;
     let { planInfo } = locationState.state;
+    setPrevPlan(planInfo);
 
     if (planInfo) {
       const { start_date, end_date, user_id, location_id, people, plan_id } =
@@ -207,6 +214,10 @@ const MainCreatePage = () => {
       setUpdateVisible(true);
     }
   }, []);
+
+  useEffect(() => {
+    navigate(".", { replace: true });
+  }, [navigate]);
 
   return (
     <>
