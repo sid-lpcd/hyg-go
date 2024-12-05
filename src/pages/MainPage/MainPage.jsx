@@ -3,10 +3,12 @@ import Header from "../../components/sections/Header/Header";
 import Button from "../../components/base/Button/Button";
 import Dropdown from "../../components/base/Dropdown/Dropdown";
 import InputText from "../../components/base/InputText/InputText";
+import { useNavigate } from "react-router-dom";
 
 export const MainPage = () => {
+  const navigate = useNavigate();
   const clickHandler = () => {
-    console.log("clicked");
+    navigate("/create-plan");
   };
   const selectHandler = (option) => {
     console.log("Selected:", option);
@@ -19,7 +21,11 @@ export const MainPage = () => {
       <Header />
       <h1>Hyg-go</h1>
       <p>Testing text</p>
-      <Button classProp="test" btnText="Start" clickHandler={clickHandler} />
+      <Button
+        classProp="test"
+        btnText="Create Plan Page"
+        clickHandler={clickHandler}
+      />
       <Dropdown options={sortOptions} selectHandler={selectHandler} />
       <InputText
         isAutocomplete={true}

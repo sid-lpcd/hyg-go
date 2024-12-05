@@ -87,7 +87,7 @@ const ListActivitiesSection = ({
   return (
     <>
       <div className="list-activities">
-        <h2 className="list-activities__title">Activities</h2>
+        <h1 className="list-activities__title">Activities</h1>
         <div className="list-activities__filters"></div>
         <div className="list-activities__list">
           {activities.map((activity) => {
