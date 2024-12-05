@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { act, useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./MapGL.scss";
@@ -21,7 +21,7 @@ const MapGL = ({
   const handleButtonClick = () => {
     mapRef.current.flyTo({
       center: initialLocation,
-      zoom: initialZoom,
+      zoom: 14,
     });
     setIsCentered(true);
   };
