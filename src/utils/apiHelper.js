@@ -144,10 +144,11 @@ export const getPlanById = async (id) => {
 };
 
 export const updatePlan = async (id, updatedPlan) => {
-  const response = await axios.patch(
-    `${API_BASE_URL}/plans/${id}`,
-    updatedPlan
-  );
+  const response = await axios.patch(`${API_BASE_URL}/plans/${id}`, {
+    ...updatedPlan,
+    start_date: formatDateApi(updatedPlan.start_date),
+    end_date: formatDateApi(updatedPlan.end_date),
+  });
   return response.data;
 };
 

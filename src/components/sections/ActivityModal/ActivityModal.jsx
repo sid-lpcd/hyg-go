@@ -193,7 +193,9 @@ const ActivityModal = ({
     calcPrice(activity?.prices);
   }, [ticketCount]);
 
-  if (!activity || !labels.length || !basketState) {
+  console.log(labels);
+
+  if (!activity || !basketState) {
     return (
       <div className="loader-overlay">
         <InfinitySpin

@@ -70,9 +70,11 @@ const InputText = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
         />
-        <button className="input-text__search" onClick={handleSearch}>
-          Search
-        </button>
+        {!isAutocomplete && (
+          <button className="input-text__search" onClick={handleSearch}>
+            Search
+          </button>
+        )}
         {isAutocomplete && filteredOptions.length > 0 && (
           <div
             className={`input-text__autocomplete ${

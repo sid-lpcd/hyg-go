@@ -26,7 +26,6 @@ const ListActivitiesSection = ({
     const limit = activities ? activities.length + 10 : 10;
     try {
       const response = await getAllAttractionsForLocation(locationId, 0, limit);
-      console.log(response);
       setActivities(response);
       setError(false);
     } catch (error) {
@@ -66,9 +65,10 @@ const ListActivitiesSection = ({
   }, [selectedFilters]);
 
   useEffect(() => {
+    if (!locationId) return;
     getAllActivities();
     filters = getAllFilters() || {};
-  }, []);
+  }, [locationId]);
 
   if (!activities || !basketState) {
     return (
@@ -76,7 +76,7 @@ const ListActivitiesSection = ({
         <InfinitySpin
           visible={true}
           width="200"
-          color="#1e6655"
+          color="#ffffff"
           ariaLabel="infinity-spin-loading"
         />
       </div>
@@ -90,9 +90,10 @@ const ListActivitiesSection = ({
         <div className="list-activities__filters"></div>
         <div className="list-activities__list">
           {activities.map((activity) => {
+            console.log(activity);
             return (
               <ActivityCard
-                key={activity.activity_id}
+                key={activity.activity_id ? activity.activity_id : uuidv4()}
                 activity={activity}
                 openActivity={() => setSelectedActivity(activity)}
                 basketState={basketState}

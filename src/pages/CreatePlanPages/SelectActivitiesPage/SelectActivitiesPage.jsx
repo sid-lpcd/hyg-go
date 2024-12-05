@@ -1,4 +1,4 @@
-import { act, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   getAllCategoriesForLocation,
@@ -19,6 +19,8 @@ import { InfinitySpin } from "react-loader-spinner";
 import { getBasket, setBasket } from "../../../utils/sessionStorageHelper";
 import ProgressBar from "../../../components/base/ProgressBar/ProgressBar";
 import { calcLength, getNumbers } from "../../../utils/generalHelpers";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SelectActivitiesPage = () => {
   const location = useLocation();
@@ -48,7 +50,8 @@ const SelectActivitiesPage = () => {
     let duration = 1;
     try {
       duration = Math.floor(
-        (getNumbers(activity.duration, 0) + getNumbers(activity.duration, 1)) /
+        (getNumbers(activity?.duration, 0) +
+          getNumbers(activity?.duration, 1)) /
           2
       );
     } catch (error) {
@@ -106,26 +109,18 @@ const SelectActivitiesPage = () => {
 
   useEffect(() => {
     getPlanInfo();
+    toast("Your plan was created successfully!");
   }, []);
-
-  if (!planInfo || !basketState)
-    return (
-      <div className="loader-overlay">
-        <InfinitySpin
-          visible={true}
-          width="200"
-          color="#1e6655"
-          ariaLabel="infinity-spin-loading"
-        />
-      </div>
-    );
 
   return (
     <>
+      <ToastContainer />
       <Header
         leftElement={
           <BackArrowIcon
-            onClick={() => navigate(-1)}
+            onClick={() =>
+              navigate("/create-plan", { state: { planInfo: planInfo } })
+            }
             className="header__icon"
           />
         }

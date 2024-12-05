@@ -69,7 +69,7 @@ const MapGL = ({
 
   const checkBasket = (marker) => {
     if (
-      basketState.activities.find(
+      basketState?.activities?.find(
         (item) => item.activity_id === marker.activity_id
       )
     ) {

@@ -95,7 +95,7 @@ const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
         <InfinitySpin
           visible={true}
           width="200"
-          color="#1e6655"
+          color="#ffffff"
           ariaLabel="infinity-spin-loading"
         />
       </div>

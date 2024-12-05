@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Modal } from "react-responsive-modal";
 import Header from "../../../components/sections/Header/Header";
 import { PeopleDropdown } from "../../../components/base/PeopleDropdown/PeopleDropdown";
@@ -13,9 +13,17 @@ import "./MainCreatePage.scss";
 import { formatDateDisplay } from "../../../utils/dateFormat";
 import DatePicker from "../../../components/base/DatePicker/DatePicker";
 import InspirationSection from "../../../components/sections/InspirationSection/InspirationSection";
-import { addPlan, getAllLocations } from "../../../utils/apiHelper";
+import {
+  addPlan,
+  getAllLocations,
+  getLocationById,
+  updatePlan,
+} from "../../../utils/apiHelper";
 
 const MainCreatePage = () => {
+  const locationState = useLocation();
+  const navigate = useNavigate();
+
   const [location, setLocation] = useState("");
   const [nextLocationUrl, setNextLocationUrl] = useState(false);
   const [openTripModal, setOpenTripModal] = useState(false);
@@ -57,8 +65,6 @@ const MainCreatePage = () => {
       placeholder: "Describe your trip...",
     },
   ];
-
-  const navigate = useNavigate();
 
   const onOpenModal = () => setOpenTripModal(true);
   const onCloseModal = () => {
@@ -107,16 +113,20 @@ const MainCreatePage = () => {
 
     if (hasErrors) return;
     try {
-      const response = await addPlan({ ...tripData, ...formData });
+      let response = null;
+      if (
+        tripData.location_id === locationState?.state?.planInfo?.location_id
+      ) {
+        response = await updatePlan(locationState?.state?.planInfo?.plan_id, {
+          ...tripData,
+          ...formData,
+        });
+      } else {
+        response = await addPlan({ ...tripData, ...formData });
+      }
       if (response) {
         setOpenTripModal(false);
-        setMessage("Your plan was created successfully!");
-        setIsSuccess(true);
-        setTimeout(() => {
-          setMessage("");
-          setIsSuccess(false);
-          navigate(`/${location ? `create-plan/${response}/activities` : ""}`);
-        }, 3000);
+        navigate(`/${location ? `create-plan/${response}/activities` : ""}`);
       }
     } catch (error) {
       setOpenTripModal(false);
@@ -126,6 +136,7 @@ const MainCreatePage = () => {
         setMessage("");
         setIsSuccess(false);
       }, 5000);
+      console.error(error);
     }
   };
 
@@ -161,6 +172,46 @@ const MainCreatePage = () => {
     setNextLocationUrl(true);
     setOpenTripModal(true);
   };
+
+  const getLocationInfo = async (locationId) => {
+    try {
+      const response = await getLocationById(locationId);
+      handleSelectLocation(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!locationState.state) return;
+    let { planInfo } = locationState.state;
+
+    if (planInfo) {
+      const {
+        title,
+        description,
+        start_date,
+        end_date,
+        user_id,
+        location_id,
+        people,
+        plan_id,
+      } = planInfo;
+      getLocationInfo(planInfo.location_id);
+      setTripData({
+        ...tripData,
+        title,
+        description,
+        start_date,
+        end_date,
+        user_id,
+        location_id,
+        people,
+        plan_id,
+      });
+      setFormData({ ...formData, title, description });
+    }
+  }, []);
 
   return (
     <>
