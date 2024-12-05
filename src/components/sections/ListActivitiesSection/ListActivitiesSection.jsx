@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllAttractionsForLocation } from "../../../utils/apiHelper";
 import { InfinitySpin } from "react-loader-spinner";
+import { v4 as uuidv4 } from "uuid";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import ActivityCard from "../../base/ActivityCard/ActivityCard";
 import "./ListActivitiesSection.scss";
@@ -90,7 +91,6 @@ const ListActivitiesSection = ({
         <div className="list-activities__filters"></div>
         <div className="list-activities__list">
           {activities.map((activity) => {
-            console.log(activity);
             return (
               <ActivityCard
                 key={activity.activity_id ? activity.activity_id : uuidv4()}
@@ -103,7 +103,7 @@ const ListActivitiesSection = ({
           })}
         </div>
         <button
-          className="list-activities__load-more"
+          className="list-activities__load-more-btn"
           onClick={getAllActivities}
         >
           Load more

@@ -3,11 +3,17 @@
 
 .list-activities {
   width: 100%;
-
+  @include flex(center);
+  flex-direction: column;
+  gap: 0.5rem;
   &__list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+  & .list-activities__load-more-btn {
+    background-color: $secondary-background-color;
+    color: $secondary-color;
   }
 }
 

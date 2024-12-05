@@ -101,7 +101,6 @@ const ActivityCard = ({
       <div className="activity-card__content">
         {inBasket && <CheckIcon className="activity-card__check-icon" />}
         <h3 className="activity-card__title">{activity.name?.split("(")[0]}</h3>
-        <p className="activity-card__location">{activity.location}</p>
         <p className="activity-card__description">
           {activity.description?.length
             ? activity.description.length > 60

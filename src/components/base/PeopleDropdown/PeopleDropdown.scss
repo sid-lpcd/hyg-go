@@ -41,7 +41,8 @@
       cursor: pointer;
       min-width: unset;
       max-width: unset;
-      width: 2.5rem;
+      width: 2rem;
+      min-height: 2rem;
     }
 
     &:disabled {

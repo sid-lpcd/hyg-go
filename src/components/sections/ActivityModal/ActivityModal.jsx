@@ -193,8 +193,6 @@ const ActivityModal = ({
     calcPrice(activity?.prices);
   }, [ticketCount]);
 
-  console.log(labels);
-
   if (!activity || !basketState) {
     return (
       <div className="loader-overlay">

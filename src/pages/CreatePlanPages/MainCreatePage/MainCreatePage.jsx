@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Modal } from "react-responsive-modal";
 import Header from "../../../components/sections/Header/Header";
 import { PeopleDropdown } from "../../../components/base/PeopleDropdown/PeopleDropdown";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
 import InputText from "../../../components/base/InputText/InputText";
@@ -49,8 +51,7 @@ const MainCreatePage = () => {
     start_date: false,
     end_date: false,
   });
-  const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [updateVisible, setUpdateVisible] = useState(false);
   const labels = [
     {
       name: "title",
@@ -101,9 +102,10 @@ const MainCreatePage = () => {
 
     let hasErrors = false;
     const newErrorData = { ...errorData };
+    const { update, ...newFormData } = formData;
 
-    Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
+    Object.keys(newFormData).forEach((key) => {
+      if (!newFormData[key]) {
         newErrorData[key] = true;
         hasErrors = true;
       }
@@ -115,29 +117,32 @@ const MainCreatePage = () => {
     try {
       let response = null;
       if (
-        tripData.location_id === locationState?.state?.planInfo?.location_id
+        tripData.location_id === locationState?.state?.planInfo?.location_id &&
+        update === true
       ) {
-        response = await updatePlan(locationState?.state?.planInfo?.plan_id, {
+        await updatePlan(locationState?.state?.planInfo?.plan_id, {
           ...tripData,
-          ...formData,
+          ...newFormData,
         });
+        response = locationState?.state?.planInfo?.plan_id;
       } else {
-        response = await addPlan({ ...tripData, ...formData });
+        response = await addPlan({ ...tripData, ...newFormData });
       }
+
       if (response) {
         setOpenTripModal(false);
         navigate(`/${location ? `create-plan/${response}/activities` : ""}`);
       }
     } catch (error) {
       setOpenTripModal(false);
-      setMessage("Failed to create the plan. Please try again.");
-      setIsSuccess(false);
-      setTimeout(() => {
-        setMessage("");
-        setIsSuccess(false);
-      }, 5000);
-      console.error(error);
+      toast("Error creating plan", { type: "error" });
     }
+  };
+
+  const openUpdate = () => {
+    let { title, description } = locationState?.state?.planInfo;
+    setFormData({ ...formData, title, description, update: true });
+    handleCreatePlan();
   };
 
   const getLocations = async (name) => {
@@ -187,21 +192,11 @@ const MainCreatePage = () => {
     let { planInfo } = locationState.state;
 
     if (planInfo) {
-      const {
-        title,
-        description,
-        start_date,
-        end_date,
-        user_id,
-        location_id,
-        people,
-        plan_id,
-      } = planInfo;
+      const { start_date, end_date, user_id, location_id, people, plan_id } =
+        planInfo;
       getLocationInfo(planInfo.location_id);
       setTripData({
         ...tripData,
-        title,
-        description,
         start_date,
         end_date,
         user_id,
@@ -209,12 +204,13 @@ const MainCreatePage = () => {
         people,
         plan_id,
       });
-      setFormData({ ...formData, title, description });
+      setUpdateVisible(true);
     }
   }, []);
 
   return (
     <>
+      <ToastContainer />
       <Header
         leftElement={
           <BackArrowIcon onClick={onOpenModal} className="header__icon" />
@@ -261,23 +257,28 @@ const MainCreatePage = () => {
             </p>
           </article>
 
+          {updateVisible && (
+            <button
+              className="plan-container__update-plan-btn"
+              onClick={openUpdate}
+            >
+              Update plan
+            </button>
+          )}
+
           <button
             className="plan-container__create-plan-btn"
-            onClick={handleCreatePlan}
+            onClick={() => {
+              setFormData({
+                title: "",
+                description: "",
+                update: false,
+              });
+              handleCreatePlan();
+            }}
           >
             Create plan
           </button>
-          {message && (
-            <div
-              className={`plan-container__message${
-                isSuccess
-                  ? " plan-container__message--success"
-                  : " plan-container__message--error"
-              }`}
-            >
-              {message}
-            </div>
-          )}
         </section>
 
         <InspirationSection />
