@@ -111,10 +111,7 @@ const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
           isResetVisible={true}
           markersList={activities}
           labels={filters}
-          basketState={basketState}
           fetchMarkersWithinBounds={fetchMarkersWithinBounds}
-          isMarkerClickable={true}
-          onMarkerClick={setSelectedActivity}
         />
       </section>
       <Modal
@@ -134,7 +131,7 @@ const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
           basketState={basketState}
           setBasketState={setBasketState}
           onClose={() => setSelectedActivity(null)}
-          showMap={false}
+          showMap={true}
         />
       </Modal>
       {error && (

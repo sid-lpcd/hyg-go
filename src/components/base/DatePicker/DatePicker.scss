@@ -5,10 +5,8 @@
 .datepicker {
   &-container {
     width: 100%;
-    height: 80%;
+    height: 35rem;
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-
     &__load-more {
       border: none;
       background-color: transparent;
@@ -29,10 +27,10 @@
 }
 .rdp {
   &-root {
-    --rdp-day-height: calc(100vw / 8);
-    --rdp-day-width: calc(100vw / 8);
-    --rdp-day_button-height: calc(100vw / 8);
-    --rdp-day_button-width: calc(100vw / 8);
+    --rdp-day-height: 3.5rem;
+    --rdp-day-width: 3.5rem;
+    --rdp-day_button-height: 3.5rem;
+    --rdp-day_button-width: 3.5rem;
     --rdp-today-color: #5d1376;
     --rdp-accent-color: #5d1376;
     --rdp-nav_button-width: 2rem;
