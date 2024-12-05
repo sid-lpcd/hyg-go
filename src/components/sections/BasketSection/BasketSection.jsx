@@ -41,6 +41,7 @@ const BasketSection = ({ planInfo, basketState, setBasketState }) => {
                 openActivity={() => setSelectedActivity(activity)}
                 basketState={basketState}
                 setBasketState={setBasketState}
+                cartPage={true}
               />
             );
           })}

@@ -13,6 +13,7 @@ const ActivityCard = ({
   openActivity,
   basketState,
   setBasketState,
+  cartPage = false,
 }) => {
   const [inBasket, setInBasket] = useState(false);
   function roundHalf(num) {
@@ -89,6 +90,46 @@ const ActivityCard = ({
 
   if (!activity) {
     return;
+  }
+
+  if (cartPage) {
+    return (
+      <article className="activity-card">
+        <img
+          src={activity.image_url}
+          alt={activity.title}
+          className="activity-card__image"
+        />
+        <div className="activity-card__content">
+          <h3 className="activity-card__title">
+            {activity.name?.split("(")[0]}
+          </h3>
+          <div className="activity-card__box">
+            <p className="activity-card__price activity-card__price--cart">
+              £ {activity?.totalPrice === 0 ? "-" : activity?.totalPrice}
+            </p>
+            <p className="activity-card__duration activity-card__duration--cart">
+              {getDuration(activity.duration)}
+            </p>
+            {activity?.totalPrice && (
+              <p className="activity-card__tickets">
+                {Object.keys(activity.ticketCount.people).reduce(
+                  (acc, value) => acc + activity.ticketCount.people[value],
+                  0
+                )}{" "}
+                tickets
+              </p>
+            )}
+            <button
+              className="activity-card__remove-btn"
+              onClick={handleRemoveFromBasket}
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </article>
+    );
   }
 
   return (
