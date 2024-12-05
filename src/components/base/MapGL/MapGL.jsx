@@ -17,6 +17,7 @@ const MapGL = ({
   const [center, setCenter] = useState(initialLocation);
   const [zoom, setZoom] = useState(initialZoom);
   const [isCentered, setIsCentered] = useState(true);
+  const [previousBounds, setPreviousBounds] = useState(null);
 
   const mapRef = useRef();
   const mapContainerRef = useRef();
@@ -24,7 +25,7 @@ const MapGL = ({
   const handleButtonClick = () => {
     mapRef.current.flyTo({
       center: initialLocation,
-      zoom: 14,
+      zoom: initialZoom,
     });
     setIsCentered(true);
   };
@@ -59,6 +60,7 @@ const MapGL = ({
     "crimson",
     "mint",
   ];
+
   const labelsWithColors = labels?.length
     ? createLabelsObject(labels, colors)
     : { default: "red" };
@@ -103,11 +105,23 @@ const MapGL = ({
             (item) => item.activity_id === parseInt(activityId)
           );
 
-          console.log(activity);
           onMarkerClick(activity);
         });
       }
     });
+  };
+
+  const isSignificantChange = (old, current, distanceThreshold) =>
+    Math.abs(old[0] - current[0]) > distanceThreshold ||
+    Math.abs(old[1] - current[1]) > distanceThreshold;
+
+  const shouldFetchMarkers = (oldBounds, newBounds) => {
+    if (!oldBounds) return true;
+
+    return (
+      isSignificantChange(oldBounds.southwest, newBounds.southwest, 0.02) ||
+      isSignificantChange(oldBounds.northeast, newBounds.northeast, 0.02)
+    );
   };
 
   useEffect(() => {
@@ -127,14 +141,21 @@ const MapGL = ({
       setCenter([mapCenter.lng, mapCenter.lat]);
       setZoom(mapZoom);
       setIsCentered(false);
+    });
 
+    mapRef.current.on("moveend", () => {
       if (fetchMarkersWithinBounds) {
         const { _sw: southwest, _ne: northeast } = mapRef.current.getBounds();
 
-        fetchMarkersWithinBounds({
+        const currentBounds = {
           southwest: [southwest.lng, southwest.lat],
           northeast: [northeast.lng, northeast.lat],
-        });
+        };
+
+        if (shouldFetchMarkers(previousBounds, currentBounds)) {
+          fetchMarkersWithinBounds(currentBounds);
+          setPreviousBounds(currentBounds);
+        }
       }
     });
 
