@@ -2,7 +2,9 @@ import axios from "axios";
 import { formatDateApi } from "./dateFormat";
 
 const API_BASE_URL =
-  VITE_ENV_TYPE === "DEV" ? import.meta.env.VITE_HYGGO_API_URL : "/api";
+  import.meta.env.VITE_ENV_TYPE === "DEV"
+    ? import.meta.env.VITE_HYGGO_API_URL
+    : "/api";
 
 export const getAllAttractions = async () => {
   const response = await axios.get(`${API_BASE_URL}/attractions`);
