@@ -85,7 +85,7 @@ export default function Form({
         >
           No
         </button>
-        <button className="form__btn" onClick={handleSubmit}>
+        <button type="submit" className="form__btn">
           Yes
         </button>
       </div>

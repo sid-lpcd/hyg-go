@@ -148,6 +148,7 @@
   &__remove {
     height: 100%;
     @include flex(center);
+    z-index: 2;
     &:hover,
     &:active {
       background-color: rgba(0, 0, 0, 0.2);

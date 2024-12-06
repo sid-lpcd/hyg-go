@@ -57,6 +57,7 @@ const ActivityCard = ({
       );
       setBasketState(basket);
     } else {
+      console.log("check");
       openDeleteModal(activity);
     }
   };
@@ -130,7 +131,7 @@ const ActivityCard = ({
           </div>
           <div
             className="activity-card__remove"
-            onClick={() => handleRemoveFromBasket(true)}
+            onClick={(e) => handleRemoveFromBasket(e, true)}
           >
             <CloseIcon className="activity-card__remove-icon" />
           </div>

@@ -14,11 +14,14 @@ const BasketSection = ({
 }) => {
   const [selectedActivityDelete, setSelectedActivityDelete] = useState(null);
 
-  const removeActivityFromBasket = (activity) => {
+  const removeActivityFromBasket = (e, activity) => {
+    e.preventDefault();
+
     const newBasket = basketState?.activities?.filter(
       (item) => item.activity_id !== activity.activity_id
     );
     setBasketState({ ...basketState, activities: newBasket });
+    setSelectedActivityDelete(null);
   };
 
   if (!basketState) {
@@ -67,7 +70,9 @@ const BasketSection = ({
         <Form
           title={`Are you sure you want to remove this ${selectedActivityDelete?.name} from your basket?`}
           handleCancel={() => setSelectedActivityDelete(null)}
-          handleSubmit={removeActivityFromBasket}
+          handleSubmit={(e) =>
+            removeActivityFromBasket(e, selectedActivityDelete)
+          }
         />
       </Modal>
     </>
