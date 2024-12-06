@@ -6,6 +6,9 @@ import {
   updatePlanWithActivities,
 } from "../../../utils/apiHelper";
 import Header from "../../../components/sections/Header/Header";
+import { getBasket, setBasket } from "../../../utils/localStorageHelper";
+import { calcLength, getNumbers } from "../../../utils/generalHelpers";
+import { ToastContainer, toast } from "react-toastify";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
 import Navigation from "../../../components/sections/Navigation/Navigation";
@@ -14,14 +17,11 @@ import Modal from "react-responsive-modal";
 import ListActivitiesSection from "../../../components/sections/ListActivitiesSection/ListActivitiesSection";
 import MapSection from "../../../components/sections/MapSection/MapSection";
 import BasketSection from "../../../components/sections/BasketSection/BasketSection";
-import "./SelectActivitiesPage.scss";
-import { InfinitySpin } from "react-loader-spinner";
-import { getBasket, setBasket } from "../../../utils/sessionStorageHelper";
 import ProgressBar from "../../../components/base/ProgressBar/ProgressBar";
-import { calcLength, getNumbers } from "../../../utils/generalHelpers";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import ActivityModal from "../../../components/sections/ActivityModal/ActivityModal";
+import CheckoutSection from "../../../components/sections/CheckoutSection/CheckoutSection";
+import "./SelectActivitiesPage.scss";
+import "react-toastify/dist/ReactToastify.css";
 
 const SelectActivitiesPage = () => {
   const location = useLocation();
@@ -86,7 +86,7 @@ const SelectActivitiesPage = () => {
     const basket = getBasket();
 
     if (basket.plan_id !== planId) {
-      setBasketState({ plan_id: planId, activities: [] });
+      setBasketState({ plan_id: planId, activities: [], gratuity: 0 });
     } else {
       setBasketState(basket);
       updatedProgress(basket);
@@ -145,7 +145,7 @@ const SelectActivitiesPage = () => {
           />
         }
       />
-      <main className="main">
+      <main className={`main${page === "basket" ? " main--basket" : ""}`}>
         {page === "activities" && (
           <ListActivitiesSection
             locationId={planInfo?.location_id}
@@ -177,8 +177,19 @@ const SelectActivitiesPage = () => {
           />
         )}
       </main>
-      <div className="bottom-fixed">
-        <ProgressBar total={totalTripLength} current={progress} />
+      <div
+        className={`bottom-fixed${
+          page === "basket" ? " bottom-fixed--basket" : ""
+        }`}
+      >
+        {page === "basket" ? (
+          <CheckoutSection
+            basketState={basketState}
+            setBasketState={setBasketState}
+          />
+        ) : (
+          <ProgressBar total={totalTripLength} current={progress} />
+        )}
         <Navigation basketState={basketState} />
       </div>
 

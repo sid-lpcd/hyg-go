@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./MapSection.scss";
 import { InfinitySpin } from "react-loader-spinner";
 import {
   getAllAttractionsForBounds,
@@ -7,9 +6,8 @@ import {
   getAllCategoriesForLocation,
   getLocationById,
 } from "../../../utils/apiHelper";
-import ActivityModal from "../ActivityModal/ActivityModal";
-import Modal from "react-responsive-modal";
 import MapGL from "../../base/MapGL/MapGL";
+import "./MapSection.scss";
 
 const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
   let filters = {};

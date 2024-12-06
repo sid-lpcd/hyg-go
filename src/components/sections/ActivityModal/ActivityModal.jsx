@@ -13,7 +13,7 @@ import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import { getNumbers } from "../../../utils/generalHelpers";
 import MapGL from "../../base/MapGL/MapGL";
-import { getBasket } from "../../../utils/sessionStorageHelper";
+import { getBasket } from "../../../utils/localStorageHelper";
 
 const ActivityModal = ({
   activityId,

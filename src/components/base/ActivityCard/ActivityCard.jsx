@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBasket } from "../../../utils/sessionStorageHelper";
+import { getBasket } from "../../../utils/localStorageHelper";
 import { getNumbers } from "../../../utils/generalHelpers";
 import { v4 as uuidv4 } from "uuid";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";

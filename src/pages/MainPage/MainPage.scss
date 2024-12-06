@@ -1,3 +1,9 @@
 @use "../../styles/partials/mixins" as *;
 @use "../../styles/partials/variables" as *;
 @use "../../styles/partials/animations";
+
+.bottom-navigation {
+  position: fixed;
+  width: 100vw;
+  bottom: 0;
+}

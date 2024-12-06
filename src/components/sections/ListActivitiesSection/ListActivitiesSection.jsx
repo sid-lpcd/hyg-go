@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import ActivityCard from "../../base/ActivityCard/ActivityCard";
 import "./ListActivitiesSection.scss";
-import Modal from "react-responsive-modal";
-import ActivityModal from "../ActivityModal/ActivityModal";
 
 const ListActivitiesSection = ({
   locationId,

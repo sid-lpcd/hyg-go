@@ -3,6 +3,9 @@
 
 .main {
   padding-bottom: 8rem;
+  &--basket {
+    justify-content: start;
+  }
   &__error {
     display: flex;
     align-items: center;
@@ -32,6 +35,9 @@
   flex-direction: column;
   gap: 0.5rem;
   background-color: rgba($color: $primary-background-color, $alpha: 0.7);
+  &--basket {
+    gap: 0;
+  }
 }
 
 .activity-modal--activity {
