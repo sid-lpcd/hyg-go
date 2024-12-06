@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Header from "../../components/sections/Header/Header";
 import Navigation from "../../components/sections/Navigation/Navigation";
-import "./MainPage.scss";
-import { useEffect, useState } from "react";
 import TripPlans from "../../components/sections/TripsPlans/TripPlans";
+import "./MainPage.scss";
 
 export const MainPage = () => {
   const navigate = useNavigate();

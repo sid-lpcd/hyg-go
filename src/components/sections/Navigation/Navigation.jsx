@@ -63,7 +63,7 @@ const Navigation = ({ basketState, pageType = "create" }) => {
     );
   } else {
     return (
-      <nav className="bottom-navigation">
+      <nav className="bottom-navigation bottom-navigation--travel">
         <Link
           to={`${baseURL}/`}
           className={`${

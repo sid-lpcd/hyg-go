@@ -126,6 +126,8 @@ const SelectActivitiesPage = () => {
     navigate("./activities", { replace: true }); // <-- redirect to current path w/o state
   }, [navigate]);
 
+  console.log(page);
+
   return (
     <>
       <ToastContainer />
