@@ -1,0 +1,61 @@
+@use "../../../styles/partials/variables" as *;
+@use "../../../styles/partials/mixins" as *;
+
+:root {
+  // --fc-small-font-size: 0.85em;
+  // --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
+  // --fc-neutral-text-color: #808080;
+  --fc-border-color: #3d3d3d;
+
+  // --fc-button-text-color: #fff;
+  --fc-button-bg-color: #cdacd2;
+  --fc-button-border-color: #510b68;
+  --fc-button-hover-bg-color: #510b68;
+  --fc-button-hover-border-color: #510b68;
+  --fc-button-active-bg-color: #510b68;
+  --fc-button-active-border-color: #510b68;
+
+  --fc-event-bg-color: #6e4176;
+  --fc-event-border-color: #cdacd2;
+  --fc-event-text-color: #fff;
+  // --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+
+  // --fc-more-link-bg-color: #d0d0d0;
+  // --fc-more-link-text-color: inherit;
+
+  // --fc-event-resizer-thickness: 8px;
+  // --fc-event-resizer-dot-total-width: 8px;
+  // --fc-event-resizer-dot-border-width: 1px;
+
+  // --fc-non-business-color: rgba(215, 215, 215, 0.3);
+  --fc-bg-event-color: #6e4176;
+  --fc-bg-event-opacity: 0.3;
+  --fc-highlight-color: #d25ded;
+  --fc-today-bg-color: transparent;
+  --fc-now-indicator-color: red;
+}
+
+.fc {
+  height: 80vh;
+  width: 100%;
+
+  &-view {
+    background-color: $secondary-background-color;
+  }
+  & .fc-scrollgrid {
+    border: 3px solid $secondary-background-color;
+    border-radius: 8px;
+    &-section > * {
+      border-width: 0px;
+    }
+  }
+  & thead {
+    line-height: 2.5rem;
+    background-color: $primary-background-color;
+    border-radius: 8px;
+  }
+
+  &-timegrid-body {
+    width: 100%;
+  }
+}

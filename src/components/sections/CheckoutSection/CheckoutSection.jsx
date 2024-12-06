@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import "./CheckoutSection.scss";
 import { useNavigate } from "react-router-dom";
+import "./CheckoutSection.scss";
 const CheckoutSection = ({ basketState, setBasketState }) => {
   const navigate = useNavigate();
 
@@ -99,7 +99,7 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
       <button
         className="checkout__btn-pay"
         onClick={() => {
-          navigate("/");
+          navigate(`/create-plan/${basketState?.plan_id}/plan`);
         }}
       >
         Pay
