@@ -122,6 +122,10 @@ button {
   }
 }
 
+button[class*="btn"] {
+  @include btn-styling;
+}
+
 /*********** Modal ************/
 
 .react-responsive-modal {
