@@ -21,6 +21,7 @@ import ProgressBar from "../../../components/base/ProgressBar/ProgressBar";
 import { calcLength, getNumbers } from "../../../utils/generalHelpers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ActivityModal from "../../../components/sections/ActivityModal/ActivityModal";
 
 const SelectActivitiesPage = () => {
   const location = useLocation();
@@ -37,6 +38,8 @@ const SelectActivitiesPage = () => {
   const [planStatus, setPlanStatus] = useState(
     location.state?.planStatus || null
   );
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showMap, setShowMap] = useState(false);
 
   const handleSaveTrip = () => {
     if (basketState.length === 0) return;
@@ -149,14 +152,17 @@ const SelectActivitiesPage = () => {
             planInfo={planInfo}
             basketState={basketState}
             setBasketState={setBasketState}
+            setSelectedActivity={(activity) => {
+              setSelectedActivity(activity);
+              setShowMap(true);
+            }}
           />
         )}
         {page === "map" && (
           <MapSection
             locationId={planInfo?.location_id}
-            planInfo={planInfo}
             basketState={basketState}
-            setBasketState={setBasketState}
+            setSelectedActivity={setSelectedActivity}
           />
         )}
         {page === "basket" && (
@@ -164,6 +170,10 @@ const SelectActivitiesPage = () => {
             planInfo={planInfo}
             basketState={basketState}
             setBasketState={setBasketState}
+            setSelectedActivity={(activity) => {
+              setSelectedActivity(activity);
+              setShowMap(true);
+            }}
           />
         )}
       </main>
@@ -171,6 +181,27 @@ const SelectActivitiesPage = () => {
         <ProgressBar total={totalTripLength} current={progress} />
         <Navigation basketState={basketState} />
       </div>
+
+      <Modal
+        open={selectedActivity}
+        onClose={() => setSelectedActivity(null)}
+        center
+        classNames={{
+          modal: "activity-modal activity-modal--activity",
+          modalAnimationIn: "modalInBottom",
+          modalAnimationOut: "modalOutBottom",
+        }}
+        animationDuration={500}
+      >
+        <ActivityModal
+          activityId={selectedActivity?.activity_id}
+          planInfo={planInfo}
+          basketState={basketState}
+          setBasketState={setBasketState}
+          onClose={() => setSelectedActivity(null)}
+          showMap={showMap}
+        />
+      </Modal>
 
       <Modal
         open={openTripModal}

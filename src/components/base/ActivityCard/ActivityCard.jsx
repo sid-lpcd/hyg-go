@@ -1,12 +1,13 @@
-import { v4 as uuidv4 } from "uuid";
-import StarIcon from "../../../assets/icons/star-icon.svg?react";
-import HalfStarIcon from "../../../assets/icons/star-half-icon.svg?react";
-import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
-import CheckIcon from "../../../assets/icons/check-icon.svg?react";
-import "./ActivityCard.scss";
 import { useEffect, useState } from "react";
 import { getBasket } from "../../../utils/sessionStorageHelper";
 import { getNumbers } from "../../../utils/generalHelpers";
+import { v4 as uuidv4 } from "uuid";
+import CloseIcon from "../../../assets/icons/close-icon.svg?react";
+import CheckIcon from "../../../assets/icons/check-icon.svg?react";
+import StarIcon from "../../../assets/icons/star-icon.svg?react";
+import HalfStarIcon from "../../../assets/icons/star-half-icon.svg?react";
+import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
+import "./ActivityCard.scss";
 
 const ActivityCard = ({
   activity,
@@ -14,6 +15,7 @@ const ActivityCard = ({
   basketState,
   setBasketState,
   cartPage = false,
+  openDeleteModal,
 }) => {
   const [inBasket, setInBasket] = useState(false);
   function roundHalf(num) {
@@ -46,13 +48,17 @@ const ActivityCard = ({
     return stars;
   };
 
-  const handleRemoveFromBasket = (e) => {
+  const handleRemoveFromBasket = (e, check = false) => {
     e.stopPropagation();
-    const basket = getBasket();
-    basket.activities = basket.activities.filter(
-      (item) => item.activity_id !== activity.activity_id
-    );
-    setBasketState(basket);
+    if (!check) {
+      const basket = getBasket();
+      basket.activities = basket.activities.filter(
+        (item) => item.activity_id !== activity.activity_id
+      );
+      setBasketState(basket);
+    } else {
+      openDeleteModal(activity);
+    }
   };
 
   const checkBasket = (activity) => {
@@ -94,24 +100,22 @@ const ActivityCard = ({
 
   if (cartPage) {
     return (
-      <article className="activity-card">
+      <article
+        className="activity-card activity-card--cart"
+        onClick={openActivity}
+      >
         <img
           src={activity.image_url}
           alt={activity.title}
-          className="activity-card__image"
+          className="activity-card__image activity-card__image--cart"
         />
-        <div className="activity-card__content">
-          <h3 className="activity-card__title">
-            {activity.name?.split("(")[0]}
-          </h3>
-          <div className="activity-card__box">
-            <p className="activity-card__price activity-card__price--cart">
-              £ {activity?.totalPrice === 0 ? "-" : activity?.totalPrice}
-            </p>
-            <p className="activity-card__duration activity-card__duration--cart">
-              {getDuration(activity.duration)}
-            </p>
-            {activity?.totalPrice && (
+        <div className="activity-card__content activity-card__content--cart">
+          <div className="activity-card__box activity-card__box--cart">
+            <h3 className="activity-card__title activity-card__title--cart">
+              {activity.name?.split("(")[0]}
+            </h3>
+
+            {activity?.totalPrice !== 0 && (
               <p className="activity-card__tickets">
                 {Object.keys(activity.ticketCount.people).reduce(
                   (acc, value) => acc + activity.ticketCount.people[value],
@@ -120,12 +124,15 @@ const ActivityCard = ({
                 tickets
               </p>
             )}
-            <button
-              className="activity-card__remove-btn"
-              onClick={handleRemoveFromBasket}
-            >
-              Remove
-            </button>
+            <p className="activity-card__price-value activity-card__price-value--cart">
+              £ {activity?.totalPrice === 0 ? "-" : activity?.totalPrice}
+            </p>
+          </div>
+          <div
+            className="activity-card__remove"
+            onClick={() => handleRemoveFromBasket(true)}
+          >
+            <CloseIcon className="activity-card__remove-icon" />
           </div>
         </div>
       </article>
@@ -151,43 +158,37 @@ const ActivityCard = ({
         </p>
         {/* Add category icon here? */}
         <div className="activity-card__tags">{activity.tags}</div>
-        <div className="activity-card__box">
-          <div className="activity-card__reviews">
-            <div className="activity-card__stars">
-              {renderStars(activity.reviews_average_rating)}
-            </div>
-            <p className="activity-card__reviews-count">
-              {activity.reviews_total_count}
-            </p>
-            {activity.duration && (
-              <p className="activity-card__duration">
-                {getDuration(activity.duration)}
-              </p>
-            )}
+        <div className="activity-card__reviews">
+          <div className="activity-card__stars">
+            {renderStars(activity.reviews_average_rating)}
           </div>
-          <div className="activity-card__price">
-            <span className="activity-card__price-value">
-              {activity.prices?.adult
-                ? getPrice(activity.prices.adult)
-                : "Free"}
-            </span>
-            {inBasket ? (
-              <button
-                className="activity-card__add-btn activity-card__add-btn--remove"
-                onClick={(e) => handleRemoveFromBasket(e)}
-              >
-                Remove
-              </button>
-            ) : (
-              <button
-                className="activity-card__add-btn"
-                onClick={() => openActivity(activity)}
-              >
-                Add to basket
-              </button>
-            )}
-          </div>
+          <p className="activity-card__reviews-count">
+            {activity.reviews_total_count}
+          </p>
         </div>
+        {activity.duration && (
+          <p className="activity-card__duration">
+            {getDuration(activity.duration)}
+          </p>
+        )}
+        <span className="activity-card__price-value">
+          {activity.prices?.adult ? getPrice(activity.prices.adult) : "Free"}
+        </span>
+        {inBasket ? (
+          <button
+            className="activity-card__add-btn activity-card__add-btn--remove"
+            onClick={(e) => handleRemoveFromBasket(e, false)}
+          >
+            Remove
+          </button>
+        ) : (
+          <button
+            className="activity-card__add-btn"
+            onClick={() => openActivity(activity)}
+          >
+            Add to basket
+          </button>
+        )}
       </div>
     </article>
   );

@@ -33,3 +33,14 @@
   gap: 0.5rem;
   background-color: rgba($color: $primary-background-color, $alpha: 0.7);
 }
+
+.activity-modal--activity {
+  top: 10%;
+  height: 90%;
+  border-end-end-radius: 0px;
+  border-end-start-radius: 0px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

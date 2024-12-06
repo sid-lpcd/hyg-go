@@ -13,6 +13,7 @@ const ListActivitiesSection = ({
   planInfo,
   basketState,
   setBasketState,
+  setSelectedActivity,
 }) => {
   let filters = {};
   const [selectedFilters, setSelectedFilters] = useState({
@@ -21,7 +22,6 @@ const ListActivitiesSection = ({
   });
   const [error, setError] = useState(false);
   const [activities, setActivities] = useState(null);
-  const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getAllActivities = async () => {
     const limit = activities ? activities.length + 10 : 10;
@@ -109,27 +109,6 @@ const ListActivitiesSection = ({
           Load more
         </button>
       </div>
-
-      <Modal
-        open={selectedActivity}
-        onClose={() => setSelectedActivity(null)}
-        center
-        classNames={{
-          modal: "activity-modal activity-modal--activity",
-          modalAnimationIn: "modalInBottom",
-          modalAnimationOut: "modalOutBottom",
-        }}
-        animationDuration={500}
-      >
-        <ActivityModal
-          activityId={selectedActivity?.activity_id}
-          planInfo={planInfo}
-          basketState={basketState}
-          setBasketState={setBasketState}
-          onClose={() => setSelectedActivity(null)}
-          showMap={true}
-        />
-      </Modal>
 
       {error && (
         <p className="main__error">

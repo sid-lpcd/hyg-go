@@ -11,7 +11,7 @@ import ActivityModal from "../ActivityModal/ActivityModal";
 import Modal from "react-responsive-modal";
 import MapGL from "../../base/MapGL/MapGL";
 
-const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
+const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
   let filters = {};
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
@@ -19,7 +19,6 @@ const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
   });
   const [error, setError] = useState(false);
   const [activities, setActivities] = useState(null);
-  const [selectedActivity, setSelectedActivity] = useState(null);
   const [initialLocation, setInitialLocation] = useState(null);
   const [initialZoom, setInitialZoom] = useState(null);
 
@@ -123,26 +122,7 @@ const MapSection = ({ locationId, planInfo, basketState, setBasketState }) => {
           onMarkerClick={setSelectedActivity}
         />
       </section>
-      <Modal
-        open={selectedActivity}
-        onClose={() => setSelectedActivity(null)}
-        center
-        classNames={{
-          modal: "activity-modal activity-modal--activity",
-          modalAnimationIn: "modalInBottom",
-          modalAnimationOut: "modalOutBottom",
-        }}
-        animationDuration={500}
-      >
-        <ActivityModal
-          activityId={selectedActivity?.activity_id}
-          planInfo={planInfo}
-          basketState={basketState}
-          setBasketState={setBasketState}
-          onClose={() => setSelectedActivity(null)}
-          showMap={false}
-        />
-      </Modal>
+
       {error && (
         <p className="main__error">
           <Error /> Failed Loading Map & Activities
