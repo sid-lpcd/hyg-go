@@ -4,5 +4,6 @@
       "source": "/api/:path*",
       "destination": "http://104.248.169.15/hyggo-server/:path*"
     }
-  ]
+  ],
+  "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }]
 }
