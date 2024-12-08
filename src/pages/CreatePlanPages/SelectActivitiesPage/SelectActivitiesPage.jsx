@@ -41,10 +41,14 @@ const SelectActivitiesPage = () => {
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [showMap, setShowMap] = useState(false);
 
-  const handleSaveTrip = () => {
+  const handleSaveTrip = async (e) => {
+    e.preventDefault();
     if (basketState.length === 0) return;
     try {
-      const response = updatePlanWithActivities(planInfo.plan_id, basketState);
+      const response = await updatePlanWithActivities(
+        planInfo.plan_id,
+        basketState
+      );
       console.log(response);
     } catch (error) {
       console.error(error);
@@ -227,7 +231,7 @@ const SelectActivitiesPage = () => {
         <Form
           title="Do you want to save this trip?"
           handleCancel={() => navigate("/")}
-          handleSubmit={() => handleSaveTrip()}
+          handleSubmit={(e) => handleSaveTrip(e)}
         />
       </Modal>
     </>

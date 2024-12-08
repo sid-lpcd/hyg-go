@@ -1,6 +1,10 @@
 @use "../../styles/partials/mixins" as *;
 @use "../../styles/partials/variables" as *;
-@use "../../styles/partials/animations";
+
+.main-traveller {
+  justify-content: start;
+  padding-bottom: 0;
+}
 
 .bottom-navigation--travel {
   position: fixed;

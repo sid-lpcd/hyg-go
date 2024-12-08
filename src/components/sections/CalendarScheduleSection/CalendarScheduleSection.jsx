@@ -2,7 +2,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/timegrid";
 import "./CalendarScheduleSection.scss";
 import { useEffect, useRef, useState } from "react";
-import { combineDateTimeUTC } from "../../../utils/dateFormat";
+import { combineDateTimeUTC, formatDateApi } from "../../../utils/dateFormat";
 import Modal from "react-responsive-modal";
 import AddNewActivityForm from "../AddNewActivityForm/AddNewActivityForm";
 import { InfinitySpin } from "react-loader-spinner";
@@ -36,20 +36,66 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
       });
     }
   }
+
+  const multiDayEventFormat = (activity) => {
+    const events = [];
+
+    const endDateTime = new Date(
+      combineDateTimeUTC(activity.end_date, activity.end_time)
+    );
+
+    let currentStart = new Date(
+      combineDateTimeUTC(activity.start_date, activity.start_time)
+    );
+
+    while (currentStart <= endDateTime) {
+      const nextDay = new Date(currentStart);
+      nextDay.setUTCDate(currentStart.getUTCDate() + 1);
+      nextDay.setUTCHours(0, 0, 0, 0); // Midnight of the next day
+
+      // Determine the end time for the current day's event
+      const currentEnd =
+        nextDay <= endDateTime ? new Date(nextDay - 1000) : endDateTime;
+
+      // Push the event for the current day
+      events.push({
+        id: activity.activity_id,
+        title: activity.name,
+        start: currentStart.toISOString(),
+        end: currentEnd.toISOString(),
+        allDay: false,
+      });
+
+      // Move to the next day
+      currentStart = new Date(nextDay);
+    }
+    return events;
+  };
+
   const formatActivities = (activities) => {
-    let currentActivity = activities[0];
+    let currentActivity = activities;
     let displayedActivities = [];
 
     while (currentActivity) {
+      if (
+        currentActivity.activity.start_date !==
+        currentActivity.activity.end_date
+      ) {
+        displayedActivities.push(
+          ...multiDayEventFormat(currentActivity.activity)
+        );
+        currentActivity = currentActivity.next;
+        continue;
+      }
       let event = {
         id: currentActivity.activity.activity_id,
         title: currentActivity.activity.name,
         start: combineDateTimeUTC(
-          currentActivity.activity.start_date,
+          formatDateApi(currentActivity.activity.start_date),
           currentActivity.activity.start_time
         ),
         end: combineDateTimeUTC(
-          currentActivity.activity.end_date,
+          formatDateApi(currentActivity.activity.end_date),
           currentActivity.activity.end_time
         ),
         allDay: false,
@@ -60,11 +106,26 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
     }
     return displayedActivities;
   };
+
+  const addDays = (dateString) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    const date = new Date(dateString);
+
+    date.setDate(date.getDate() + 1);
+
+    return date.toLocaleDateString("en-CA", options); // Format back to YYYY-MM-DD
+  };
+
   useEffect(() => {
-    if (activities.length) {
-      setDisplayedActivities(formatActivities(activities));
+    if (activities) {
+      let tempDisplayedActivities = [];
+      activities.forEach((activity) => {
+        tempDisplayedActivities.push(...formatActivities(activity));
+      });
+      setDisplayedActivities(tempDisplayedActivities);
     }
   }, [activities]);
+
   if (!planInfo || !activities) {
     return (
       <div className="loader-overlay">
@@ -84,6 +145,11 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
         plugins={[dayGridPlugin]}
         initialView="timeGridDay"
         events={displayedActivities}
+        slotDuration="00:15:00"
+        validRange={{
+          start: planInfo.start_date,
+          end: addDays(planInfo.end_date),
+        }}
         editable={true}
         selectable={true}
         selectMirror={true}
@@ -96,6 +162,7 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
       >
         +
       </button>
+
       <Modal
         open={openModalNew}
         onClose={() => setOpenModalNew(false)}

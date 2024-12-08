@@ -161,6 +161,17 @@ export const updatePlanWithActivities = async (id, basket) => {
   return response.data;
 };
 
+export const updatePlanWithActivitiesCalendar = async (
+  id,
+  activities_linked
+) => {
+  const response = await axios.patch(
+    `${API_BASE_URL}/plans/${id}/activities-calendar`,
+    activities_linked
+  );
+  return response.data;
+};
+
 export const deletePlan = async (id) => {
   const response = await axios.delete(`${API_BASE_URL}/plans/${id}`);
   return response.data;
