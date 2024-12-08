@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { updatePlanWithActivities } from "../../../utils/apiHelper";
 import "./CheckoutSection.scss";
 const CheckoutSection = ({ basketState, setBasketState }) => {
   const navigate = useNavigate();
@@ -48,6 +49,19 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
       gratuity: (totalCost * ((gratuityPercentage - 2.5) / 100)).toFixed(2),
     });
   };
+
+  const savePlan = async () => {
+    try {
+      const response = await updatePlanWithActivities(
+        basketState.plan_id,
+        basketState
+      );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (basketState) {
       setTotalCost(
@@ -99,6 +113,7 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
       <button
         className="checkout__btn-pay"
         onClick={() => {
+          savePlan(basketState);
           navigate(`/create-plan/${basketState?.plan_id}/plan`);
         }}
       >

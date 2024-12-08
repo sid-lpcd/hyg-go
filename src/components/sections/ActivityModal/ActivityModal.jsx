@@ -5,15 +5,15 @@ import { v4 as uuidv4 } from "uuid";
 import StarIcon from "../../../assets/icons/star-icon.svg?react";
 import HalfStarIcon from "../../../assets/icons/star-half-icon.svg?react";
 import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "./ActivityModal.scss";
 import { getAttractionById } from "../../../utils/apiHelper";
 import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import { getNumbers } from "../../../utils/generalHelpers";
 import MapGL from "../../base/MapGL/MapGL";
 import { getBasket } from "../../../utils/localStorageHelper";
+import "swiper/css";
+import "swiper/css/pagination";
+import "./ActivityModal.scss";
 
 const ActivityModal = ({
   activityId,

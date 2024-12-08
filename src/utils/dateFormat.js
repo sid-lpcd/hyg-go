@@ -11,3 +11,8 @@ export const formatDateApi = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-CA", options); // 'en-CA' gives 'YYYY-MM-DD'
 };
+
+export function combineDateTimeUTC(date, time) {
+  const combinedDateTime = new Date(`${date}T${time}Z`);
+  return combinedDateTime.toISOString(); // Returns in UTC format
+}

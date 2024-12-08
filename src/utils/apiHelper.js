@@ -109,10 +109,8 @@ export const getAllPlansForLocation = async (locationId) => {
   return response.data;
 };
 
-export const getAIPlanForLocation = async (locationId) => {
-  const response = await axios.get(
-    `${API_BASE_URL}/locations/${locationId}/AI-plan`
-  );
+export const getAIPlan = async (planId) => {
+  const response = await axios.get(`${API_BASE_URL}/plans/${planId}/AI-plan`);
   return response.data;
 };
 

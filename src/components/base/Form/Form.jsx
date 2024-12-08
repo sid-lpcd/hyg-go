@@ -45,6 +45,24 @@ export default function Form({
                 />
               );
               break;
+            case "datetime-local":
+              console.log(label);
+              input = (
+                <input
+                  name={label.name}
+                  value={formData[label.name]}
+                  onChange={(e) => handleChange(e)}
+                  type="datetime-local"
+                  className={`form__input${
+                    errorData[label.name] ? " form__input--error" : ""
+                  }`}
+                  placeholder={label.placeholder}
+                  min={label.min}
+                  max={label.max}
+                  step={600}
+                />
+              );
+              break;
             case "select":
               input = (
                 <select

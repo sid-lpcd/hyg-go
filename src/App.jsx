@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import "react-responsive-modal/styles.css";
 import "./App.scss";
-import SelectActivitiesPage from "./pages/CreatePlanPages/SelectActivitiesPage/SelectActivitiesPage";
-import MainCreatePage from "./pages/CreatePlanPages/MainCreatePage/MainCreatePage";
 import { MainPage } from "./pages/MainPage/MainPage";
+import MainCreatePage from "./pages/CreatePlanPages/MainCreatePage/MainCreatePage";
 import CalendarPlan from "./pages/CreatePlanPages/CalendarPlan/CalendarPlan";
+import SelectActivitiesPage from "./pages/CreatePlanPages/SelectActivitiesPage/SelectActivitiesPage";
 
 function App() {
   return (
