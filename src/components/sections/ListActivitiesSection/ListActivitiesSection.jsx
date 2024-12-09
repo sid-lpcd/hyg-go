@@ -41,7 +41,6 @@ const ListActivitiesSection = ({
   };
 
   const initializeWebSocket = () => {
-    console.log(import.meta.env.VITE_HYGGO_API_URL_WSS_PRODUCTION);
     const websocket = new WebSocket(
       import.meta.env.VITE_ENV_TYPE === "DEV"
         ? import.meta.env.VITE_HYGGO_API_URL_WS
@@ -56,10 +55,10 @@ const ListActivitiesSection = ({
       }
     };
 
+    const tempActivities = activities || [];
+
     websocket.onmessage = (event) => {
       const response = JSON.parse(event.data);
-      console.log("Received response: ", response);
-      const tempActivities = activities || [];
 
       if (response.statusCode === 200) {
         if (activities) {
@@ -78,6 +77,8 @@ const ListActivitiesSection = ({
         setWs(null);
       } else if (!response.statusCode) {
         tempActivities.push(response);
+        setActivities(tempActivities);
+        setLoadingMore(false);
       } else if (response.statusCode === 404) {
         setError("No more activities found");
         setLoadingMore(false);
