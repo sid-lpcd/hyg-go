@@ -20,24 +20,86 @@ const ListActivitiesSection = ({
   const [error, setError] = useState(false);
   const [activities, setActivities] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [ws, setWs] = useState(null);
 
-  const getAllActivities = async () => {
-    const limit = activities ? activities.length + 1 : 1;
-    try {
-      setLoadingMore(true);
-      const response = await getAllAttractionsForLocation(locationId, 0, limit);
-      if (response?.length === activities?.length) {
-        setLoadingMore(false);
-        setError("No more activities");
-        return;
+  const getAllActivities = (websocket) => {
+    setLoadingMore(true);
+    const limit = activities ? activities.length + 10 : 10;
+    const requestData = {
+      action: "getAttractions",
+      locationId,
+      offset: activities?.length || 0,
+      limit,
+    };
+    websocket.send(JSON.stringify(requestData)); // Send request
+  };
+
+  const handleReload = () => {
+    if (ws) ws.close(); // Close existing WebSocket
+    const newWebSocket = initializeWebSocket(); // Reinitialize WebSocket
+    setWs(newWebSocket);
+  };
+
+  const initializeWebSocket = () => {
+    const websocket = new WebSocket(
+      import.meta.env.VITE_ENV_TYPE === "DEV"
+        ? "ws://localhost:8080"
+        : "ws://104.248.169.15:8080"
+    );
+
+    websocket.onopen = () => {
+      console.log("WebSocket connected");
+      setWs(websocket);
+      if (locationId) {
+        getAllActivities(websocket);
       }
-      setActivities(response);
-      setLoadingMore(false);
-      setError(false);
-    } catch (error) {
-      console.error(error);
+    };
+
+    websocket.onmessage = (event) => {
+      const response = JSON.parse(event.data);
+      console.log("Received response: ", response);
+      const tempActivities = activities || [];
+
+      if (response.statusCode === 200) {
+        if (activities) {
+          setActivities([...activities, ...response.data]);
+        } else {
+          setActivities(response.data);
+        }
+        websocket.close();
+        setLoadingMore(false);
+        setWs(null);
+      } else if (response.statusCode === 202) {
+        console.log("Closing WebSocket due to 202 response.");
+        websocket.close();
+        setLoadingMore(false);
+        setWs(null);
+      } else if (!response.statusCode) {
+        tempActivities.push(response);
+        setActivities(tempActivities);
+      } else if (response.statusCode === 404) {
+        setError("No more activities found");
+        setLoadingMore(false);
+        setWs(null);
+        websocket.close();
+      } else {
+        setError(true);
+        setLoadingMore(false);
+        setWs(null);
+        websocket.close();
+      }
+    };
+
+    websocket.onclose = () => {
+      console.log("WebSocket closed");
+    };
+
+    websocket.onerror = (err) => {
+      console.error("WebSocket error: ", err);
       setError(true);
-    }
+    };
+
+    return websocket;
   };
 
   const getAllCategories = async () => {
@@ -46,7 +108,7 @@ const ListActivitiesSection = ({
       filters = { ...filters, categories: response };
       setError(false);
     } catch (error) {
-      setError(true);
+      // setError(true);
     }
   };
 
@@ -72,8 +134,14 @@ const ListActivitiesSection = ({
 
   useEffect(() => {
     if (!locationId) return;
-    getAllActivities();
+
+    const websocket = initializeWebSocket();
+    setWs(websocket);
+    // getAllActivities();
     filters = getAllFilters() || {};
+    return () => {
+      if (ws) ws.close();
+    };
   }, [locationId]);
 
   if (!activities || !basketState) {
@@ -107,13 +175,15 @@ const ListActivitiesSection = ({
             );
           })}
         </div>
-        {error ? null : !loadingMore ? (
-          <button
-            className="list-activities__load-more-btn"
-            onClick={getAllActivities}
-          >
-            Load more
-          </button>
+        {!loadingMore ? (
+          error ? null : (
+            <button
+              className="list-activities__load-more-btn"
+              onClick={handleReload}
+            >
+              Load more
+            </button>
+          )
         ) : (
           <InfinitySpin
             visible={true}
