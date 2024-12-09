@@ -44,7 +44,7 @@ const ListActivitiesSection = ({
     const websocket = new WebSocket(
       import.meta.env.VITE_ENV_TYPE === "DEV"
         ? "ws://localhost:8080"
-        : "ws://104.248.169.15:8080"
+        : "wss://104.248.169.15:8080"
     );
 
     websocket.onopen = () => {
