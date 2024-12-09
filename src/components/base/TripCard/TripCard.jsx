@@ -1,9 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import PeopleIcon from "../../../assets/icons/profile-icon.svg?react";
 import { formatDateTripDisplay } from "../../../utils/dateFormat";
 import "./TripCard.scss";
 const TripCard = ({ trip }) => {
+  const navigate = useNavigate();
   return (
-    <div className="trip-card">
+    <div
+      className="trip-card"
+      onClick={() => {
+        navigate(`/create-plan/${trip.plan_id}/activities`);
+      }}
+    >
       <div
         className="trip-card__background"
         style={{ backgroundImage: `url(${trip.location?.image?.url})` }}
