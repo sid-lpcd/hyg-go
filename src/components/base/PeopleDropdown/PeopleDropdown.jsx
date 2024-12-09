@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import React from "react";
 import "./PeopleDropdown.scss";
-import Modal from "react-responsive-modal";
 
 export const PeopleDropdown = ({ tripData, setTripData, onClose }) => {
   const [localPeople, setLocalPeople] = useState({
-    adult: tripData.adult || 1,
-    children: tripData.children || 0,
-    infant: tripData.infant || 0,
+    adult: tripData?.people.adult || 1,
+    children: tripData?.people.children || 0,
+    infant: tripData?.people.infant || 0,
   });
   const handleChangePeople = (field, value) => {
     if (field === "adult")
@@ -29,23 +29,26 @@ export const PeopleDropdown = ({ tripData, setTripData, onClose }) => {
   useEffect(() => {
     setLocalPeople(tripData.people);
   }, [tripData]);
+
+  if (!tripData) return null;
+
   return (
     <>
       <article className="people-dropdown__container">
         <PeopleControl
           label="Adults (+16yrs):"
-          count={localPeople.adult}
+          count={localPeople?.adult}
           onChange={(val) => handleChangePeople("adult", val)}
           min={1}
         />
         <PeopleControl
           label="Children (2-16yrs):"
-          count={localPeople.children}
+          count={localPeople?.children}
           onChange={(val) => handleChangePeople("children", val)}
         />
         <PeopleControl
           label="Infant (0-2yrs):"
-          count={localPeople.infant}
+          count={localPeople?.infant}
           onChange={(val) => handleChangePeople("infant", val)}
         />
         <div className="people-dropdown__btn-container">
