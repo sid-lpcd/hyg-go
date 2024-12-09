@@ -43,8 +43,8 @@ const ListActivitiesSection = ({
   const initializeWebSocket = () => {
     const websocket = new WebSocket(
       import.meta.env.VITE_ENV_TYPE === "DEV"
-        ? "ws://localhost:8080"
-        : "wss://104.248.169.15:8080"
+        ? import.meta.env.VITE_HYGGO_API_URL_WS
+        : import.meta.env.VITE_HYGGO_API_URL_WSS_PRODUCTION
     );
 
     websocket.onopen = () => {
