@@ -22,7 +22,7 @@ const ListActivitiesSection = ({
   const [loadingMore, setLoadingMore] = useState(false);
 
   const getAllActivities = async () => {
-    const limit = activities ? activities.length + 10 : 10;
+    const limit = activities ? activities.length + 1 : 1;
     try {
       setLoadingMore(true);
       const response = await getAllAttractionsForLocation(locationId, 0, limit);
