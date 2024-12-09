@@ -13,6 +13,7 @@ const MapGL = ({
   isMarkerClickable = false,
   onMarkerClick,
   basketState,
+  isMoveable = true,
 }) => {
   const [center, setCenter] = useState(initialLocation);
   const [zoom, setZoom] = useState(initialZoom);
@@ -134,30 +135,37 @@ const MapGL = ({
       zoom: zoom,
     });
 
-    mapRef.current.on("move", () => {
-      const mapCenter = mapRef.current.getCenter();
-      const mapZoom = mapRef.current.getZoom();
+    if (!isMoveable) {
+      mapRef.current.dragPan.disable();
+      mapRef.current.dragRotate.disable();
+      mapRef.current.touchZoomRotate.disableRotation();
+      mapRef.current.scrollZoom.disable();
+    } else {
+      mapRef.current.on("move", () => {
+        const mapCenter = mapRef.current.getCenter();
+        const mapZoom = mapRef.current.getZoom();
 
-      setCenter([mapCenter.lng, mapCenter.lat]);
-      setZoom(mapZoom);
-      setIsCentered(false);
-    });
+        setCenter([mapCenter.lng, mapCenter.lat]);
+        setZoom(mapZoom);
+        setIsCentered(false);
+      });
 
-    mapRef.current.on("moveend", () => {
-      if (fetchMarkersWithinBounds) {
-        const { _sw: southwest, _ne: northeast } = mapRef.current.getBounds();
+      mapRef.current.on("moveend", () => {
+        if (fetchMarkersWithinBounds) {
+          const { _sw: southwest, _ne: northeast } = mapRef.current.getBounds();
 
-        const currentBounds = {
-          southwest: [southwest.lng, southwest.lat],
-          northeast: [northeast.lng, northeast.lat],
-        };
+          const currentBounds = {
+            southwest: [southwest.lng, southwest.lat],
+            northeast: [northeast.lng, northeast.lat],
+          };
 
-        if (shouldFetchMarkers(previousBounds, currentBounds)) {
-          fetchMarkersWithinBounds(currentBounds);
-          setPreviousBounds(currentBounds);
+          if (shouldFetchMarkers(previousBounds, currentBounds)) {
+            fetchMarkersWithinBounds(currentBounds);
+            setPreviousBounds(currentBounds);
+          }
         }
-      }
-    });
+      });
+    }
 
     markersList.length && setMarkers();
 

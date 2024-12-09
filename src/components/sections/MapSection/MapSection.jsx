@@ -4,12 +4,16 @@ import {
   getAllAttractionsForBounds,
   getAllAttractionsForLocation,
   getAllCategoriesForLocation,
+  getAttractionById,
   getLocationById,
 } from "../../../utils/apiHelper";
 import MapGL from "../../base/MapGL/MapGL";
 import "./MapSection.scss";
+import { useSearchParams } from "react-router-dom";
 
 const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   let filters = {};
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
@@ -22,6 +26,13 @@ const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
 
   const getLocationInfo = async () => {
     try {
+      if (searchParams.get("activity")) {
+        const activityId = searchParams.get("activity");
+        const response = await getAttractionById(activityId);
+        setInitialLocation([response.longitude, response.latitude]);
+        setInitialZoom(15);
+        return;
+      }
       const response = await getLocationById(locationId);
       setInitialLocation([response.longitude, response.latitude]);
       if (response.type === "COUNTRY") {
@@ -39,6 +50,7 @@ const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
     try {
       const response = await getAllAttractionsForLocation(locationId, 0, limit);
       setActivities(response);
+
       setError(false);
     } catch (error) {
       console.error(error);
