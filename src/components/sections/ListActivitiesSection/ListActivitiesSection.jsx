@@ -8,7 +8,6 @@ import "./ListActivitiesSection.scss";
 
 const ListActivitiesSection = ({
   locationId,
-  planInfo,
   basketState,
   setBasketState,
   setSelectedActivity,
@@ -20,12 +19,20 @@ const ListActivitiesSection = ({
   });
   const [error, setError] = useState(false);
   const [activities, setActivities] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const getAllActivities = async () => {
     const limit = activities ? activities.length + 10 : 10;
     try {
+      setLoadingMore(true);
       const response = await getAllAttractionsForLocation(locationId, 0, limit);
+      if (response?.length === activities?.length) {
+        setLoadingMore(false);
+        setError("No more activities");
+        return;
+      }
       setActivities(response);
+      setLoadingMore(false);
       setError(false);
     } catch (error) {
       console.error(error);
@@ -100,17 +107,27 @@ const ListActivitiesSection = ({
             );
           })}
         </div>
-        <button
-          className="list-activities__load-more-btn"
-          onClick={getAllActivities}
-        >
-          Load more
-        </button>
+        {error ? null : !loadingMore ? (
+          <button
+            className="list-activities__load-more-btn"
+            onClick={getAllActivities}
+          >
+            Load more
+          </button>
+        ) : (
+          <InfinitySpin
+            visible={true}
+            width="200"
+            color="#ffffff"
+            ariaLabel="infinity-spin-loading"
+          />
+        )}
       </div>
 
       {error && (
         <p className="main__error">
-          <Error /> Failed Loading Activities
+          <Error />{" "}
+          {typeof error === "string" ? error : "Failed Loading Activities"}
         </p>
       )}
     </>

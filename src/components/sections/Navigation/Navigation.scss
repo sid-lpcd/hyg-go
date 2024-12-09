@@ -5,7 +5,7 @@
   @include flex(space-around);
   background-color: $nav-background-color;
   padding: 0.5rem 1rem;
-  min-height: 8vh;
+  height: 10vh;
 
   &__item {
     text-align: center;

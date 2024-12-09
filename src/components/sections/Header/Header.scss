@@ -4,7 +4,8 @@
 .header {
   @include flex(space-between);
   padding: $min-padding;
-  min-height: 8vh;
+  height: 8vh;
+
   &__logo {
     width: 100%;
     &-link {

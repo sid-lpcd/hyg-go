@@ -38,9 +38,11 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     @include flex(space-between);
+    gap: 0.5rem;
   }
 
   &__details {
+    width: 60%;
     @include flex(space-between);
     gap: 1rem;
   }
