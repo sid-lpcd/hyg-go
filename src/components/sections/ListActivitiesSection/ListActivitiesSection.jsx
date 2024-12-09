@@ -71,14 +71,14 @@ const ListActivitiesSection = ({
         setWs(null);
       } else if (response.statusCode === 202) {
         console.log("Closing WebSocket due to 202 response.");
-        setActivities(tempActivities);
         websocket.close();
-        setLoadingMore(false);
         setWs(null);
       } else if (!response.statusCode) {
+        console.log(tempActivities);
         tempActivities.push(response);
         setActivities(tempActivities);
         setLoadingMore(false);
+        console.log(loadingMore);
       } else if (response.statusCode === 404) {
         setError("No more activities found");
         setLoadingMore(false);
