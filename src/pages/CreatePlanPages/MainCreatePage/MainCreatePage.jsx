@@ -69,7 +69,13 @@ const MainCreatePage = () => {
     },
   ];
 
-  const onOpenModal = () => setOpenTripModal(true);
+  const onOpenModal = () => {
+    if (updateVisible) {
+      let { title, description } = prevPlan;
+      setFormData({ ...formData, title, description, update: true });
+    }
+    setOpenTripModal(true);
+  };
   const onCloseModal = () => {
     setOpenTripModal(false);
   };

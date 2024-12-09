@@ -14,6 +14,7 @@ import { getBasket } from "../../../utils/localStorageHelper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "./ActivityModal.scss";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ActivityModal = ({
   activityId,
@@ -23,6 +24,11 @@ const ActivityModal = ({
   onClose,
   showMap,
 }) => {
+  const navigate = useNavigate();
+
+  const location = useLocation();
+  const locationId = location.pathname.split("/")[2];
+
   const [activity, setActivity] = useState(null);
   const [ticketCount, setTicketCount] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -294,11 +300,18 @@ const ActivityModal = ({
       </article>
 
       {activity?.latitude && activity?.longitude && showMap && (
-        <div className="activity__map">
+        <div
+          className="activity__map"
+          onClick={() => {
+            onClose();
+            navigate(`/create-plan/${locationId}/map?activity=${activityId}`);
+          }}
+        >
           <MapGL
             initialLocation={[activity?.longitude, activity?.latitude]}
             isResetVisible={true}
             markersList={[activity]}
+            isMoveable={false}
           />
         </div>
       )}

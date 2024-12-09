@@ -4,7 +4,7 @@ import { formatDateApi } from "./dateFormat";
 const API_BASE_URL =
   import.meta.env.VITE_ENV_TYPE === "DEV"
     ? import.meta.env.VITE_HYGGO_API_URL
-    : "/api";
+    : import.meta.env.VITE_HYGGO_API_URL_PRODUCTION;
 
 export const getAllAttractions = async () => {
   const response = await axios.get(`${API_BASE_URL}/attractions`);
@@ -80,6 +80,7 @@ export const getAllAttractionsForLocation = async (
   offset = 0,
   limit = 10
 ) => {
+  console.log("limit", limit);
   const response = await axios.get(
     `${API_BASE_URL}/locations/${locationId}/attractions`,
     {
