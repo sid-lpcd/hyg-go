@@ -41,6 +41,7 @@ const ListActivitiesSection = ({
   };
 
   const initializeWebSocket = () => {
+    console.log(import.meta.env.VITE_HYGGO_API_URL_WSS_PRODUCTION);
     const websocket = new WebSocket(
       import.meta.env.VITE_ENV_TYPE === "DEV"
         ? import.meta.env.VITE_HYGGO_API_URL_WS
