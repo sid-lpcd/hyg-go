@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./RegisterPage.scss";
 import Header from "../../components/sections/Header/Header";
+import { registerEarlyUser } from "../../utils/apiHelper";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -8,18 +9,31 @@ const RegisterPage = () => {
     email: "",
     country: "",
   });
+  const [error, setError] = useState({
+    name: false,
+    email: false,
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) {
-      alert("Please fill in all required fields.");
-    } else {
-      console.log("Form submitted:", formData);
+    if (!formData.name) {
+      setError({ ...error, name: true });
+    }
+    if (!formData.email) {
+      setError({ ...error, email: true });
+    }
+    if (formData.name && formData.email) {
+      try {
+        const response = await registerEarlyUser(formData);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

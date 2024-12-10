@@ -187,3 +187,16 @@ export const getPublicPlanById = async (id) => {
   const response = await axios.get(`${API_BASE_URL}/public/${id}`);
   return response.data;
 };
+
+export const registerEarlyUser = async (user) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/users/registerEarly`,
+      user
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
