@@ -1,2 +1,47 @@
 @use "../../styles/partials/mixins" as *;
 @use "../../styles/partials/variables" as *;
+
+.register-page {
+  &__title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  &__form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+
+  &__form-group {
+    padding-bottom: 1rem;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: $secondary-color;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid $primary-background-color;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+  }
+  &__btn {
+    margin: 0 auto;
+  }
+
+  &__required {
+    color: $color-error;
+  }
+}
