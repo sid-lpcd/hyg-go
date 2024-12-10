@@ -37,6 +37,13 @@ const RegisterPage = () => {
         console.log(error);
       }
     }
+    setError({ name: false, email: false });
+    setSuccessMessage("");
+    setFormData({
+      name: "",
+      email: "",
+      country: "",
+    });
   };
 
   return (
