@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./RegisterPage.scss";
-import Error from "../../../assets/icons/error-icon.svg?react";
+import Error from "../../assets/icons/error-icon.svg?react";
 import Header from "../../components/sections/Header/Header";
 import { registerEarlyUser } from "../../utils/apiHelper";
 
