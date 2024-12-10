@@ -35,7 +35,7 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
   };
 
   const handleDecrease = () => {
-    if (gratuityPercentage < 0) {
+    if (gratuityPercentage <= 0) {
       setGratuityPercentage(0);
       setBasketState({
         ...basketState,
