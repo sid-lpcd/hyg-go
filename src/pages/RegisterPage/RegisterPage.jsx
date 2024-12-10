@@ -13,6 +13,7 @@ const RegisterPage = () => {
     name: false,
     email: false,
   });
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +31,7 @@ const RegisterPage = () => {
     if (formData.name && formData.email) {
       try {
         const response = await registerEarlyUser(formData);
-        console.log(response);
+        setSuccessMessage("User registered successfully");
       } catch (error) {
         console.log(error);
       }
@@ -42,52 +43,56 @@ const RegisterPage = () => {
       <Header />
       <main className="register-page">
         <h1 className="register-page__title">Register</h1>
-        <form className="register-page__form" onSubmit={handleSubmit}>
-          <div className="register-page__form-group">
-            <label htmlFor="name" className="register-page__label">
-              Name <span className="register-page__required">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="register-page__input"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="register-page__form-group">
-            <label htmlFor="email" className="register-page__label">
-              Email <span className="register-page__required">*</span>
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="register-page__input"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="register-page__form-group">
-            <label htmlFor="country" className="register-page__label">
-              Country
-            </label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              className="register-page__input"
-              value={formData.country}
-              onChange={handleInputChange}
-            />
-          </div>
-          <button type="submit" className="register-page__btn">
-            Register
-          </button>
-        </form>
+        {successMessage ? (
+          <p className="register-page__success">{successMessage}</p>
+        ) : (
+          <form className="register-page__form" onSubmit={handleSubmit}>
+            <div className="register-page__form-group">
+              <label htmlFor="name" className="register-page__label">
+                Name <span className="register-page__required">*</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="register-page__input"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="register-page__form-group">
+              <label htmlFor="email" className="register-page__label">
+                Email <span className="register-page__required">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className="register-page__input"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="register-page__form-group">
+              <label htmlFor="country" className="register-page__label">
+                Country
+              </label>
+              <input
+                type="text"
+                id="country"
+                name="country"
+                className="register-page__input"
+                value={formData.country}
+                onChange={handleInputChange}
+              />
+            </div>
+            <button type="submit" className="register-page__btn">
+              Register
+            </button>
+          </form>
+        )}
       </main>
     </>
   );
