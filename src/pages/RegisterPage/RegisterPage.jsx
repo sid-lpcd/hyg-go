@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./RegisterPage.scss";
+import Error from "../../../assets/icons/error-icon.svg?react";
 import Header from "../../components/sections/Header/Header";
 import { registerEarlyUser } from "../../utils/apiHelper";
 
@@ -60,6 +61,11 @@ const RegisterPage = () => {
                 onChange={handleInputChange}
                 required
               />
+              {error.name && (
+                <p className="register-page__error">
+                  <Error /> This is a required field
+                </p>
+              )}
             </div>
             <div className="register-page__form-group">
               <label htmlFor="email" className="register-page__label">
@@ -74,6 +80,11 @@ const RegisterPage = () => {
                 onChange={handleInputChange}
                 required
               />
+              {error.email && (
+                <p className="register-page__error">
+                  <Error /> This is a required field
+                </p>
+              )}
             </div>
             <div className="register-page__form-group">
               <label htmlFor="country" className="register-page__label">
