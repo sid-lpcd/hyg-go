@@ -12,3 +12,15 @@
     height: 77vh;
   }
 }
+
+@supports (height: 100dvh) {
+  .map {
+    &-section {
+      height: 77dvh;
+    }
+
+    &__container {
+      height: 77dvh;
+    }
+  }
+}

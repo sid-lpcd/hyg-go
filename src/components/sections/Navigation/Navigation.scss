@@ -55,3 +55,9 @@
     @include flex(center);
   }
 }
+
+@supports (height: 100dvh) {
+  .bottom-navigation {
+    height: 10dvh;
+  }
+}

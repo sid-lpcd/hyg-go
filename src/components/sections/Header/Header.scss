@@ -23,3 +23,9 @@
     }
   }
 }
+
+@supports (height: 100dvh) {
+  .header {
+    height: 8dvh;
+  }
+}

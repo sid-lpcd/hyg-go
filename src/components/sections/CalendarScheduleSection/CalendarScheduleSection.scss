@@ -78,3 +78,9 @@
     width: 100% !important;
   }
 }
+
+@supports (height: 100dvh) {
+  .fc {
+    height: 80dvh;
+  }
+}
