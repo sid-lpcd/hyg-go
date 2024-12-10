@@ -80,7 +80,6 @@ export const getAllAttractionsForLocation = async (
   offset = 0,
   limit = 10
 ) => {
-  console.log("limit", limit);
   const response = await axios.get(
     `${API_BASE_URL}/locations/${locationId}/attractions`,
     {

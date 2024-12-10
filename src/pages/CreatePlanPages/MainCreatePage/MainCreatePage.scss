@@ -3,7 +3,6 @@
 @use "../../../styles/partials/animations";
 
 .main {
-  min-height: 90vh;
   @include flex(space-around);
   flex-direction: column;
   gap: 2rem;

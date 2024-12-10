@@ -230,10 +230,20 @@ const MainCreatePage = () => {
       <ToastContainer />
       <Header
         leftElement={
-          <BackArrowIcon onClick={onOpenModal} className="header__icon" />
+          <BackArrowIcon
+            onClick={() => {
+              tripData.location_id ? onOpenModal() : handleCancel();
+            }}
+            className="header__icon"
+          />
         }
         rightElement={
-          <CloseIcon onClick={onOpenModal} className="header__icon" />
+          <CloseIcon
+            onClick={() => {
+              tripData.location_id ? onOpenModal() : handleCancel();
+            }}
+            className="header__icon"
+          />
         }
       />
       <main className="main">

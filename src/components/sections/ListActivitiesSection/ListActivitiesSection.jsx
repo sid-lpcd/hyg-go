@@ -48,7 +48,6 @@ const ListActivitiesSection = ({
     );
 
     websocket.onopen = () => {
-      console.log("WebSocket connected");
       setWs(websocket);
       if (locationId) {
         getAllActivities(websocket);
@@ -71,7 +70,6 @@ const ListActivitiesSection = ({
         setError(false);
         setWs(null);
       } else if (response.statusCode === 202) {
-        console.log("Closing WebSocket due to 202 response.");
         setLoadingMore(false);
         setError(false);
         websocket.close();
@@ -93,9 +91,7 @@ const ListActivitiesSection = ({
       }
     };
 
-    websocket.onclose = () => {
-      console.log("WebSocket closed");
-    };
+    websocket.onclose = () => {};
 
     websocket.onerror = (err) => {
       console.error("WebSocket error: ", err);

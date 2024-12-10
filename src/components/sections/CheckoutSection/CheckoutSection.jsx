@@ -56,7 +56,6 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
         basketState.plan_id,
         basketState
       );
-      console.log(response);
       navigate(`/create-plan/${basketState?.plan_id}/plan`);
     } catch (error) {
       console.error(error);
