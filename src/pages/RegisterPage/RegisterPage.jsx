@@ -66,7 +66,6 @@ const RegisterPage = () => {
                 className="register-page__input"
                 value={formData.name}
                 onChange={handleInputChange}
-                required
               />
               {error.name && (
                 <p className="register-page__error">
@@ -85,7 +84,6 @@ const RegisterPage = () => {
                 className="register-page__input"
                 value={formData.email}
                 onChange={handleInputChange}
-                required
               />
               {error.email && (
                 <p className="register-page__error">
