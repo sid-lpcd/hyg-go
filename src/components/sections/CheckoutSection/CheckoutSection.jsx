@@ -57,6 +57,7 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
         basketState
       );
       console.log(response);
+      navigate(`/create-plan/${basketState?.plan_id}/plan`);
     } catch (error) {
       console.error(error);
     }
@@ -112,10 +113,7 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
       </div>
       <button
         className="checkout__btn-pay"
-        onClick={() => {
-          savePlan(basketState);
-          navigate(`/create-plan/${basketState?.plan_id}/plan`);
-        }}
+        onClick={() => savePlan(basketState)}
       >
         Pay
       </button>

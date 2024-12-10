@@ -41,6 +41,12 @@ export const formatDateApi = (dateString) => {
 };
 
 export function combineDateTimeUTC(date, time) {
-  const combinedDateTime = new Date(`${date}T${time}Z`);
-  return combinedDateTime.toISOString(); // Returns in UTC format
+  // Regular Expression to validate the expected date format
+  const validFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+  if (!validFormat.test(date)) {
+    const combinedDateTime = new Date(`${date}T${time}Z`);
+
+    return combinedDateTime.toISOString(); // Returns in UTC format
+  }
+  return date;
 }
