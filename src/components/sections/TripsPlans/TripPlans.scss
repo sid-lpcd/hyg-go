@@ -29,6 +29,16 @@
     font-size: 1.2rem;
   }
 }
+@supports (height: 100dvh) {
+  .planned-trips {
+    &__title {
+      height: 8dvh;
+    }
+    &__list {
+      height: 73dvh;
+    }
+  }
+}
 
 button.planned-trips__add-btn {
   position: absolute;
