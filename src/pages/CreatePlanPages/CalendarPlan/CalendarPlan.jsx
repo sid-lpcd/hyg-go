@@ -39,7 +39,9 @@ const CalendarPlan = () => {
 
   const getPlanActivities = async () => {
     try {
+      console.log(planId);
       const responsePlan = await getPlanById(planId);
+      console.log(responsePlan);
       setPlanInfo(responsePlan);
       const response = await getAIPlan(planId);
       console.log(response);
