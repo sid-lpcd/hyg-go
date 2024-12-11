@@ -12,6 +12,7 @@ const InputText = ({
   setInputValue,
   error,
   setError,
+  currentLocation = false,
 }) => {
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [autocompleteActive, setAutocompleteActive] = useState(false);
@@ -33,11 +34,16 @@ const InputText = ({
   const handleSearch = async () => {
     if (isAutocomplete) {
       const filtered = await getOptions(inputValue.name);
-      setFilteredOptions(filtered);
+      setFilteredOptions(filtered[0]);
       setAutocompleteActive(true);
     }
   };
-  const handleFocus = () => {
+  const handleFocus = async () => {
+    if (currentLocation && inputValue.length < 2) {
+      const filtered = await getOptions();
+      setFilteredOptions(filtered);
+      setAutocompleteActive(true);
+    }
     if (isAutocomplete && filteredOptions && inputValue.length > 2) {
       setAutocompleteActive(true);
     }
@@ -82,17 +88,33 @@ const InputText = ({
             }`}
             ref={dropdownRef}
           >
-            {filteredOptions.map((option) => (
-              <div
-                key={uuidv4()}
-                className="input-text__options"
-                onMouseDown={() => handleOptionClick(option)}
-              >
-                {option.name}
-                {option.region && `, ${option.region}`}
-                {option.country && `, ${option.country}`}
-              </div>
-            ))}
+            {filteredOptions.map((option) => {
+              if (
+                currentLocation &
+                (option.name === "Use my current location")
+              ) {
+                return (
+                  <div
+                    key={uuidv4()}
+                    className="input-text__options input-text__options--location"
+                    onMouseDown={() => handleOptionClick(option)}
+                  >
+                    {option.name}
+                  </div>
+                );
+              }
+              return (
+                <div
+                  key={uuidv4()}
+                  className="input-text__options"
+                  onMouseDown={() => handleOptionClick(option)}
+                >
+                  {option.name}
+                  {option.region && `, ${option.region}`}
+                  {option.country && `, ${option.country}`}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

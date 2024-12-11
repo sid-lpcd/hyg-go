@@ -55,6 +55,14 @@ export const getLocationById = async (id) => {
   return response.data;
 };
 
+export const getLocationByCoordinates = async (lat, lng) => {
+  if (!lat || !lng) return null;
+  const response = await axios.get(
+    `${API_BASE_URL}/locations/coordinates?lat=${lat}&lng=${lng}`
+  );
+  return response.data;
+};
+
 export const updateLocation = async (id, updatedLocation) => {
   const response = await axios.patch(
     `${API_BASE_URL}/locations/${id}`,

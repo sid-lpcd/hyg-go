@@ -111,6 +111,13 @@
     width: 100%;
     padding: calc($min-padding / 2);
 
+    &--location {
+      padding-top: 0.5rem;
+      color: $nav-color;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
     &:hover {
       background-color: #debae3;
     }

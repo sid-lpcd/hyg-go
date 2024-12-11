@@ -18,6 +18,7 @@ import InspirationSection from "../../../components/sections/InspirationSection/
 import {
   addPlan,
   getAllLocations,
+  getLocationByCoordinates,
   getLocationById,
   updatePlan,
 } from "../../../utils/apiHelper";
@@ -80,19 +81,42 @@ const MainCreatePage = () => {
     setOpenTripModal(false);
   };
 
-  const handleSelectLocation = (location) => {
+  const handleSelectLocation = async (location) => {
     if (typeof location === "string") {
       setLocation(location);
     } else if (location.error) {
       setLocation(location.error);
     } else {
-      setLocation(
-        `${location.name}${location.region ? `, ${location.region}` : ""} ${
-          location.country ? `, ${location.country}` : ""
-        }`
-      );
+      if (location.name === "Use my current location") {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          try {
+            const response = await getLocationByCoordinates(
+              latitude,
+              longitude
+            );
+            if (!response) {
+              setLocation(location.error);
+              return;
+            }
+            setLocation(
+              `${response.name}${
+                response.region ? `, ${response.region}` : ""
+              } ${response.country ? `, ${response.country}` : ""}`
+            );
+          } catch (error) {
+            console.error(error);
+          }
+        });
+      } else {
+        setLocation(
+          `${location.name}${location.region ? `, ${location.region}` : ""} ${
+            location.country ? `, ${location.country}` : ""
+          }`
+        );
+        setTripData({ ...tripData, location_id: location.location_id });
+      }
     }
-    setTripData({ ...tripData, location_id: location.location_id });
   };
 
   const handleChangeForm = (e) => {
@@ -159,7 +183,10 @@ const MainCreatePage = () => {
 
   const getLocations = async (name) => {
     try {
+      if (!name)
+        return [{ location_id: null, name: "Use my current location" }];
       const response = await getAllLocations(name);
+      response.unshift({ location_id: null, name: "Use my current location" });
       return response;
     } catch (error) {
       return { error: "No locations found" };
@@ -260,6 +287,7 @@ const MainCreatePage = () => {
             placeholder="Where are you going?"
             error={errorData.location_id}
             setError={() => setErrorData({ ...errorData, location_id: false })}
+            currentLocation={true}
           />
           <article
             className="dates-container"
