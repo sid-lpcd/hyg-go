@@ -29,7 +29,6 @@ const CalendarPlan = () => {
         planInfo.plan_id,
         activities
       );
-      console.log(response);
     } catch (error) {
       console.error(error);
     }
@@ -42,7 +41,6 @@ const CalendarPlan = () => {
       const responsePlan = await getPlanById(planId);
       setPlanInfo(responsePlan);
       const response = await getAIPlan(planId);
-      console.log(response);
       setActivities(response);
     } catch (error) {
       console.error(error);
