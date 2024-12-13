@@ -1,8 +1,11 @@
 import { useState } from "react";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import "./LoginSection.scss";
+import { loginUser } from "../../../utils/apiHelper";
+import { useNavigate } from "react-router-dom";
 
 const LoginSection = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
@@ -37,7 +40,11 @@ const LoginSection = () => {
 
       const data = await response.json();
       localStorage.setItem("token", data.token); // Store JWT in localStorage
-      alert("Login successful!");
+      navigate(
+        "/",
+        { state: { username: response.user.username, showToast: true } },
+        { replace: true }
+      );
     } catch (err) {
       setError(err.message);
     }
