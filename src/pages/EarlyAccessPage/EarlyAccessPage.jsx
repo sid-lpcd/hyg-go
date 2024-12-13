@@ -1,10 +1,10 @@
 import { useState } from "react";
-import "./RegisterPage.scss";
+import "./EarlyAccessPage.scss";
 import Error from "../../assets/icons/error-icon.svg?react";
 import Header from "../../components/sections/Header/Header";
 import { registerEarlyUser } from "../../utils/apiHelper";
 
-const RegisterPage = () => {
+const EarlyAccessPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,7 +38,6 @@ const RegisterPage = () => {
       }
     }
     setError({ name: false, email: false });
-    setSuccessMessage("");
     setFormData({
       name: "",
       email: "",
@@ -114,4 +113,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default EarlyAccessPage;
