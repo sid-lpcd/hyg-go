@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useAuth } from "../../hooks/AuthContext";
 import Header from "../../components/sections/Header/Header";
 import LoginSection from "../../components/sections/LoginSection/LoginSection";
 import RegisterSection from "../../components/sections/RegisterSection/RegisterSection";
-import { useAuth } from "../../context/AuthContext";
+import ProfileSection from "../../components/sections/ProfileSection/ProfileSection";
 import "./UserPage.scss";
 
 const UserPage = () => {

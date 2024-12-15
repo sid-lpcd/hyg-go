@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
-import { getToken, setToken, removeToken } from "../utils/localStorageHelper";
-import { loginUser, registerUser } from "../utils/apiHelper";
+import { getToken, setToken, deleteToken } from "../utils/localStorageHelper";
+import { loginUser, registerUser, updateUser } from "../utils/apiHelper";
 
 const AuthContext = createContext();
 
@@ -14,13 +14,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (formData) => {
     try {
       const response = await loginUser(formData);
-      if (response.ok) {
-        const data = await response.json();
-        setToken(data.token);
+      if (response.status === 200) {
+        console.log(response);
+        setToken(response.data.token);
         setAuthState({
           isLoggedIn: true,
-          user: data.user,
-          token: data.token,
+          user: response.data.user,
+          token: response.data.token,
         });
         return { success: true };
       }
@@ -47,8 +47,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const update = async (formData) => {
+    try {
+      const response = await updateUser({
+        user_id: authState.user.user_id,
+        ...formData,
+      });
+      if (response.status === 200) {
+        setToken(token);
+        setAuthState({
+          isLoggedIn: true,
+          user: response.data.user,
+          token: token,
+        });
+        return { success: true };
+      }
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
   const logout = () => {
-    removeToken();
+    deleteToken();
     setAuthState({
       isLoggedIn: false,
       user: null,
@@ -57,7 +77,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ authState, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ authState, login, register, logout, update }}
+    >
       {children}
     </AuthContext.Provider>
   );

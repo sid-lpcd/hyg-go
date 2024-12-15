@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../hooks/AuthContext";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import "./LoginSection.scss";
 

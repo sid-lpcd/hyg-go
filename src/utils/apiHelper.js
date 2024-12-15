@@ -225,3 +225,28 @@ export const registerUser = async (user) => {
     throw Error(error.response.data.error);
   }
 };
+
+export const updateUser = async (user) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/users/${user.user_id}`,
+      user
+    );
+    return response;
+  } catch (error) {
+    throw Error(error.response.data.error);
+  }
+};
+
+export const getUserProfile = async (authToken) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/users/profile`, {
+      headers: {
+        authorisation: `Bearer ${authToken}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw Error(error.response.data.error);
+  }
+};

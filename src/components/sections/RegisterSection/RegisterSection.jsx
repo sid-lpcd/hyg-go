@@ -1,9 +1,7 @@
 import { useState } from "react";
-import "./RegisterSection.scss";
-import Error from "../../../assets/icons/error-icon.svg?react";
-import { registerUser } from "../../../utils/apiHelper";
-import { setToken } from "../../../utils/localStorageHelper";
 import { useAuth } from "../../../hooks/AuthContext";
+import Error from "../../../assets/icons/error-icon.svg?react";
+import "./RegisterSection.scss";
 
 const RegisterSection = () => {
   const { register } = useAuth();

@@ -19,5 +19,5 @@ export function deleteToken() {
 }
 
 export function getToken() {
-  return JSON.parse(localStorage.getItem("authToken")) || [];
+  return JSON.parse(localStorage.getItem("authToken")) || null;
 }
