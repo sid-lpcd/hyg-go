@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./RegisterSection.scss";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import { registerUser } from "../../../utils/apiHelper";
+import { setToken } from "../../../utils/localStorageHelper";
 
 const RegisterSection = () => {
   const [formData, setFormData] = useState({
@@ -56,8 +57,14 @@ const RegisterSection = () => {
 
     try {
       const response = await registerUser(formData);
-      console.log(response);
       if (response.status === 201) {
+        const token = response.data.token;
+        if (token) {
+          setToken(token);
+          navigate("/");
+        } else {
+          throw new Error("Token not provided in response.");
+        }
         setError({
           first_name: false,
           last_name: false,

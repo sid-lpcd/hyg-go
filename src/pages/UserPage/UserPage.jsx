@@ -3,13 +3,14 @@ import Header from "../../components/sections/Header/Header";
 import LoginSection from "../../components/sections/LoginSection/LoginSection";
 import RegisterSection from "../../components/sections/RegisterSection/RegisterSection";
 import "./UserPage.scss";
+import { getToken } from "../../utils/localStorageHelper";
 
 const UserPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("jwt");
+    const token = getToken();
     setIsLoggedIn(!!token);
   }, []);
 
