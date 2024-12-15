@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useAuth } from "../../../hooks/AuthContext";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import "./LoginSection.scss";
+import { useNavigate } from "react-router-dom";
 
 const LoginSection = () => {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
@@ -31,7 +33,11 @@ const LoginSection = () => {
     }
 
     const result = await login(formData);
-    if (!result.success) setError(result.error || "Login failed.");
+    if (!result.success) {
+      setError(result.error || "Login failed.");
+    } else {
+      navigate(`/`);
+    }
   };
 
   return (

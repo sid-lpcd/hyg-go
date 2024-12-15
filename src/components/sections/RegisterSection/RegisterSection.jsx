@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useAuth } from "../../../hooks/AuthContext";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import "./RegisterSection.scss";
+import { useNavigate } from "react-router-dom";
 
 const RegisterSection = () => {
+  const navigate = useNavigate();
   const { register } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -77,6 +79,7 @@ const RegisterSection = () => {
       password: "",
       re_password: "",
     });
+    navigate(`/`);
   };
 
   return (

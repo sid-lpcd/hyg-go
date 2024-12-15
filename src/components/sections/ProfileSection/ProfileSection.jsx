@@ -41,7 +41,6 @@ const ProfileSection = () => {
 
   const getUserInfo = async () => {
     const response = await getUserProfile(authState.token);
-    console.log(response);
     setUserData(response.data);
     setEditData(response.data);
   };
@@ -110,14 +109,19 @@ const ProfileSection = () => {
 
         <p className="profile__email">
           {isEditing ? (
-            <input
-              type="email"
-              name="email"
-              value={editData.email}
-              onChange={handleEditChange}
-              className="profile__input profile__input--email"
-              placeholder="Email"
-            />
+            <div className="profile__input-group">
+              <label htmlFor="email" className="profile__input-label">
+                Email <span className="profile__input-required">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={editData.email}
+                onChange={handleEditChange}
+                className="profile__input profile__input--email"
+                placeholder="Email"
+              />
+            </div>
           ) : (
             userData.email
           )}

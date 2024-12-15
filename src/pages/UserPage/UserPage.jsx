@@ -18,6 +18,9 @@ const UserPage = () => {
           <ProfileSection />
         ) : (
           <div className="user-page__auth-container">
+            <h1 className="user-page__title">
+              {showLogin ? "Welcome Back!" : "Create Your Account"}
+            </h1>
             <div className="user-page__toggle">
               <button
                 className={`user-page__toggle-btn ${
