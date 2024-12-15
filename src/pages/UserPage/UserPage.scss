@@ -1,2 +1,27 @@
 @use "../../styles/partials/mixins" as *;
 @use "../../styles/partials/variables" as *;
+
+.user-page {
+  &__auth-container {
+    @include flex(center);
+    flex-direction: column;
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  &__toggle {
+    width: 100%;
+    @include flex(center);
+  }
+}
+
+button.user-page__toggle-btn {
+  opacity: 0.7;
+  &--active {
+    opacity: 1;
+    background-color: $secondary-background-color;
+    color: $secondary-color;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}

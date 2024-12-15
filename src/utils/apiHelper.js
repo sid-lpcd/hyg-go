@@ -213,6 +213,15 @@ export const loginUser = async (user) => {
     const response = await axios.post(`${API_BASE_URL}/users/login`, user);
     return response;
   } catch (error) {
-    throw Error(error.response.data.message);
+    throw Error(error.response.data.error);
+  }
+};
+
+export const registerUser = async (user) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/users/register`, user);
+    return response;
+  } catch (error) {
+    throw Error(error.response.data.error);
   }
 };

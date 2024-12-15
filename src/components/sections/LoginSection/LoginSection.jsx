@@ -51,9 +51,7 @@ const LoginSection = () => {
   };
 
   return (
-    <div className="login-page">
-      <h1 className="login-page__title">Login</h1>
-
+    <>
       <form className="login-page__form" onSubmit={handleSubmit}>
         <div className="login-page__form-group">
           <label htmlFor="usernameOrEmail" className="login-page__label">
@@ -91,7 +89,7 @@ const LoginSection = () => {
           Login
         </button>
       </form>
-    </div>
+    </>
   );
 };
 
