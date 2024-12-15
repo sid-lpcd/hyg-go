@@ -2,23 +2,18 @@ import { useEffect, useState } from "react";
 import Header from "../../components/sections/Header/Header";
 import LoginSection from "../../components/sections/LoginSection/LoginSection";
 import RegisterSection from "../../components/sections/RegisterSection/RegisterSection";
+import { useAuth } from "../../context/AuthContext";
 import "./UserPage.scss";
-import { getToken } from "../../utils/localStorageHelper";
 
 const UserPage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { authState } = useAuth();
   const [showLogin, setShowLogin] = useState(true);
-
-  useEffect(() => {
-    const token = getToken();
-    setIsLoggedIn(!!token);
-  }, []);
 
   return (
     <>
       <Header />
       <main>
-        {isLoggedIn ? (
+        {authState.isLoggedIn ? (
           <ProfileSection />
         ) : (
           <div className="user-page__auth-container">

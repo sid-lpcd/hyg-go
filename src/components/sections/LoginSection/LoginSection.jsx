@@ -1,11 +1,10 @@
 import { useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import "./LoginSection.scss";
-import { loginUser } from "../../../utils/apiHelper";
-import { useNavigate } from "react-router-dom";
 
 const LoginSection = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
@@ -31,23 +30,8 @@ const LoginSection = () => {
       return;
     }
 
-    try {
-      const response = await loginUser(formData);
-
-      if (!response.ok) {
-        throw new Error("Invalid username/email or password.");
-      }
-
-      const data = await response.json();
-      localStorage.setItem("token", data.token); // Store JWT in localStorage
-      navigate(
-        "/",
-        { state: { username: response.user.username, showToast: true } },
-        { replace: true }
-      );
-    } catch (err) {
-      setError(err.message);
-    }
+    const result = await login(formData);
+    if (!result.success) setError(result.error || "Login failed.");
   };
 
   return (

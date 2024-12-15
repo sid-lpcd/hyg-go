@@ -3,8 +3,11 @@ import "./RegisterSection.scss";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import { registerUser } from "../../../utils/apiHelper";
 import { setToken } from "../../../utils/localStorageHelper";
+import { useAuth } from "../../../hooks/AuthContext";
 
 const RegisterSection = () => {
+  const { register } = useAuth();
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -55,42 +58,27 @@ const RegisterSection = () => {
 
     if (hasErrors) return;
 
-    try {
-      const response = await registerUser(formData);
-      if (response.status === 201) {
-        const token = response.data.token;
-        if (token) {
-          setToken(token);
-          navigate("/");
-        } else {
-          throw new Error("Token not provided in response.");
-        }
-        setError({
-          first_name: false,
-          last_name: false,
-          username: false,
-          email: false,
-          password: false,
-          re_password: false,
-        });
-        setFormData({
-          first_name: "",
-          last_name: "",
-          username: "",
-          email: "",
-          country: "",
-          password: "",
-          re_password: "",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      if (error?.message) {
-        setErrorMessage(error?.message);
-      } else {
-        setErrorMessage("Something went wrong. Please try again.");
-      }
-    }
+    const result = await register(formData);
+    if (!result.success)
+      return setErrorMessage(result.error || "Registration failed.");
+
+    setError({
+      first_name: false,
+      last_name: false,
+      username: false,
+      email: false,
+      password: false,
+      re_password: false,
+    });
+    setFormData({
+      first_name: "",
+      last_name: "",
+      username: "",
+      email: "",
+      country: "",
+      password: "",
+      re_password: "",
+    });
   };
 
   return (
