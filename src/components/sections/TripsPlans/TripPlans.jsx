@@ -3,9 +3,11 @@ import { InfinitySpin } from "react-loader-spinner";
 import TripCard from "../../base/TripCard/TripCard";
 import "./TripPlans.scss";
 import { useNavigate } from "react-router-dom";
-import { getAllPlans } from "../../../utils/apiHelper";
+import { getAllPlans, getAllPlansForUser } from "../../../utils/apiHelper";
+import { useAuth } from "../../../context/AuthContext";
 
 function TripPlans() {
+  const { authState } = useAuth();
   const navigate = useNavigate();
 
   const [trips, setTrips] = useState(null);
@@ -24,7 +26,7 @@ function TripPlans() {
 
   const fetchTrips = async () => {
     try {
-      const response = await getAllPlans();
+      const response = await getAllPlansForUser();
       filterTrips(response);
       setTrips(response);
       setLoading(false);
@@ -34,8 +36,9 @@ function TripPlans() {
   };
 
   useEffect(() => {
+    if (!authState.isLoggedIn) return;
     fetchTrips();
-  }, []);
+  }, [authState]);
 
   const handleScroll = () => {
     if (addDivRef.current) {

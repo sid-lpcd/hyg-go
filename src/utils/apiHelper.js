@@ -1,42 +1,78 @@
 import axios from "axios";
 import { formatDateApi } from "./dateFormat";
+import { useAuth } from "../context/AuthContext";
+import { getToken } from "./localStorageHelper";
 
 const API_BASE_URL =
   import.meta.env.VITE_ENV_TYPE === "DEV"
     ? import.meta.env.VITE_HYGGO_API_URL
     : import.meta.env.VITE_HYGGO_API_URL_PRODUCTION;
 
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+// Add an interceptor to include the authorization header
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    const authToken = !(
+      new Date().getTime() >= new Date(token?.expiresAt).getTime()
+    )
+      ? token?.token
+      : null;
+    if (authToken) {
+      config.headers.authorisation = `Bearer ${authToken}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export const getAllAttractions = async () => {
-  const response = await axios.get(`${API_BASE_URL}/attractions`);
+  const response = await apiClient.get(`${API_BASE_URL}/attractions`);
   return response.data;
 };
 
 export const addAttraction = async (attraction) => {
-  const response = await axios.post(`${API_BASE_URL}/attractions`, attraction);
+  const response = await apiClient.post(
+    `${API_BASE_URL}/attractions`,
+    attraction,
+    {
+      headers: {
+        ...(auth.token && { authorisation: `Bearer ${auth.token}` }),
+      },
+    }
+  );
   return response.data;
 };
 
 export const getAttractionById = async (id) => {
-  const response = await axios.get(`${API_BASE_URL}/attractions/${id}`);
+  const response = await apiClient.get(`${API_BASE_URL}/attractions/${id}`);
   return response.data;
 };
 
 export const updateAttraction = async (id, updatedAttraction) => {
-  const response = await axios.patch(
+  const response = await apiClient.patch(
     `${API_BASE_URL}/attractions/${id}`,
-    updatedAttraction
+    updatedAttraction,
+    {
+      headers: {
+        ...(auth.token && { authorisation: `Bearer ${auth.token}` }),
+      },
+    }
   );
   return response.data;
 };
 
 export const deleteAttraction = async (id) => {
-  const response = await axios.delete(`${API_BASE_URL}/attractions/${id}`);
+  const response = await apiClient.delete(`${API_BASE_URL}/attractions/${id}`);
   return response.data;
 };
 
 export const getAllLocations = async (searchQuery = "") => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/locations`, {
+    const response = await apiClient.get(`${API_BASE_URL}/locations`, {
       params: { search: searchQuery },
     });
     return response.data;
@@ -46,38 +82,48 @@ export const getAllLocations = async (searchQuery = "") => {
 };
 
 export const addLocation = async (location) => {
-  const response = await axios.post(`${API_BASE_URL}/locations`, location);
+  const response = await apiClient.post(`${API_BASE_URL}/locations`, location);
   return response.data;
 };
 
 export const getLocationById = async (id) => {
-  const response = await axios.get(`${API_BASE_URL}/locations/${id}`);
+  const response = await apiClient.get(`${API_BASE_URL}/locations/${id}`);
   return response.data;
 };
 
 export const getLocationByCoordinates = async (lat, lng) => {
   if (!lat || !lng) return null;
-  const response = await axios.get(
-    `${API_BASE_URL}/locations/coordinates?lat=${lat}&lng=${lng}`
+  const response = await apiClient.get(
+    `${API_BASE_URL}/locations/coordinates?lat=${lat}&lng=${lng}`,
+    {
+      headers: {
+        ...(auth.token && { authorisation: `Bearer ${auth.token}` }),
+      },
+    }
   );
   return response.data;
 };
 
 export const updateLocation = async (id, updatedLocation) => {
-  const response = await axios.patch(
+  const response = await apiClient.patch(
     `${API_BASE_URL}/locations/${id}`,
-    updatedLocation
+    updatedLocation,
+    {
+      headers: {
+        ...(auth.token && { authorisation: `Bearer ${auth.token}` }),
+      },
+    }
   );
   return response.data;
 };
 
 export const deleteLocation = async (id) => {
-  const response = await axios.delete(`${API_BASE_URL}/locations/${id}`);
+  const response = await apiClient.delete(`${API_BASE_URL}/locations/${id}`);
   return response.data;
 };
 
 export const getAllCategoriesForLocation = async (locationId) => {
-  const response = await axios.get(
+  const response = await apiClient.get(
     `${API_BASE_URL}/locations/${locationId}/categories`
   );
   return response.data;
@@ -88,7 +134,7 @@ export const getAllAttractionsForLocation = async (
   offset = 0,
   limit = 10
 ) => {
-  const response = await axios.get(
+  const response = await apiClient.get(
     `${API_BASE_URL}/locations/${locationId}/attractions`,
     {
       params: {
@@ -101,7 +147,7 @@ export const getAllAttractionsForLocation = async (
 };
 
 export const getAllAttractionsForBounds = async (locationId, bounds) => {
-  const response = await axios.post(
+  const response = await apiClient.post(
     `${API_BASE_URL}/locations/${locationId}/attractions/bounds`,
     {
       bounds: bounds,
@@ -111,14 +157,16 @@ export const getAllAttractionsForBounds = async (locationId, bounds) => {
 };
 
 export const getAllPlansForLocation = async (locationId) => {
-  const response = await axios.get(
+  const response = await apiClient.get(
     `${API_BASE_URL}/locations/${locationId}/plans`
   );
   return response.data;
 };
 
 export const getAIPlan = async (planId) => {
-  const response = await axios.get(`${API_BASE_URL}/plans/${planId}/AI-plan`);
+  const response = await apiClient.get(
+    `${API_BASE_URL}/plans/${planId}/AI-plan`
+  );
   return response.data;
 };
 
@@ -126,15 +174,28 @@ export const getAllAttractionsForCategoryForLocation = async (
   locationId,
   category
 ) => {
-  const response = await axios.get(
+  const response = await apiClient.get(
     `${API_BASE_URL}/locations/${locationId}/categories/${category}/attractions`
   );
   return response.data;
 };
 
 export const getAllPlans = async () => {
-  const response = await axios.get(`${API_BASE_URL}/plans`);
-  return response.data;
+  try {
+    const response = await apiClient.get(`${API_BASE_URL}/plans`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAllPlansForUser = async () => {
+  try {
+    const response = await apiClient.get(`${API_BASE_URL}/plans/user`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const addPlan = async (plan) => {
@@ -143,17 +204,17 @@ export const addPlan = async (plan) => {
     start_date: formatDateApi(plan.start_date),
     end_date: formatDateApi(plan.end_date),
   };
-  const response = await axios.post(`${API_BASE_URL}/plans`, newPlan);
+  const response = await apiClient.post(`${API_BASE_URL}/plans`, newPlan);
   return response.data;
 };
 
 export const getPlanById = async (id) => {
-  const response = await axios.get(`${API_BASE_URL}/plans/${id}`);
+  const response = await apiClient.get(`${API_BASE_URL}/plans/${id}`);
   return response.data;
 };
 
 export const updatePlan = async (id, updatedPlan) => {
-  const response = await axios.patch(`${API_BASE_URL}/plans/${id}`, {
+  const response = await apiClient.patch(`${API_BASE_URL}/plans/${id}`, {
     ...updatedPlan,
     start_date: formatDateApi(updatedPlan.start_date),
     end_date: formatDateApi(updatedPlan.end_date),
@@ -162,7 +223,7 @@ export const updatePlan = async (id, updatedPlan) => {
 };
 
 export const updatePlanWithActivities = async (id, basket) => {
-  const response = await axios.patch(
+  const response = await apiClient.patch(
     `${API_BASE_URL}/plans/${id}/activities`,
     basket
   );
@@ -173,7 +234,7 @@ export const updatePlanWithActivitiesCalendar = async (
   id,
   activities_linked
 ) => {
-  const response = await axios.patch(
+  const response = await apiClient.patch(
     `${API_BASE_URL}/plans/${id}/activities-calendar`,
     activities_linked
   );
@@ -181,23 +242,23 @@ export const updatePlanWithActivitiesCalendar = async (
 };
 
 export const deletePlan = async (id) => {
-  const response = await axios.delete(`${API_BASE_URL}/plans/${id}`);
+  const response = await apiClient.delete(`${API_BASE_URL}/plans/${id}`);
   return response.data;
 };
 
 export const getAllPublicPlans = async () => {
-  const response = await axios.get(`${API_BASE_URL}/public`);
+  const response = await apiClient.get(`${API_BASE_URL}/public`);
   return response.data;
 };
 
 export const getPublicPlanById = async (id) => {
-  const response = await axios.get(`${API_BASE_URL}/public/${id}`);
+  const response = await apiClient.get(`${API_BASE_URL}/public/${id}`);
   return response.data;
 };
 
 export const registerEarlyUser = async (user) => {
   try {
-    const response = await axios.post(
+    const response = await apiClient.post(
       `${API_BASE_URL}/users/registerEarly`,
       user
     );
@@ -210,7 +271,7 @@ export const registerEarlyUser = async (user) => {
 
 export const loginUser = async (user) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/users/login`, user);
+    const response = await apiClient.post(`${API_BASE_URL}/users/login`, user);
     return response;
   } catch (error) {
     throw Error(error.response.data.error);
@@ -219,7 +280,19 @@ export const loginUser = async (user) => {
 
 export const registerUser = async (user) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/users/register`, user);
+    const response = await apiClient.post(
+      `${API_BASE_URL}/users/register`,
+      user
+    );
+    return response;
+  } catch (error) {
+    throw Error(error.response.data.error);
+  }
+};
+
+export const refreshTokenUser = async () => {
+  try {
+    const response = await apiClient.get(`${API_BASE_URL}/users/refresh`);
     return response;
   } catch (error) {
     throw Error(error.response.data.error);
@@ -228,7 +301,7 @@ export const registerUser = async (user) => {
 
 export const updateUser = async (user) => {
   try {
-    const response = await axios.patch(
+    const response = await apiClient.patch(
       `${API_BASE_URL}/users/${user.user_id}`,
       user
     );
@@ -240,7 +313,7 @@ export const updateUser = async (user) => {
 
 export const getUserProfile = async (authToken) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/users/profile`, {
+    const response = await apiClient.get(`${API_BASE_URL}/users/profile`, {
       headers: {
         authorisation: `Bearer ${authToken}`,
       },

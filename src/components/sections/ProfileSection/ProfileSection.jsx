@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import ProfileIcon from "../../../assets/icons/full-profile-icon.svg?react";
 import "./ProfileSection.scss";
-import { useAuth } from "../../../hooks/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import { getUserProfile } from "../../../utils/apiHelper";
 
@@ -55,11 +56,15 @@ const ProfileSection = () => {
     <div className="profile">
       <ToastContainer />
       <div className="profile__card">
-        <img
-          src={userData.profilePicture}
-          alt="Profile"
-          className="profile__image"
-        />
+        {userData?.profilePicture ? (
+          <img
+            src={userData.profilePicture}
+            alt="Profile"
+            className="profile__image"
+          />
+        ) : (
+          <ProfileIcon className="profile__image" />
+        )}
         {isEditing && (
           <input
             type="url"

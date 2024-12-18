@@ -1,6 +1,12 @@
 @use "../../styles/partials/mixins" as *;
 @use "../../styles/partials/variables" as *;
 
+.header__profile-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+}
+
 .main-traveller {
   justify-content: start;
   padding-bottom: 0;

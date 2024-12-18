@@ -1,5 +1,6 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ProfileIcon from "../../assets/icons/full-profile-icon.svg?react";
 import Header from "../../components/sections/Header/Header";
 import Navigation from "../../components/sections/Navigation/Navigation";
 import TripPlans from "../../components/sections/TripsPlans/TripPlans";
@@ -8,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 
 export const MainPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(location.pathname.split("/").pop());
 
@@ -24,7 +26,16 @@ export const MainPage = () => {
   return (
     <>
       <ToastContainer />
-      <Header />
+      <Header
+        rightElement={
+          <>
+            <ProfileIcon
+              className="header__profile-icon"
+              onClick={() => navigate("/user")}
+            />
+          </>
+        }
+      />
       <main className="main main-traveller">{!page && <TripPlans />}</main>
 
       <Navigation pageType="travel" />

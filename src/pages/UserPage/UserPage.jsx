@@ -1,18 +1,28 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../context/AuthContext";
+import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import Header from "../../components/sections/Header/Header";
 import LoginSection from "../../components/sections/LoginSection/LoginSection";
 import RegisterSection from "../../components/sections/RegisterSection/RegisterSection";
 import ProfileSection from "../../components/sections/ProfileSection/ProfileSection";
 import "./UserPage.scss";
+import { useNavigate } from "react-router-dom";
 
 const UserPage = () => {
+  const navigate = useNavigate();
   const { authState } = useAuth();
   const [showLogin, setShowLogin] = useState(true);
 
   return (
     <>
-      <Header />
+      <Header
+        leftElement={
+          <BackArrowIcon
+            onClick={() => navigate(-1)}
+            className="header__icon"
+          />
+        }
+      />
       <main>
         {authState.isLoggedIn ? (
           <ProfileSection />

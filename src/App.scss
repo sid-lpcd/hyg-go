@@ -146,3 +146,19 @@ button[class*="btn"] {
     }
   }
 }
+
+/*********** Loading ************/
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  @include flex(center);
+}
+@supports (height: 100dvh) {
+  .loader-overlay {
+    height: 100dvh;
+  }
+}

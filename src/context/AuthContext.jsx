@@ -1,26 +1,42 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { getToken, setToken, deleteToken } from "../utils/localStorageHelper";
-import { loginUser, registerUser, updateUser } from "../utils/apiHelper";
+import {
+  loginUser,
+  refreshTokenUser,
+  registerUser,
+  updateUser,
+} from "../utils/apiHelper";
+import { useNavigate } from "react-router-dom";
+import { InfinitySpin } from "react-loader-spinner";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
+  const isTokenExpired = (expiresAt) => {
+    if (!expiresAt) return true;
+    return new Date() >= new Date(Number(expiresAt));
+  };
+
+  const [loading, setLoading] = useState(true);
+
   const [authState, setAuthState] = useState({
-    isLoggedIn: !!getToken(),
-    user: null, // Can hold user details
-    token: getToken(),
+    isLoggedIn: false,
+    user: null,
+    token: null,
+    expiresAt: null,
   });
 
   const login = async (formData) => {
     try {
       const response = await loginUser(formData);
       if (response.status === 200) {
-        console.log(response);
         setToken(response.data.token);
         setAuthState({
           isLoggedIn: true,
           user: response.data.user,
           token: response.data.token,
+          expiresAt: response.data.expiresAt,
         });
         return { success: true };
       }
@@ -39,6 +55,7 @@ export const AuthProvider = ({ children }) => {
           isLoggedIn: true,
           user: response.data.user,
           token: token,
+          expiresAt: response.data.expiresAt,
         });
         return { success: true };
       }
@@ -54,11 +71,12 @@ export const AuthProvider = ({ children }) => {
         ...formData,
       });
       if (response.status === 200) {
-        setToken(token);
+        setToken(response.data.token, response.data.expiresAt);
         setAuthState({
           isLoggedIn: true,
           user: response.data.user,
-          token: token,
+          token: response.data.token,
+          expiresAt: response.data.expiresAt,
         });
         return { success: true };
       }
@@ -75,6 +93,52 @@ export const AuthProvider = ({ children }) => {
       token: null,
     });
   };
+
+  const refreshToken = async () => {
+    try {
+      const response = await refreshTokenUser();
+      if (response.status === 200) {
+        setToken(response.data.token, response.data.expiresAt);
+        setAuthState({
+          token: response.data.token,
+          expiresAt: response.data.expiresAt,
+          isLoggedIn: true,
+        });
+        setLoading(false);
+      }
+    } catch (err) {
+      logout();
+      navigate("/user");
+    }
+  };
+
+  useEffect(() => {
+    if (authState.token && isTokenExpired(authState.expiresAt)) {
+      logout();
+      navigate("/user");
+    }
+  }, [authState]);
+
+  useEffect(() => {
+    if (getToken()) {
+      refreshToken();
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="loader-overlay">
+        <InfinitySpin
+          visible={true}
+          width="200"
+          color="#ffffff"
+          ariaLabel="infinity-spin-loading"
+        />
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider
