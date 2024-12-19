@@ -3,7 +3,6 @@ import { useAuth } from "./AuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { authState } = useAuth();
-  console.log(authState);
 
   if (!authState.isLoggedIn) {
     return <Navigate to="/user" replace />;

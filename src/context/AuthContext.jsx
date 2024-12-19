@@ -120,7 +120,9 @@ export const AuthProvider = ({ children }) => {
   }, [authState]);
 
   useEffect(() => {
-    if (getToken()) {
+    const token = getToken();
+    console.log(token);
+    if (token) {
       refreshToken();
     } else {
       setLoading(false);

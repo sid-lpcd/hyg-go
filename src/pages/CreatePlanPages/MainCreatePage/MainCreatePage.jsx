@@ -33,7 +33,6 @@ const MainCreatePage = () => {
   const [openDatesModal, setOpenDatesModal] = useState(false);
   const [openPeopleModal, setOpenPeopleModal] = useState(false);
   const [tripData, setTripData] = useState({
-    user_id: 1,
     title: "",
     description: "",
     location_id: null,
@@ -232,14 +231,12 @@ const MainCreatePage = () => {
     setPrevPlan(planInfo);
 
     if (planInfo) {
-      const { start_date, end_date, user_id, location_id, people, plan_id } =
-        planInfo;
+      const { start_date, end_date, location_id, people, plan_id } = planInfo;
       getLocationInfo(planInfo.location_id);
       setTripData({
         ...tripData,
         start_date,
         end_date,
-        user_id,
         location_id,
         people,
         plan_id,

@@ -16,13 +16,8 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const token = getToken();
-    const authToken = !(
-      new Date().getTime() >= new Date(token?.expiresAt).getTime()
-    )
-      ? token?.token
-      : null;
-    if (authToken) {
-      config.headers.authorisation = `Bearer ${authToken}`;
+    if (token) {
+      config.headers.authorisation = `Bearer ${token}`;
     }
     return config;
   },
