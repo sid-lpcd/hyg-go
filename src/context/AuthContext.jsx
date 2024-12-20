@@ -121,7 +121,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = getToken();
-    console.log(token);
     if (token) {
       refreshToken();
     } else {

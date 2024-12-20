@@ -20,10 +20,9 @@ function TripPlans() {
   const filterTrips = (trips) => {
     const filteredTrips = trips.filter(
       (trip) =>
-        new Date(trip.start_date).setHours(0, 0, 0, 0) >=
+        new Date(trip.end_date).setHours(0, 0, 0, 0) >=
         new Date().setHours(0, 0, 0, 0)
     );
-    console.log(filteredTrips);
     setVisibleTrips(filteredTrips);
   };
 
