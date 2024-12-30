@@ -19,6 +19,21 @@
   align-items: $align;
 }
 
+@mixin grid(
+  $columns: 1,
+  $rows: 1,
+  $gap: 1rem,
+  $justify: center,
+  $align: center
+) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  grid-template-rows: repeat($rows, 1fr);
+  gap: $gap;
+  justify-items: $justify;
+  align-items: $align;
+}
+
 @mixin background-center-img($url, $contain: unset) {
   background-image: url($url);
   background-position: center;

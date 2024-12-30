@@ -21,9 +21,42 @@
     }
   }
 
+  &__stats {
+    width: 100%;
+    @include flex(space-around);
+  }
+
+  &__stat {
+    @include flex(center);
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+
+    &-label,
+    &-number {
+      font-weight: bold;
+    }
+  }
+  &__flags {
+    @include flex(space-around);
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  &__flag {
+    height: 1.5rem;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 12px;
+  }
+
+  &__box {
+    @include grid(2, 2, 1rem);
+  }
+
   &__image {
-    width: 9rem;
-    height: 9rem;
+    width: 7rem;
+    height: 7rem;
     border-radius: 50%;
     object-fit: cover;
     object-position: center;
@@ -32,6 +65,10 @@
   &__name {
     font-size: 1.5rem;
   }
+
+  &__stat-number,
+  &__stat-label,
+  &__title,
   &__name,
   &__email,
   &__bio {

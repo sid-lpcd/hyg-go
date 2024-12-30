@@ -13,10 +13,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const isTokenExpired = (expiresAt) => {
-    if (!expiresAt) return true;
-    return new Date() >= new Date(Number(expiresAt));
-  };
 
   const [loading, setLoading] = useState(true);
 
@@ -94,6 +90,10 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const isTokenExpired = (expiresAt) => {
+    if (!expiresAt) return true;
+    return new Date() >= new Date(Number(expiresAt));
+  };
   const refreshToken = async () => {
     try {
       const response = await refreshTokenUser();

@@ -4,6 +4,7 @@ import "./ProfileSection.scss";
 import { useAuth } from "../../../context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import { getUserProfile } from "../../../utils/apiHelper";
+import { getCode } from "country-list";
 
 const ProfileSection = () => {
   const { update, authState } = useAuth();
@@ -13,7 +14,12 @@ const ProfileSection = () => {
     last_name: "",
     username: "",
     email: "",
-    profilePicture: "",
+    bio: "",
+    total_trips: 0,
+    followers: 0,
+    following: 0,
+    countries: [],
+    profile_picture: "",
   });
 
   const [editData, setEditData] = useState(userData);
@@ -42,8 +48,14 @@ const ProfileSection = () => {
 
   const getUserInfo = async () => {
     const response = await getUserProfile(authState.token);
+    console.log(response);
     setUserData(response.data);
     setEditData(response.data);
+  };
+
+  const countryNameToCode = (countryName) => {
+    const code = getCode(countryName);
+    return code || null;
   };
 
   useEffect(() => {
@@ -53,23 +65,60 @@ const ProfileSection = () => {
   }, [authState]);
 
   return (
-    <div className="profile">
+    <section className="profile">
       <ToastContainer />
       <div className="profile__card">
-        {userData?.profilePicture ? (
-          <img
-            src={userData.profilePicture}
-            alt="Profile"
-            className="profile__image"
-          />
-        ) : (
-          <ProfileIcon className="profile__image" />
-        )}
+        <h2 className="profile__title">Profile</h2>
+        <div className="profile__stats">
+          {userData?.profile_picture ? (
+            <img
+              src={userData.profile_picture}
+              alt="Profile"
+              className="profile__image"
+            />
+          ) : (
+            <ProfileIcon className="profile__image" />
+          )}
+          <div className="profile__box">
+            <div className="profile__stat">
+              <span className="profile__stat-number">{userData.followers}</span>
+              <span className="profile__stat-label">Followers</span>
+            </div>
+            <div className="profile__stat">
+              <span className="profile__stat-number">{userData.following}</span>
+              <span className="profile__stat-label">Following</span>
+            </div>
+            <div className="profile__stat">
+              <span className="profile__stat-number">
+                {userData.total_trips}
+              </span>
+              <span className="profile__stat-label">Trips</span>
+            </div>
+            <div className="profile__stat">
+              <span className="profile__stat-number">
+                {userData.countries.length}
+              </span>
+              <span className="profile__stat-label">Countries</span>
+            </div>
+          </div>
+        </div>
+        <div className="profile__flags">
+          {userData.countries.map((country) => (
+            <img
+              key={country}
+              src={`https://catamphetamine.gitlab.io/country-flag-icons/3x2/${countryNameToCode(
+                country
+              )}.svg`}
+              alt={country}
+              className="profile__flag"
+            />
+          ))}
+        </div>
         {isEditing && (
           <input
             type="url"
-            name="profilePicture"
-            value={editData.profilePicture}
+            name="profile_picture"
+            value={editData.profile_picture}
             onChange={handleEditChange}
             className="profile__input profile__input--image"
             placeholder="Profile Picture URL"
@@ -132,6 +181,25 @@ const ProfileSection = () => {
           )}
         </p>
 
+        <div className="profile__bio">
+          {isEditing ? (
+            <div className="profile__input-group">
+              <label htmlFor="bio" className="profile__input-label">
+                Bio
+              </label>
+              <textarea
+                name="bio"
+                value={editData.bio}
+                onChange={handleEditChange}
+                className="profile__input profile__input--bio"
+                placeholder="Tell something about yourself"
+              />
+            </div>
+          ) : (
+            <p>{userData.bio || "No bio available"}</p>
+          )}
+        </div>
+
         {isEditing ? (
           <div className="profile__actions">
             <button
@@ -156,7 +224,7 @@ const ProfileSection = () => {
           </button>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
