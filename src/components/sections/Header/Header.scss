@@ -6,6 +6,10 @@
   padding: $min-padding;
   height: 8vh;
 
+  @include tablet {
+    height: 10vh;
+  }
+
   &__logo {
     width: 100%;
     &-link {
@@ -15,6 +19,7 @@
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
+      top: 0;
       padding: $min-padding;
     }
   }
@@ -31,5 +36,9 @@
 @supports (height: 100dvh) {
   .header {
     height: 8dvh;
+
+    @include tablet {
+      height: 10dvh;
+    }
   }
 }

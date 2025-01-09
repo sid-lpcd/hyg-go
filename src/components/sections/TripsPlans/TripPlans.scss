@@ -8,6 +8,9 @@
   &__title {
     padding: 0 0 1rem;
     height: 8vh;
+    @include tablet {
+      height: 10vh;
+    }
   }
 
   &__list {
@@ -16,8 +19,11 @@
     gap: 1rem;
     height: 73vh;
     width: 100%;
-    overflow: scroll;
+    overflow: hidden;
     padding-bottom: 8vh;
+    @include tablet {
+      height: 75vh;
+    }
   }
 
   &__add {
@@ -29,6 +35,7 @@
     font-size: 1.2rem;
   }
 }
+
 @supports (height: 100dvh) {
   .planned-trips {
     &__title {
@@ -36,6 +43,15 @@
     }
     &__list {
       height: 73dvh;
+    }
+
+    @include tablet {
+      &__title {
+        height: 10dvh;
+      }
+      &__list {
+        height: 75vh;
+      }
     }
   }
 }
