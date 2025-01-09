@@ -102,7 +102,7 @@ const ProfileSection = () => {
             </div>
           </div>
         </div>
-        <div className="profile__flags">
+        <div className="profilec">
           {userData.countries.map((country) => (
             <img
               key={country}

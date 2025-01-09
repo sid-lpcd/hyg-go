@@ -12,6 +12,10 @@
       display: block;
       max-width: 6.25rem;
       margin: 0 auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: $min-padding;
     }
   }
   &__icon {
