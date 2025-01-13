@@ -24,7 +24,7 @@ const Navigation = ({ basketState, pageType = "create" }) => {
 
   if (pageType === "create") {
     return (
-      <nav className="bottom-navigation">
+      <nav className="bottom-navigation bottom-navigation--wrapper">
         <Link
           to={`${baseURL}/activities`}
           className={`${

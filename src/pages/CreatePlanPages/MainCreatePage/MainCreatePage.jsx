@@ -12,7 +12,10 @@ import CalendarIcon from "../../../assets/icons/calendar-icon.svg?react";
 import ProfileIcon from "../../../assets/icons/profile-icon.svg?react";
 import Form from "../../../components/base/Form/Form";
 import "./MainCreatePage.scss";
-import { formatDateDisplay } from "../../../utils/dateFormat";
+import {
+  formatDateDisplay,
+  formatDateDisplayDesktop,
+} from "../../../utils/dateFormat";
 import DatePicker from "../../../components/base/DatePicker/DatePicker";
 import InspirationSection from "../../../components/sections/InspirationSection/InspirationSection";
 import {
@@ -225,6 +228,22 @@ const MainCreatePage = () => {
     }
   };
 
+  function getPeopleSummary({ adult, children, infant }) {
+    const people = [];
+
+    if (adult > 0) {
+      people.push(`${adult} ${adult === 1 ? "Adult" : "Adults"}`);
+    }
+    if (children > 0) {
+      people.push(`${children} ${children === 1 ? "Child" : "Children"}`);
+    }
+    if (infant > 0) {
+      people.push(`${infant} ${infant === 1 ? "Infant" : "Infants"}`);
+    }
+
+    return people.length > 0 ? people.join(", ") : "No people";
+  }
+
   useEffect(() => {
     if (!locationState.state) return;
     let { planInfo } = locationState.state;
@@ -276,61 +295,91 @@ const MainCreatePage = () => {
             <h1 className="plan-container__title">Plan your trip</h1>
             <h2 className="plan-container__subtitle">Where are you going?</h2>
           </div>
-          <InputText
-            isAutocomplete={true}
-            getOptions={getLocations}
-            inputValue={location}
-            setInputValue={handleSelectLocation}
-            placeholder="Where are you going?"
-            error={errorData.location_id}
-            setError={() => setErrorData({ ...errorData, location_id: false })}
-            currentLocation={true}
-          />
-          <article
-            className="dates-container"
-            onClick={() => setOpenDatesModal(true)}
-          >
-            <CalendarIcon className="dates__icon" />
-            <p className="dates__text">
-              {`${formatDateDisplay(tripData.start_date)} - ${formatDateDisplay(
-                tripData.end_date,
-                Date.now() + 24 * 60 * 60 * 1000
-              )}`}
-            </p>
-          </article>
+          <div className="plan-container__inputs">
+            <InputText
+              isAutocomplete={true}
+              getOptions={getLocations}
+              inputValue={location}
+              setInputValue={handleSelectLocation}
+              placeholder="Where are you going?"
+              error={errorData.location_id}
+              setError={() =>
+                setErrorData({ ...errorData, location_id: false })
+              }
+              currentLocation={true}
+            />
+            <article
+              className="dates-container"
+              onClick={() => setOpenDatesModal(true)}
+            >
+              <CalendarIcon className="dates__icon" />
+              <p className="dates__text">
+                {window.innerWidth >= 1024
+                  ? `${formatDateDisplayDesktop(
+                      tripData.start_date
+                    )} - ${formatDateDisplayDesktop(
+                      tripData.end_date,
+                      Date.now() + 24 * 60 * 60 * 1000
+                    )}`
+                  : `${formatDateDisplay(
+                      tripData.start_date
+                    )} - ${formatDateDisplay(
+                      tripData.end_date,
+                      Date.now() + 24 * 60 * 60 * 1000
+                    )}`}
+              </p>
+            </article>
 
-          <article
-            className="people-dropdown"
-            onClick={() => setOpenPeopleModal(true)}
-          >
-            <ProfileIcon className="people-dropdown__icon" />
-            <p className="people-dropdown__summary">
-              {`${tripData.people.adult} Adults, ${tripData.people.children} Children, ${tripData.people.infant} Infants`}
-            </p>
-          </article>
+            <article
+              className="people-dropdown__container"
+              onClick={() => setOpenPeopleModal(true)}
+            >
+              <ProfileIcon className="people-dropdown__icon" />
+              <p className="people-dropdown__summary">
+                {getPeopleSummary(tripData.people)}
+              </p>
+            </article>
+            {!updateVisible && (
+              <button
+                className="plan-container__create-plan-btn"
+                onClick={() => {
+                  setFormData({
+                    title: "",
+                    description: "",
+                    update: false,
+                  });
+                  handleCreatePlan();
+                }}
+              >
+                Create plan
+              </button>
+            )}
+          </div>
 
           {updateVisible && (
-            <button
-              className="plan-container__update-plan-btn"
-              onClick={openUpdate}
-            >
-              Update plan
-            </button>
-          )}
+            <>
+              <button
+                className="plan-container__update-plan-btn"
+                onClick={openUpdate}
+              >
+                Update plan
+              </button>
 
-          <button
-            className="plan-container__create-plan-btn"
-            onClick={() => {
-              setFormData({
-                title: "",
-                description: "",
-                update: false,
-              });
-              handleCreatePlan();
-            }}
-          >
-            Create plan
-          </button>
+              <button
+                className="plan-container__create-plan-btn"
+                onClick={() => {
+                  setFormData({
+                    title: "",
+                    description: "",
+                    update: false,
+                  });
+                  handleCreatePlan();
+                }}
+              >
+                Create plan
+              </button>
+            </>
+          )}
         </section>
 
         <InspirationSection />

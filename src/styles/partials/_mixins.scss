@@ -58,5 +58,24 @@
   @include flex(center);
   @include tablet {
     min-width: 12.5rem;
+    max-width: 15rem;
+  }
+}
+
+@mixin input-styling {
+  background-color: $primary-background-btn-color;
+  color: $primary-btn-color;
+  box-shadow: $primary-background-btn-color 0 15px 30px -5px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  max-width: 100%;
+  min-width: 7rem;
+  min-height: 2.5rem;
+  padding: calc($min-padding/2);
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.2s ease-in-out;
+  @include desktop {
+    min-width: 12.5rem;
   }
 }

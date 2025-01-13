@@ -2,16 +2,14 @@
 @use "../../../styles/partials/mixins" as *;
 
 .input-text {
-  @include btn-styling;
+  @include input-styling;
+  @include flex(start);
   & {
-    justify-content: start;
-    gap: 1rem;
     position: relative;
     width: 100%;
-    max-width: 67.5rem;
+    height: 100%;
     border-radius: 4px;
     gap: calc($min-padding / 4);
-    height: 2.5rem;
     overflow: visible;
   }
   &__container {

@@ -34,7 +34,7 @@ export const PeopleDropdown = ({ tripData, setTripData, onClose }) => {
 
   return (
     <>
-      <article className="people-dropdown__container">
+      <article className="people-dropdown__modal-container">
         <PeopleControl
           label="Adults (+16yrs):"
           count={localPeople?.adult}

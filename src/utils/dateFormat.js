@@ -34,6 +34,14 @@ export const formatDateDisplay = (date, fallback = new Date()) => {
   });
 };
 
+export const formatDateDisplayDesktop = (date, fallback = new Date()) => {
+  const parsedDate = new Date(date || fallback);
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const year = parsedDate.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export const formatDateApi = (dateString) => {
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
   const date = new Date(dateString);

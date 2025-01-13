@@ -24,6 +24,9 @@
     gap: 1rem;
     width: 100%;
     overflow-x: scroll;
+    @include desktop {
+      padding-bottom: 0.5rem;
+    }
   }
 
   &-card {
