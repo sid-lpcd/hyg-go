@@ -30,7 +30,7 @@ export const MainPage = () => {
         rightElement={
           <>
             <ProfileIcon
-              className="header__profile-icon"
+              className="header__icon"
               onClick={() => navigate("/user")}
             />
           </>

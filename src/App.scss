@@ -162,3 +162,14 @@ button[class*="btn"] {
     height: 100dvh;
   }
 }
+
+/*********** Main ************/
+
+.main {
+  @include flex(space-around);
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 67.5rem;
+  padding: 1rem;
+  margin: 0 auto;
+}

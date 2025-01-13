@@ -14,21 +14,42 @@
     width: 100%;
     &-link {
       display: block;
-      max-width: 6.25rem;
-      margin: 0 auto;
       position: absolute;
+      margin: 0 auto;
+      max-width: 6.25rem;
       left: 50%;
       transform: translateX(-50%);
-      top: 0;
       padding: $min-padding;
     }
   }
+
+  &__left,
+  &__right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__left {
+    justify-content: flex-start;
+  }
+
+  &__right {
+    justify-content: flex-end;
+  }
+
   &__icon {
     width: 30px;
     height: 30px;
     & * {
       fill: $primary-color;
       stroke: $primary-color;
+    }
+
+    @include tablet {
+      width: 50px;
+      height: 50px;
     }
   }
 }
