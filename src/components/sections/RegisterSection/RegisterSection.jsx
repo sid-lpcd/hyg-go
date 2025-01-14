@@ -43,7 +43,7 @@ const RegisterSection = () => {
     const newErrorData = { ...error };
 
     Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
+      if (key !== "country" && !formData[key]) {
         newErrorData[key] = true;
         hasErrors = true;
       }

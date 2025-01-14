@@ -7,7 +7,7 @@ import { getUserProfile } from "../../../utils/apiHelper";
 import { getCode } from "country-list";
 
 const ProfileSection = () => {
-  const { update, authState } = useAuth();
+  const { update, logout, authState } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     first_name: "",
@@ -216,12 +216,20 @@ const ProfileSection = () => {
             </button>
           </div>
         ) : (
-          <button
-            className="profile__btn profile__btn--edit"
-            onClick={() => setIsEditing(true)}
-          >
-            Edit Profile
-          </button>
+          <div className="profile__actions">
+            <button
+              className="profile__btn profile__btn--edit"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit Profile
+            </button>
+            <button
+              className="profile__btn profile__btn--logout"
+              onClick={logout}
+            >
+              Log Out
+            </button>
+          </div>
         )}
       </div>
     </section>
