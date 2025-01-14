@@ -94,6 +94,7 @@
   }
 
   &__actions {
+    width: 80%;
     @include flex(space-between);
   }
 
@@ -106,6 +107,12 @@
     &--cancel {
       background-color: $color-background-error;
       color: $color-error;
+    }
+
+    &--logout {
+      background-color: $color-background-error;
+      color: $color-error;
+      border-color: $color-error;
     }
   }
 }
