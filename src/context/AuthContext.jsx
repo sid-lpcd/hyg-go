@@ -27,12 +27,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await loginUser(formData);
       if (response.status === 200) {
-        setToken(response.data.token);
+        console.log("Login response:", response);
+        setToken(response.data.token, response.data.expires_at);
+        console.log(getToken());
         setAuthState({
           isLoggedIn: true,
           user: response.data.user,
           token: response.data.token,
-          expiresAt: response.data.expiresAt,
+          expiresAt: response.data.expires_at,
         });
         return { success: true };
       }
@@ -51,7 +53,7 @@ export const AuthProvider = ({ children }) => {
           isLoggedIn: true,
           user: response.data.user,
           token: token,
-          expiresAt: response.data.expiresAt,
+          expiresAt: response.data.expires_at,
         });
         return { success: true };
       }
@@ -67,12 +69,12 @@ export const AuthProvider = ({ children }) => {
         ...formData,
       });
       if (response.status === 200) {
-        setToken(response.data.token, response.data.expiresAt);
+        setToken(response.data.token, response.data.expires_at);
         setAuthState({
           isLoggedIn: true,
           user: response.data.user,
           token: response.data.token,
-          expiresAt: response.data.expiresAt,
+          expiresAt: response.data.expires_at,
         });
         return { success: true };
       }
@@ -90,18 +92,18 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const isTokenExpired = (expiresAt) => {
-    if (!expiresAt) return true;
-    return new Date() >= new Date(Number(expiresAt));
+  const isTokenExpired = (expires_at) => {
+    if (!expires_at) return true;
+    return new Date() >= new Date(Number(expires_at));
   };
   const refreshToken = async () => {
     try {
       const response = await refreshTokenUser();
       if (response.status === 200) {
-        setToken(response.data.token, response.data.expiresAt);
+        setToken(response.data.token, response.data.expires_at);
         setAuthState({
           token: response.data.token,
-          expiresAt: response.data.expiresAt,
+          expiresAt: response.data.expires_at,
           isLoggedIn: true,
         });
         setLoading(false);

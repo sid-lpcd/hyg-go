@@ -9,21 +9,21 @@ const RegisterSection = () => {
   const { register } = useAuth();
 
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     country: "",
     password: "",
-    re_password: "",
+    rePassword: "",
   });
   const [error, setError] = useState({
-    first_name: false,
-    last_name: false,
+    firstName: false,
+    lastName: false,
     username: false,
     email: false,
     password: false,
-    re_password: false,
+    rePassword: false,
   });
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -31,8 +31,8 @@ const RegisterSection = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setError({ ...error, [name]: false });
-    if (name === "re_password" || name === "password") {
-      setError({ ...error, re_password: false, password: false });
+    if (name === "rePassword" || name === "password") {
+      setError({ ...error, rePassword: false, password: false });
     }
   };
 
@@ -49,8 +49,8 @@ const RegisterSection = () => {
       }
     });
 
-    if (formData.password !== formData.re_password) {
-      newErrorData.re_password = true;
+    if (formData.password !== formData.rePassword) {
+      newErrorData.rePassword = true;
       hasErrors = true;
     }
 
@@ -63,21 +63,21 @@ const RegisterSection = () => {
       return setErrorMessage(result.error || "Registration failed.");
 
     setError({
-      first_name: false,
-      last_name: false,
+      firstName: false,
+      lastName: false,
       username: false,
       email: false,
       password: false,
-      re_password: false,
+      rePassword: false,
     });
     setFormData({
-      first_name: "",
-      last_name: "",
+      firstName: "",
+      lastName: "",
       username: "",
       email: "",
       country: "",
       password: "",
-      re_password: "",
+      rePassword: "",
     });
     navigate(`/`);
   };
@@ -86,34 +86,34 @@ const RegisterSection = () => {
     <>
       <form className="register-page__form" onSubmit={handleSubmit}>
         <div className="register-page__form-group">
-          <label htmlFor="first_name" className="register-page__label">
+          <label htmlFor="firstName" className="register-page__label">
             First Name(s) <span className="register-page__required">*</span>
           </label>
           <input
             type="text"
-            name="first_name"
+            name="firstName"
             className="register-page__input"
-            value={formData.first_name}
+            value={formData.firstName}
             onChange={handleInputChange}
           />
-          {error.first_name && (
+          {error.firstName && (
             <p className="register-page__error">
               <Error /> This is a required field
             </p>
           )}
         </div>
         <div className="register-page__form-group">
-          <label htmlFor="last_name" className="register-page__label">
+          <label htmlFor="lastName" className="register-page__label">
             Last Name(s) <span className="register-page__required">*</span>
           </label>
           <input
             type="text"
-            name="last_name"
+            name="lastName"
             className="register-page__input"
-            value={formData.last_name}
+            value={formData.lastName}
             onChange={handleInputChange}
           />
-          {error.last_name && (
+          {error.lastName && (
             <p className="register-page__error">
               <Error /> This is a required field
             </p>
@@ -183,17 +183,17 @@ const RegisterSection = () => {
           )}
         </div>
         <div className="register-page__form-group">
-          <label htmlFor="re_password" className="register-page__label">
+          <label htmlFor="rePassword" className="register-page__label">
             Confirm Password <span className="register-page__required">*</span>
           </label>
           <input
             type="password"
-            name="re_password"
+            name="rePassword"
             className="register-page__input"
-            value={formData.re_password}
+            value={formData.rePassword}
             onChange={handleInputChange}
           />
-          {error.re_password && (
+          {error.rePassword && (
             <p className="register-page__error">
               <Error /> Passwords do not match
             </p>
