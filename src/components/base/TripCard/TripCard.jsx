@@ -8,7 +8,7 @@ const TripCard = ({ trip }) => {
     <div
       className="trip-card"
       onClick={() => {
-        navigate(`/create-plan/${trip.plan_id}/activities`);
+        navigate(`/create-plan/${trip.planId}/activities`);
       }}
     >
       <div
@@ -30,7 +30,7 @@ const TripCard = ({ trip }) => {
             <PeopleIcon className="trip-card__people-icon" />{" "}
           </span>
           <span className="trip-card__dates">
-            {formatDateTripDisplay(trip.start_date, trip.end_date)}
+            {formatDateTripDisplay(trip.startDate, trip.endDate)}
           </span>
         </div>
       </div>

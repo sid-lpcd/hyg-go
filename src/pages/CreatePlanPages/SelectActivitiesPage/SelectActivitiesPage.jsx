@@ -53,7 +53,7 @@ const SelectActivitiesPage = () => {
     } catch (error) {
       console.error(error);
     }
-    // navigate(`/`);
+    navigate(`/`);
     setOpenTripModal(false);
   };
 

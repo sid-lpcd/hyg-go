@@ -148,12 +148,13 @@ const MainCreatePage = () => {
     try {
       let response = null;
       let planStatus = null;
+      console.log("Trip Data, previous plan and update:", tripData, prevPlan, update);
       if (tripData.locationId === prevPlan?.locationId && update === true) {
         await updatePlan(prevPlan?.planId, {
           ...tripData,
           ...newFormData,
         });
-        response = prevPlan?.planId;
+        response = prevPlan;
         planStatus = "updated";
       } else {
         response = await addPlan({ ...tripData, ...newFormData });

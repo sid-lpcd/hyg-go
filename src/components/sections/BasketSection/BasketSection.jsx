@@ -18,7 +18,7 @@ const BasketSection = ({
     e.preventDefault();
 
     const newBasket = basketState?.activities?.filter(
-      (item) => item.activity_id !== activity.activity_id
+      (item) => item.activityId !== activity.activityId
     );
     setBasketState({ ...basketState, activities: newBasket });
     setSelectedActivityDelete(null);
@@ -44,7 +44,7 @@ const BasketSection = ({
           {basketState?.activities?.map((activity) => {
             return (
               <ActivityCard
-                key={activity.activity_id ? activity.activity_id : uuidv4()}
+                key={activity.activityId ? activity.activityId : uuidv4()}
                 activity={activity}
                 openActivity={() => setSelectedActivity(activity)}
                 basketState={basketState}
