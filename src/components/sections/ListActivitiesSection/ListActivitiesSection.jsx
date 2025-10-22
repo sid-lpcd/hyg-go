@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllAttractionsForLocation } from "../../../utils/apiHelper";
+import { getAllActivitiesForLocation } from "../../../utils/apiHelper";
 import { InfinitySpin } from "react-loader-spinner";
 import { v4 as uuidv4 } from "uuid";
 import Error from "../../../assets/icons/error-icon.svg?react";
@@ -24,9 +24,10 @@ const ListActivitiesSection = ({
 
   const getAllActivities = (websocket) => {
     setLoadingMore(true);
+    console.log("Fetching activities. Activities so far:", activities);
     const limit = activities ? activities.length + 10 : 10;
     const requestData = {
-      action: "getAttractions",
+      action: "getActivities",
       locationId,
       offset: activities?.length || 0,
       limit,
@@ -165,7 +166,7 @@ const ListActivitiesSection = ({
           {activities.map((activity) => {
             return (
               <ActivityCard
-                key={activity.activity_id ? activity.activity_id : uuidv4()}
+                key={activity.activityId ? activity.activityId : uuidv4()}
                 activity={activity}
                 openActivity={() => setSelectedActivity(activity)}
                 basketState={basketState}

@@ -27,11 +27,8 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
       calendarApi.addEvent({
         id: createEventId(),
         title: newActivity.name,
-        start: combineDateTimeUTC(
-          newActivity.start_date,
-          newActivity.start_time
-        ),
-        end: combineDateTimeUTC(newActivity.end_date, newActivity.end_time),
+        start: newActivity.startDate,
+        end: newActivity.endDate,
         allDay: false,
       });
     }
@@ -40,13 +37,9 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
   const multiDayEventFormat = (activity) => {
     const events = [];
 
-    const endDateTime = new Date(
-      combineDateTimeUTC(activity.end_date, activity.end_time)
-    );
+    const endDateTime = new Date(activity.endDate);
 
-    let currentStart = new Date(
-      combineDateTimeUTC(activity.start_date, activity.start_time)
-    );
+    let currentStart = new Date(activity.startDate);
 
     while (currentStart <= endDateTime) {
       const nextDay = new Date(currentStart);
@@ -59,7 +52,7 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
 
       // Push the event for the current day
       events.push({
-        id: activity.activity_id,
+        id: activity.activityId,
         title: activity.name,
         start: currentStart.toISOString(),
         end: currentEnd.toISOString(),
@@ -73,37 +66,26 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
   };
 
   const formatActivities = (activities) => {
-    let currentActivity = activities;
     let displayedActivities = [];
 
-    while (currentActivity) {
-      if (
-        currentActivity.activity.start_date !==
-        currentActivity.activity.end_date
-      ) {
-        displayedActivities.push(
-          ...multiDayEventFormat(currentActivity.activity)
-        );
-        currentActivity = currentActivity.next;
-        continue;
+    console.log("Formatting activities:", activities);
+    activities.forEach((activity) => {
+      if (activity.startDate !== activity.endDate) {
+        displayedActivities.push(...multiDayEventFormat(activity));
+        return;
       }
       let event = {
-        id: currentActivity.activity.activity_id,
-        title: currentActivity.activity.name,
-        start: combineDateTimeUTC(
-          formatDateApi(currentActivity.activity.start_date),
-          currentActivity.activity.start_time
-        ),
-        end: combineDateTimeUTC(
-          formatDateApi(currentActivity.activity.end_date),
-          currentActivity.activity.end_time
-        ),
+        id: activity.activityId,
+        title: activity.name,
+        start: activity.startDate,
+        end: activity.endDate,
         allDay: false,
       };
+
       displayedActivities.push(event);
 
-      currentActivity = currentActivity.next;
-    }
+      console.log("Formatted event:", event);
+    });
     return displayedActivities;
   };
 
@@ -119,9 +101,7 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
   useEffect(() => {
     if (activities) {
       let tempDisplayedActivities = [];
-      activities.forEach((activity) => {
-        tempDisplayedActivities.push(...formatActivities(activity));
-      });
+      tempDisplayedActivities.push(...formatActivities(activities));
       setDisplayedActivities(tempDisplayedActivities);
     }
   }, [activities]);
@@ -147,8 +127,8 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
         events={displayedActivities}
         slotDuration="00:15:00"
         validRange={{
-          start: planInfo.start_date,
-          end: addDays(planInfo.end_date),
+          start: planInfo.startDate,
+          end: addDays(planInfo.endDate),
         }}
         editable={true}
         selectable={true}

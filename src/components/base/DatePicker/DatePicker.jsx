@@ -5,40 +5,40 @@ import "./DatePicker.scss";
 
 const DatePicker = ({ tripData, setTripData, onClose }) => {
   const [localDates, setLocalDates] = useState({
-    start_date: tripData.start_date || null,
-    end_date: tripData.end_date || null,
+    startDate: tripData.startDate || null,
+    endDate: tripData.endDate || null,
   });
 
   useEffect(() => {
     setLocalDates({
-      start_date: tripData.start_date || null,
-      end_date: tripData.end_date || null,
+      startDate: tripData.startDate || null,
+      endDate: tripData.endDate || null,
     });
   }, [tripData]);
 
   const handleDayClick = (day) => {
-    if (localDates.start_date && localDates.end_date) {
+    if (localDates.startDate && localDates.endDate) {
       setLocalDates({
-        start_date: day,
-        end_date: null,
+        startDate: day,
+        endDate: null,
       });
       return;
     }
-    if (!localDates.start_date) {
-      setLocalDates({ ...localDates, start_date: day });
+    if (!localDates.startDate) {
+      setLocalDates({ ...localDates, startDate: day });
       return;
-    } else if (day < localDates.start_date) {
-      setLocalDates({ ...localDates, start_date: day, end_date: null });
+    } else if (day < localDates.startDate) {
+      setLocalDates({ ...localDates, startDate: day, endDate: null });
     } else {
-      setLocalDates({ ...localDates, end_date: day });
+      setLocalDates({ ...localDates, endDate: day });
     }
   };
 
   const handleDone = () => {
     setTripData({
       ...tripData,
-      start_date: localDates.start_date,
-      end_date: localDates.end_date,
+      startDate: localDates.startDate,
+      endDate: localDates.endDate,
     });
     onClose();
   };
@@ -48,14 +48,14 @@ const DatePicker = ({ tripData, setTripData, onClose }) => {
       <div className="datepicker-container">
         <DayPicker
           modifiers={{
-            selected: localDates.start_date
+            selected: localDates.startDate
               ? {
-                  after: localDates.start_date,
-                  before: localDates.end_date,
+                  after: localDates.startDate,
+                  before: localDates.endDate,
                 }
               : undefined,
-            range_start: localDates.start_date,
-            range_end: localDates.end_date,
+            range_start: localDates.startDate,
+            range_end: localDates.endDate,
           }}
           onDayClick={handleDayClick}
           disabled={{

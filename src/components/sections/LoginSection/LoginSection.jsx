@@ -3,7 +3,6 @@ import { useAuth } from "../../../context/AuthContext";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import "./LoginSection.scss";
 import { useNavigate } from "react-router-dom";
-import { getToken } from "../../../utils/localStorageHelper";
 
 const LoginSection = () => {
   const navigate = useNavigate();

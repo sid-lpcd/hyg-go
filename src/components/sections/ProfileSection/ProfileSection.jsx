@@ -10,16 +10,16 @@ const ProfileSection = () => {
   const { update, logout, authState } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     bio: "",
-    total_trips: 0,
+    totalTrips: 0,
     followers: 0,
     following: 0,
-    countries: [],
-    profile_picture: "",
+    country: "",
+    profilePicture: "",
   });
 
   const [editData, setEditData] = useState(userData);
@@ -70,9 +70,9 @@ const ProfileSection = () => {
       <div className="profile__card">
         <h2 className="profile__title">Profile</h2>
         <div className="profile__stats">
-          {userData?.profile_picture ? (
+          {userData?.profilePicture ? (
             <img
-              src={userData.profile_picture}
+              src={userData.profilePicture}
               alt="Profile"
               className="profile__image"
             />
@@ -90,20 +90,21 @@ const ProfileSection = () => {
             </div>
             <div className="profile__stat">
               <span className="profile__stat-number">
-                {userData.total_trips}
+                {userData.totalTrips}
               </span>
               <span className="profile__stat-label">Trips</span>
             </div>
             <div className="profile__stat">
               <span className="profile__stat-number">
-                {userData.countries.length}
+                {/* {userData.countries.length} */}
+                1
               </span>
               <span className="profile__stat-label">Countries</span>
             </div>
           </div>
         </div>
         <div className="profile__flags">
-          {userData.countries.map((country) => (
+          {/* {userData.countries.map((country) => (
             <img
               key={country}
               src={`https://catamphetamine.gitlab.io/country-flag-icons/3x2/${countryNameToCode(
@@ -112,13 +113,21 @@ const ProfileSection = () => {
               alt={country}
               className="profile__flag"
             />
-          ))}
+          ))} */}
+          <img
+              key={userData.country}
+              src={`https://catamphetamine.gitlab.io/country-flag-icons/3x2/${countryNameToCode(
+                userData.country
+              )}.svg`}
+              alt={userData.country}
+              className="profile__flag"
+            />
         </div>
         {isEditing && (
           <input
             type="url"
             name="profile_picture"
-            value={editData.profile_picture}
+            value={editData.profilePicture}
             onChange={handleEditChange}
             className="profile__input profile__input--image"
             placeholder="Profile Picture URL"
@@ -136,7 +145,7 @@ const ProfileSection = () => {
                 <input
                   type="text"
                   name="first_name"
-                  value={editData.first_name}
+                  value={editData.firstName}
                   onChange={handleEditChange}
                   className="profile__input profile__input--name"
                   placeholder="First Name"
@@ -149,7 +158,7 @@ const ProfileSection = () => {
                 <input
                   type="text"
                   name="last_name"
-                  value={editData.last_name}
+                  value={editData.lastName}
                   onChange={handleEditChange}
                   className="profile__input profile__input--name"
                   placeholder="Last Name"
@@ -157,7 +166,7 @@ const ProfileSection = () => {
               </div>
             </>
           ) : (
-            `${userData.first_name} ${userData.last_name}`
+            `${userData.firstName} ${userData.lastName}`
           )}
         </h2>
 

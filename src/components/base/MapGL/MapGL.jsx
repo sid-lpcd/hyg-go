@@ -73,7 +73,7 @@ const MapGL = ({
   const checkBasket = (marker) => {
     if (
       basketState?.activities?.find(
-        (item) => item.activity_id === marker.activity_id
+        (item) => item.activityId === marker.activityId
       )
     ) {
       return true;
@@ -92,7 +92,7 @@ const MapGL = ({
 
       const markerEl = new mapboxgl.Marker({ color: colorMarker })
         .setLngLat([marker.longitude, marker.latitude])
-        .addClassName(`marker-${marker.activity_id}`)
+        .addClassName(`marker-${marker.activityId}`)
         .addTo(mapRef.current);
 
       if (isMarkerClickable) {
@@ -103,7 +103,7 @@ const MapGL = ({
           const activityId = classNames[classNames.length - 1].split("-")[1];
 
           const activity = markersList.find(
-            (item) => item.activity_id === parseInt(activityId)
+            (item) => item.activityId === parseInt(activityId)
           );
 
           onMarkerClick(activity);
@@ -160,7 +160,12 @@ const MapGL = ({
           };
 
           if (shouldFetchMarkers(previousBounds, currentBounds)) {
-            fetchMarkersWithinBounds(currentBounds);
+            fetchMarkersWithinBounds({
+              swLat: southwest.lat,
+              neLat: northeast.lat,
+              swLng: southwest.lng,
+              neLng: northeast.lng,
+            });
             setPreviousBounds(currentBounds);
           }
         }

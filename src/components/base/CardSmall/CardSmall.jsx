@@ -3,13 +3,13 @@ import FlameIcon from "../../../assets/icons/fire-icon.svg?react";
 import "./CardSmall.scss";
 
 const CardSmall = ({ plan }) => {
-  const { title, location, likes, image_url, user } = plan;
+  const { title, location, likes, imageUrl, user } = plan;
 
   return (
     <article className="card">
       <div
         className="card__background"
-        style={{ backgroundImage: `url(${image_url})` }}
+        style={{ backgroundImage: `url(${imageUrl})` }}
       >
         <div className="card__overlay"></div>
       </div>
@@ -22,7 +22,7 @@ const CardSmall = ({ plan }) => {
         <div className="card__footer">
           <div className="card__user-info">
             <img
-              src={user.profile_image}
+              src={user.profileImage}
               alt={`${user.name}'s profile`}
               className="card__user-image"
             />

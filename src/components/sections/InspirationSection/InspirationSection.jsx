@@ -9,11 +9,11 @@ const InspirationSection = () => {
       title: "Tropical Paradise in Bora Bora",
       location: "Bora Bora, French Polynesia",
       likes: 246,
-      image_url:
+      imageUrl:
         "https://eatsleepbreathetravel.com/wp-content/uploads/2021/10/Bora_Bora_-12-2_50-2.jpg",
       user: {
         name: "Emily Stone",
-        profile_image:
+        profileImage:
           "https://eatsleepbreathetravel.com/wp-content/uploads/2019/06/29th-of-May-2019-Hannah-54.jpg",
       },
     },
@@ -22,11 +22,11 @@ const InspirationSection = () => {
       title: "Cultural Escape in Kyoto",
       location: "Kyoto, Japan",
       likes: 180,
-      image_url:
+      imageUrl:
         "https://images.pexels.com/photos/3557603/pexels-photo-3557603.jpeg",
       user: {
         name: "Akira Matsuda",
-        profile_image:
+        profileImage:
           "https://media.licdn.com/dms/image/v2/D5603AQG7ccl9cVncMw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1716105604544?e=2147483647&v=beta&t=Q3U4WDqdCT699TtGyUktRxVCEiVlgsmhAVMzHuuWX1A",
       },
     },
@@ -35,11 +35,11 @@ const InspirationSection = () => {
       title: "Desert Adventure in Dubai",
       location: "Dubai, UAE",
       likes: 312,
-      image_url:
+      imageUrl:
         "https://images.pexels.com/photos/2563106/pexels-photo-2563106.jpeg",
       user: {
         name: "Omar Khaled",
-        profile_image:
+        profileImage:
           "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
       },
     },
@@ -48,11 +48,11 @@ const InspirationSection = () => {
       title: "Beach Bliss in the Maldives",
       location: "Maldives",
       likes: 374,
-      image_url:
+      imageUrl:
         "https://www.outrigger.com/globalassets/outrigger/images/resorts--hotels/maldives/outrigger-maldives-maafushivaru-resort/walkway-to-villas/outrigger-maldives-maafushivaru-resort-walkway-to-villas1.jpg",
       user: {
         name: "Isla Grace",
-        profile_image:
+        profileImage:
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0HBfWts24vpEMUcotpkjeTh35AHERi2QIYg&s",
       },
     },

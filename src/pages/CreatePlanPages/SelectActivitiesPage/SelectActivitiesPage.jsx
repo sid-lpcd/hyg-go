@@ -46,7 +46,7 @@ const SelectActivitiesPage = () => {
     if (basketState.length === 0) return;
     try {
       const response = await updatePlanWithActivities(
-        planInfo.plan_id,
+        planInfo.planId,
         basketState
       );
       console.log(response);
@@ -73,6 +73,7 @@ const SelectActivitiesPage = () => {
 
   const updatedProgress = (basket) => {
     let activityTime = 0;
+    console.log("Calculating progress for basket:", basket);
     if (basket.activities.length === 0) {
       activityTime = 0;
     } else if (basket.activities.length === 1) {
@@ -89,8 +90,8 @@ const SelectActivitiesPage = () => {
   const compareBasket = (planId) => {
     const basket = getBasket();
 
-    if (basket.plan_id !== planId) {
-      setBasketState({ plan_id: planId, activities: [], gratuity: 0 });
+    if (basket.planId !== planId) {
+      setBasketState({ planId: planId, activities: [], gratuity: 0 });
     } else {
       setBasketState(basket);
       updatedProgress(basket);
@@ -101,8 +102,8 @@ const SelectActivitiesPage = () => {
     try {
       const response = await getPlanById(locationId);
       setPlanInfo(response);
-      setTotalTripLength(calcLength(response.start_date, response.end_date));
-      compareBasket(response.plan_id);
+  setTotalTripLength(calcLength(response.startDate, response.endDate));
+  compareBasket(response.planId);
     } catch (error) {
       console.error(error);
     }
@@ -152,7 +153,7 @@ const SelectActivitiesPage = () => {
       <main className={`main${page === "basket" ? " main--basket" : ""}`}>
         {page === "activities" && (
           <ListActivitiesSection
-            locationId={planInfo?.location_id}
+            locationId={planInfo?.locationId}
             planInfo={planInfo}
             basketState={basketState}
             setBasketState={setBasketState}
@@ -164,7 +165,7 @@ const SelectActivitiesPage = () => {
         )}
         {page === "map" && (
           <MapSection
-            locationId={planInfo?.location_id}
+            locationId={planInfo?.locationId}
             basketState={basketState}
             setSelectedActivity={setSelectedActivity}
           />
@@ -209,7 +210,7 @@ const SelectActivitiesPage = () => {
         animationDuration={500}
       >
         <ActivityModal
-          activityId={selectedActivity?.activity_id}
+          activityId={selectedActivity?.activityId}
           planInfo={planInfo}
           basketState={basketState}
           setBasketState={setBasketState}

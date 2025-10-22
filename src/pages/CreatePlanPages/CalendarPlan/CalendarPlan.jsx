@@ -26,7 +26,7 @@ const CalendarPlan = () => {
     e.preventDefault();
     try {
       const response = await updatePlanWithActivitiesCalendar(
-        planInfo.plan_id,
+        planInfo.planId,
         activities
       );
     } catch (error) {
@@ -40,8 +40,9 @@ const CalendarPlan = () => {
     try {
       const responsePlan = await getPlanById(planId);
       setPlanInfo(responsePlan);
-      const response = await getAIPlan(planId);
-      setActivities(response);
+      const planDTO = await getAIPlan(planId);
+      console.log("Fetched activities for plan:", planDTO);
+      setActivities(planDTO.activities);
     } catch (error) {
       console.error(error);
     }

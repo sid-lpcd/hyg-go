@@ -35,9 +35,9 @@ const MainCreatePage = () => {
   const [tripData, setTripData] = useState({
     title: "",
     description: "",
-    location_id: null,
-    start_date: formatDateDisplay(null),
-    end_date: formatDateDisplay(null, Date.now() + 24 * 60 * 60 * 1000),
+    locationId: null,
+    startDate: formatDateDisplay(null),
+    endDate: formatDateDisplay(null, Date.now() + 24 * 60 * 60 * 1000),
     people: { adult: 1, children: 0, infant: 0 },
   });
   const [formData, setFormData] = useState({
@@ -47,9 +47,9 @@ const MainCreatePage = () => {
   const [errorData, setErrorData] = useState({
     title: false,
     description: false,
-    location_id: false,
-    start_date: false,
-    end_date: false,
+    locationId: false,
+    startDate: false,
+    endDate: false,
   });
   const [updateVisible, setUpdateVisible] = useState(false);
   const [prevPlan, setPrevPlan] = useState(locationState.state || null);
@@ -113,7 +113,7 @@ const MainCreatePage = () => {
             location.country ? `, ${location.country}` : ""
           }`
         );
-        setTripData({ ...tripData, location_id: location.location_id });
+  setTripData({ ...tripData, locationId: location.locationId });
       }
     }
   };
@@ -148,12 +148,12 @@ const MainCreatePage = () => {
     try {
       let response = null;
       let planStatus = null;
-      if (tripData.location_id === prevPlan?.location_id && update === true) {
-        await updatePlan(prevPlan?.plan_id, {
+      if (tripData.locationId === prevPlan?.locationId && update === true) {
+        await updatePlan(prevPlan?.planId, {
           ...tripData,
           ...newFormData,
         });
-        response = prevPlan?.plan_id;
+        response = prevPlan?.planId;
         planStatus = "updated";
       } else {
         response = await addPlan({ ...tripData, ...newFormData });
@@ -162,7 +162,7 @@ const MainCreatePage = () => {
 
       if (response) {
         setOpenTripModal(false);
-        navigate(`/${location ? `create-plan/${response}/activities` : ""}`, {
+        navigate(`/${location ? `create-plan/${response.planId}/activities` : ""}`, {
           state: {
             planStatus: planStatus,
           },
@@ -183,9 +183,9 @@ const MainCreatePage = () => {
   const getLocations = async (name) => {
     try {
       if (!name)
-        return [{ location_id: null, name: "Use my current location" }];
+        return [{ locationId: null, name: "Use my current location" }];
       const response = await getAllLocations(name);
-      response.unshift({ location_id: null, name: "Use my current location" });
+      response.unshift({ locationId: null, name: "Use my current location" });
       return response;
     } catch (error) {
       return { error: "No locations found" };
@@ -231,15 +231,15 @@ const MainCreatePage = () => {
     setPrevPlan(planInfo);
 
     if (planInfo) {
-      const { start_date, end_date, location_id, people, plan_id } = planInfo;
-      getLocationInfo(planInfo.location_id);
+      const { startDate, endDate, locationId, people, planId } = planInfo;
+      getLocationInfo(planInfo.locationId);
       setTripData({
         ...tripData,
-        start_date,
-        end_date,
-        location_id,
+        startDate,
+        endDate,
+        locationId,
         people,
-        plan_id,
+        planId,
       });
       setUpdateVisible(true);
     }
@@ -282,8 +282,8 @@ const MainCreatePage = () => {
             inputValue={location}
             setInputValue={handleSelectLocation}
             placeholder="Where are you going?"
-            error={errorData.location_id}
-            setError={() => setErrorData({ ...errorData, location_id: false })}
+            error={errorData.locationId}
+            setError={() => setErrorData({ ...errorData, locationId: false })}
             currentLocation={true}
           />
           <article
@@ -292,8 +292,8 @@ const MainCreatePage = () => {
           >
             <CalendarIcon className="dates__icon" />
             <p className="dates__text">
-              {`${formatDateDisplay(tripData.start_date)} - ${formatDateDisplay(
-                tripData.end_date,
+              {`${formatDateDisplay(tripData.startDate)} - ${formatDateDisplay(
+                tripData.endDate,
                 Date.now() + 24 * 60 * 60 * 1000
               )}`}
             </p>

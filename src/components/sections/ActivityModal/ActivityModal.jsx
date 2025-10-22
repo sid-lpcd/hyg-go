@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import StarIcon from "../../../assets/icons/star-icon.svg?react";
 import HalfStarIcon from "../../../assets/icons/star-half-icon.svg?react";
 import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
-import { getAttractionById } from "../../../utils/apiHelper";
+import { getActivityById } from "../../../utils/apiHelper";
 import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import { getNumbers } from "../../../utils/generalHelpers";
@@ -30,7 +30,7 @@ const ActivityModal = ({
   const locationId = location.pathname.split("/")[2];
 
   const [activity, setActivity] = useState(null);
-  const [ticketCount, setTicketCount] = useState(1);
+  const [ticketCount, setTicketCount] = useState({people: { adult: 1}});
   const [totalPrice, setTotalPrice] = useState(0);
   const [labels, setLabels] = useState([]);
   const [ticketPrices, setTicketPrices] = useState({});
@@ -111,7 +111,7 @@ const ActivityModal = ({
     if (!activityId) return;
 
     try {
-      const response = await getAttractionById(activityId);
+      const response = await getActivityById(activityId);
       setActivity({ ...response, images: response.images.slice(1, 5) });
 
       if (!response?.prices) {
@@ -139,7 +139,7 @@ const ActivityModal = ({
     const basket = getBasket();
 
     const existingActivity = basket?.activities?.find(
-      (item) => item.activity_id === activity.activity_id
+      (item) => item.activityId === activity.activityId
     );
     if (existingActivity) {
       existingActivity.ticketCount = ticketCount;
@@ -166,7 +166,7 @@ const ActivityModal = ({
   const handleRemoveFromBasket = () => {
     const basket = getBasket();
     basket.activities = basket.activities.filter(
-      (item) => item.activity_id !== activity.activity_id
+      (item) => item.activityId !== activity.activityId
     );
     setBasketState(basket);
   };
@@ -174,7 +174,7 @@ const ActivityModal = ({
   const checkBasket = (activity) => {
     if (basketState) {
       const existingActivity = basketState.activities.find(
-        (item) => item.activity_id === activity.activity_id
+        (item) => item.activityId === activity.activityId
       );
       if (existingActivity) {
         setTicketCount(existingActivity.ticketCount);
@@ -217,7 +217,7 @@ const ActivityModal = ({
       <article className="activity__header">
         <h2 className="activity__title">{activity.name}</h2>
         <a
-          href={activity.attractionUrl}
+          href={activity.externalUrl}
           className="activity__link"
           target="_blank"
           rel="noopener noreferrer"
@@ -250,10 +250,10 @@ const ActivityModal = ({
         <p className="activity__info">Reviews</p>
         <div className="activity__reviews">
           <div className="activity-card__stars">
-            {renderStars(activity?.reviews_average_rating)}
+            {renderStars(activity?.reviewsTotalCount)}
           </div>
           <p className="activity__reviews-count">
-            {activity?.reviews_total_count}
+            {activity?.reviewsTotalCount}
           </p>
         </div>
         <p className="activity__info"> Expected Duration </p>

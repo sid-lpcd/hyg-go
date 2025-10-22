@@ -10,8 +10,8 @@ export function getBasket() {
   return JSON.parse(localStorage.getItem("basket")) || [];
 }
 
-export function setToken(token, expires_at) {
-  localStorage.setItem("authToken", JSON.stringify({ token, expires_at }));
+export function setToken(token, expiresAt) {
+  localStorage.setItem("authToken", JSON.stringify({ token, expiresAt }));
 }
 
 export function deleteToken() {

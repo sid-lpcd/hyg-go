@@ -53,11 +53,11 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
   const savePlan = async () => {
     try {
       const response = await updatePlanWithActivities(
-        basketState.plan_id,
+        basketState.planId,
         basketState
       );
       console.log(response);
-      navigate(`/create-plan/${basketState?.plan_id}/plan`);
+      navigate(`/create-plan/${basketState?.planId}/plan`);
       // navigate(`/`);
     } catch (error) {
       console.error(error);

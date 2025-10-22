@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { InfinitySpin } from "react-loader-spinner";
 import {
-  getAllAttractionsForBounds,
-  getAllAttractionsForLocation,
+  getAllActivities as fetchAllActivities,
+  getAllActivitiesForBounds,
+  getAllActivitiesForLocation,
   getAllCategoriesForLocation,
-  getAttractionById,
+  getActivityById,
   getLocationById,
 } from "../../../utils/apiHelper";
 import MapGL from "../../base/MapGL/MapGL";
@@ -28,7 +29,7 @@ const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
     try {
       if (searchParams.get("activity")) {
         const activityId = searchParams.get("activity");
-        const response = await getAttractionById(activityId);
+        const response = await getActivitiesById(activityId);
         setInitialLocation([response.longitude, response.latitude]);
         setInitialZoom(15);
         return;
@@ -48,7 +49,7 @@ const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
   const getAllActivities = async () => {
     const limit = activities ? activities.length + 10 : 10;
     try {
-      const response = await getAllAttractionsForLocation(locationId, 0, limit);
+      const response = await getAllActivitiesForLocation(locationId, 0, limit);
       setActivities(response);
 
       setError(false);
@@ -86,8 +87,8 @@ const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
 
   const fetchMarkersWithinBounds = async (bounds) => {
     try {
-      const response = await getAllAttractionsForBounds(locationId, bounds);
-
+      console.log("Fetching activities within bounds:", bounds);
+      const response = await fetchAllActivities(bounds);
       setActivities(response);
     } catch (error) {
       console.error(error);

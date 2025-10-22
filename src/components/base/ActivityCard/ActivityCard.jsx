@@ -53,7 +53,7 @@ const ActivityCard = ({
     if (!check) {
       const basket = getBasket();
       basket.activities = basket.activities.filter(
-        (item) => item.activity_id !== activity.activity_id
+        (item) => item.activityId !== activity.activityId
       );
       setBasketState(basket);
     } else {
@@ -65,7 +65,7 @@ const ActivityCard = ({
   const checkBasket = (activity) => {
     if (
       basketState.activities.find(
-        (item) => item.activity_id === activity.activity_id
+        (item) => item.activityId === activity.activityId
       )
     ) {
       setInBasket(true);
@@ -106,7 +106,7 @@ const ActivityCard = ({
         onClick={openActivity}
       >
         <img
-          src={activity.image_url}
+          src={activity.imageUrl}
           alt={activity.title}
           className="activity-card__image activity-card__image--cart"
         />
@@ -143,7 +143,7 @@ const ActivityCard = ({
   return (
     <article className="activity-card" onClick={() => openActivity(activity)}>
       <img
-        src={activity.image_url}
+        src={activity.imageUrl}
         alt={activity.title}
         className="activity-card__image"
       />
@@ -161,10 +161,10 @@ const ActivityCard = ({
         <div className="activity-card__tags">{activity.tags}</div>
         <div className="activity-card__reviews">
           <div className="activity-card__stars">
-            {renderStars(activity.reviews_average_rating)}
+            {renderStars(activity.reviewsAverageRating)}
           </div>
           <p className="activity-card__reviews-count">
-            {activity.reviews_total_count}
+            {activity.reviewsTotalCount}
           </p>
         </div>
         {activity.duration && (

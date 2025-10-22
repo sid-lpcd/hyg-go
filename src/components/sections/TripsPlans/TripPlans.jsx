@@ -20,7 +20,7 @@ function TripPlans() {
   const filterTrips = (trips) => {
     const filteredTrips = trips.filter(
       (trip) =>
-        new Date(trip.end_date).setHours(0, 0, 0, 0) >=
+        new Date(trip.endDate).setHours(0, 0, 0, 0) >=
         new Date().setHours(0, 0, 0, 0)
     );
     setVisibleTrips(filteredTrips);
@@ -81,7 +81,7 @@ function TripPlans() {
       <h2 className="planned-trips__title">Your planned trips</h2>
       <div className="planned-trips__list" ref={scrollRef}>
         {visibleTrips.map((trip) => (
-          <TripCard key={trip.plan_id} trip={trip} />
+          <TripCard key={trip.planId} trip={trip} />
         ))}
         <div
           className="planned-trips__add"
