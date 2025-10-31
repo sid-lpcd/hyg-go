@@ -47,7 +47,7 @@ const SelectActivitiesPage = () => {
     try {
       const response = await updatePlanWithActivities(
         planInfo.planId,
-        basketState
+        basketState.activities
       );
       console.log(response);
     } catch (error) {

@@ -54,7 +54,7 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
     try {
       const response = await updatePlanWithActivities(
         basketState.planId,
-        basketState
+        basketState.activities
       );
       console.log(response);
       navigate(`/create-plan/${basketState?.planId}/plan`);

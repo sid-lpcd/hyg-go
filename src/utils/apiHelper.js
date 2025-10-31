@@ -155,7 +155,7 @@ export const getAllPlansForLocation = async (locationId) => {
 };
 
 
-export const getAIPlan = async (planId) => {
+export const createAIPlan = async (planId) => {
   const response = await apiClient.post(
     `${API_BASE_URL}/plans/${planId}/AI-plan`
   );
@@ -221,26 +221,13 @@ export const updatePlan = async (id, updatedPlan) => {
 };
 
 
-export const updatePlanWithActivities = async (id, basket) => {
+export const updatePlanWithActivities = async (id, activities) => {
   const response = await apiClient.patch(
     `${API_BASE_URL}/plans/${id}/activities`,
-    basket
+    activities
   );
   return response.data;
 };
-
-
-export const updatePlanWithActivitiesCalendar = async (
-  id,
-  activitiesLinked
-) => {
-  const response = await apiClient.patch(
-    `${API_BASE_URL}/plans/${id}/activities-calendar`,
-    activitiesLinked
-  );
-  return response.data;
-};
-
 
 export const deletePlan = async (id) => {
   const response = await apiClient.delete(`${API_BASE_URL}/plans/${id}`);

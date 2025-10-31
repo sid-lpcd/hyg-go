@@ -5,9 +5,9 @@ import Header from "../../../components/sections/Header/Header";
 import CalendarScheduleSection from "../../../components/sections/CalendarScheduleSection/CalendarScheduleSection";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  getAIPlan,
+  createAIPlan,
   getPlanById,
-  updatePlanWithActivitiesCalendar,
+  updatePlanWithActivities
 } from "../../../utils/apiHelper";
 import Form from "../../../components/base/Form/Form";
 import Modal from "react-responsive-modal";
@@ -25,7 +25,7 @@ const CalendarPlan = () => {
   const handleSaveTrip = async (e) => {
     e.preventDefault();
     try {
-      const response = await updatePlanWithActivitiesCalendar(
+      const response = await updatePlanWithActivities(
         planInfo.planId,
         activities
       );
@@ -40,9 +40,10 @@ const CalendarPlan = () => {
     try {
       const responsePlan = await getPlanById(planId);
       setPlanInfo(responsePlan);
-      const planDTO = await getAIPlan(planId);
-      console.log("Fetched activities for plan:", planDTO);
+      const planDTO = await createAIPlan(planId);
+      console.log("Fetched activities for plan:", planDTO.planId);
       setActivities(planDTO.activities);
+      console.log("Activities set in state:", planDTO.activities.length);
     } catch (error) {
       console.error(error);
     }
