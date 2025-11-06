@@ -103,7 +103,7 @@ const ActivityCard = ({
               {activity.name?.split("(")[0]}
             </h3>
 
-            {activity?.totalPrice !== 0 && (
+            {activity?.ticketTotalPrice !== 0 && (
               <p className="activity-card__tickets">
                 {Object.keys(activity.ticketCount.people).reduce(
                   (acc, value) => acc + activity.ticketCount.people[value],
@@ -113,7 +113,7 @@ const ActivityCard = ({
               </p>
             )}
             <p className="activity-card__price-value activity-card__price-value--cart">
-              £ {activity?.totalPrice === 0 ? "-" : activity?.totalPrice}
+              £ {(activity?.ticketTotalPrice === 0) ? "-" : activity?.ticketTotalPrice}
             </p>
           </div>
           <div

@@ -58,7 +58,7 @@ const CheckoutSection = () => {
       setTotalCost(
         Number(
           basketState?.activities
-            ?.reduce((total, activity) => total + (Number(activity.totalPrice) || 0), 0)
+            ?.reduce((total, activity) => total + (Number(activity.ticketTotalPrice) || 0), 0)
             .toFixed(2)
         ) || 0
       );

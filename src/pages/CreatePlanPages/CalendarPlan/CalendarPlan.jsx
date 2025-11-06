@@ -12,11 +12,15 @@ import {
 import Form from "../../../components/base/Form/Form";
 import Modal from "react-responsive-modal";
 import "./CalendarPlan.scss";
+import { useBasket } from "../../../context/BasketContext";
+
 const CalendarPlan = () => {
   const location = useLocation();
   const planId = location.pathname.split("/")[2];
 
   const navigate = useNavigate();
+
+  const { deleteBasket } = useBasket();
 
   const [planInfo, setPlanInfo] = useState(null);
   const [activities, setActivities] = useState(null);

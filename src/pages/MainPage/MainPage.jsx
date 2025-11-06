@@ -6,6 +6,7 @@ import Navigation from "../../components/sections/Navigation/Navigation";
 import TripPlans from "../../components/sections/TripsPlans/TripPlans";
 import "./MainPage.scss";
 import { ToastContainer } from "react-toastify";
+import { BasketProvider } from "../../context/BasketContext";
 
 export const MainPage = () => {
   const location = useLocation();
@@ -38,7 +39,9 @@ export const MainPage = () => {
       />
       <main className="main main-traveller">{!page && <TripPlans />}</main>
 
-      <Navigation pageType="travel" />
+      <BasketProvider>
+        <Navigation pageType="travel" />
+      </BasketProvider>
     </>
   );
 };

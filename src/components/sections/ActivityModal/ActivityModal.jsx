@@ -30,7 +30,7 @@ const ActivityModal = ({
 
   const [activity, setActivity] = useState(null);
   const [ticketCount, setTicketCount] = useState({people: { adult: 1}});
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [ticketTotalPrice, setTotalPrice] = useState(0);
   const [labels, setLabels] = useState([]);
   const [ticketPrices, setTicketPrices] = useState({});
   const [inBasket, setInBasket] = useState(false);
@@ -142,7 +142,7 @@ const ActivityModal = ({
     const activityToAdd = {
       ...activity,
       ticketCount,
-      totalPrice,
+      ticketTotalPrice,
     };
 
     if (existingActivity) {
@@ -174,7 +174,7 @@ const ActivityModal = ({
       );
       if (existingActivity) {
         setTicketCount(existingActivity.ticketCount);
-        setTotalPrice(existingActivity.totalPrice);
+        setTotalPrice(existingActivity.ticketTotalPrice);
       }
     }
   };
@@ -329,7 +329,7 @@ const ActivityModal = ({
               ))}
             </div>
             <p className="activity__total-price">
-              Total Price: £{totalPrice.toFixed(2)}
+              Total Price: £{ticketTotalPrice.toFixed(2)}
             </p>
           </div>
         )}

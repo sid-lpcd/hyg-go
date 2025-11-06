@@ -36,7 +36,9 @@ function App() {
           path="/create-plan/:id/plan"
           element={
             <ProtectedRoute>
-              <CalendarPlan />
+              <BasketProvider>
+                <CalendarPlan />
+              </BasketProvider>
             </ProtectedRoute>
           }
         />
