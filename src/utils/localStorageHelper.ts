@@ -1,4 +1,3 @@
-// LocalStorage helper functions with TypeScript support
 import { BasketState } from '../types/common/basket';
 
 export function setBasket(basket: BasketState): void {

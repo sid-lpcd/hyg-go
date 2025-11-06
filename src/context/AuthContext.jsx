@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getToken, setToken, deleteToken } from "../utils/localStorageHelper";
+import { getToken, setToken, deleteToken, isTokenExpired, getTokenIfValid } from "../utils/tokenHelper";
 import {
   loginUser,
   refreshTokenUser,
@@ -45,12 +45,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await registerUser(formData);
       if (response.status === 201) {
-        const token = response.data.token;
-        setToken(token);
+        setToken(response.data.token, response.data.expiresAt);
         setAuthState({
           isLoggedIn: true,
           user: response.data.user,
-          token: token,
+          token: response.data.token,
           expiresAt: response.data.expiresAt,
         });
         return { success: true };
@@ -89,11 +88,6 @@ export const AuthProvider = ({ children }) => {
       token: null,
     });
   };
-
-  const isTokenExpired = (expiresAt) => {
-    if (!expiresAt) return true;
-    return new Date() >= new Date(Number(expiresAt));
-  };
   const refreshToken = async () => {
     try {
       const response = await refreshTokenUser();
@@ -113,15 +107,22 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (authState.token && isTokenExpired(authState.expiresAt)) {
+    if (authState.token && isTokenExpired()) {
       logout();
       navigate("/user");
     }
   }, [authState]);
 
   useEffect(() => {
-    const token = getToken();
-    if (token) {
+    const tokenData = getTokenIfValid();
+    if (tokenData) {
+      // Set the auth state with the valid token
+      setAuthState(prevState => ({
+        ...prevState,
+        token: tokenData.token,
+        expiresAt: tokenData.expiresAt,
+        isLoggedIn: true
+      }));
       refreshToken();
     } else {
       setLoading(false);

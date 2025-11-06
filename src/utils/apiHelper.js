@@ -1,6 +1,6 @@
 import axios from "axios";
 import { formatDateApi } from "./dateFormat";
-import { getToken } from "./localStorageHelper";
+import { getToken } from "./tokenHelper";
 
 const API_BASE_URL =
   import.meta.env.VITE_ENV_TYPE === "DEV"

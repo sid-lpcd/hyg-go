@@ -102,8 +102,6 @@ const SelectActivitiesPage = () => {
       };
       setBasketState(newBasket);
       updatedProgress(newBasket); 
-    } else {
-      updatedProgress(basketState);
     }
   };
 
@@ -118,6 +116,12 @@ const SelectActivitiesPage = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (basketState) {
+      updatedProgress(basketState);
+    }
+  }, [basketState]);
 
   useEffect(() => {
     setPage(location.pathname.split("/").pop());

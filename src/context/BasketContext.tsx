@@ -153,11 +153,11 @@ export function BasketProvider({ children }: BasketProviderProps) {
   };
 
   const getTotalActivities = (): number => {
-    return basketState?.activities.length || 0;
+    return basketState?.activities?.length || 0;
   };
 
   const hasActivity = (activityId: number): boolean => {
-    return basketState?.activities.some(activity => activity.activityId === activityId) || false;
+    return basketState?.activities?.some(activity => activity.activityId === activityId) || false;
   };
 
   const value: BasketContextType = {
