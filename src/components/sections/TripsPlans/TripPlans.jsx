@@ -11,25 +11,14 @@ function TripPlans() {
   const navigate = useNavigate();
 
   const [trips, setTrips] = useState(null);
-  const [visibleTrips, setVisibleTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAddBtnVisible, setIsAddBtnVisible] = useState(false);
   const addDivRef = useRef(null);
   const scrollRef = useRef(null);
 
-  const filterTrips = (trips) => {
-    const filteredTrips = trips.filter(
-      (trip) =>
-        new Date(trip.endDate).setHours(0, 0, 0, 0) >=
-        new Date().setHours(0, 0, 0, 0)
-    );
-    setVisibleTrips(filteredTrips);
-  };
-
   const fetchTrips = async () => {
     try {
-      const response = await getAllPlansForUser();
-      filterTrips(response);
+      const response = await getAllPlansForUser(new Date().toISOString().split('T')[0]);
       setTrips(response);
       setLoading(false);
     } catch (error) {
@@ -80,7 +69,7 @@ function TripPlans() {
     <div className="planned-trips">
       <h2 className="planned-trips__title">Your planned trips</h2>
       <div className="planned-trips__list" ref={scrollRef}>
-        {visibleTrips.map((trip) => (
+        {trips.map((trip) => (
           <TripCard key={trip.planId} trip={trip} />
         ))}
         <div

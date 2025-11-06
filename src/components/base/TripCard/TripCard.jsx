@@ -13,7 +13,7 @@ const TripCard = ({ trip }) => {
     >
       <div
         className="trip-card__background"
-        style={{ backgroundImage: `url(${trip.location?.image?.url})` }}
+        style={{ backgroundImage: `url(${trip.mainImageUrl})` }}
       >
         <div className="trip-card__overlay"></div>
       </div>

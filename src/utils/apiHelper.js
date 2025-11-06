@@ -184,9 +184,11 @@ export const getAllPlans = async () => {
 };
 
 
-export const getAllPlansForUser = async () => {
+export const getAllPlansForUser = async (after) => {
   try {
-    const response = await apiClient.get(`${API_BASE_URL}/plans/user`);
+    const response = await apiClient.get(`${API_BASE_URL}/plans/user`, {
+      params: { after: after }
+    });
     return response.data;
   } catch (error) {
     throw error;

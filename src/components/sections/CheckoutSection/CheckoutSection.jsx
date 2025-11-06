@@ -67,9 +67,11 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
   useEffect(() => {
     if (basketState) {
       setTotalCost(
-        basketState?.activities
-          ?.reduce((total, activity) => total + activity.totalPrice, 0)
-          .toFixed(2)
+        Number(
+          basketState?.activities
+            ?.reduce((total, activity) => total + (Number(activity.totalPrice) || 0), 0)
+            .toFixed(2)
+        ) || 0
       );
     }
   }, [basketState]);

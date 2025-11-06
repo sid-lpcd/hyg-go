@@ -6,7 +6,7 @@ import {
   updatePlanWithActivities,
 } from "../../../utils/apiHelper";
 import Header from "../../../components/sections/Header/Header";
-import { getBasket, setBasket } from "../../../utils/localStorageHelper";
+import { getBasket, setBasket, deleteBasket } from "../../../utils/localStorageHelper";
 import { calcLength, getNumbers } from "../../../utils/generalHelpers";
 import { ToastContainer, toast } from "react-toastify";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
@@ -87,11 +87,11 @@ const SelectActivitiesPage = () => {
 
     setProgress(activityTime);
   };
-  const compareBasket = (planId) => {
+  const compareBasket = (response) => {
     const basket = getBasket();
 
-    if (basket.planId !== planId) {
-      setBasketState({ planId: planId, activities: [], gratuity: 0 });
+    if (basket.planId !== response.planId) {
+      setBasketState({ planId: response.planId, activities: response.activities, gratuity: 0 });
     } else {
       setBasketState(basket);
       updatedProgress(basket);
@@ -101,9 +101,10 @@ const SelectActivitiesPage = () => {
   const getPlanInfo = async () => {
     try {
       const response = await getPlanById(locationId);
+      console.log("Fetched plan info:", response);
       setPlanInfo(response);
-  setTotalTripLength(calcLength(response.startDate, response.endDate));
-  compareBasket(response.planId);
+      setTotalTripLength(calcLength(response.startDate, response.endDate));
+      compareBasket(response);
     } catch (error) {
       console.error(error);
     }
@@ -231,7 +232,10 @@ const SelectActivitiesPage = () => {
       >
         <Form
           title="Do you want to save this trip?"
-          handleCancel={() => navigate("/")}
+          handleCancel={() =>{ 
+            deleteBasket();
+            navigate("/")
+          }}
           handleSubmit={(e) => handleSaveTrip(e)}
         />
       </Modal>
