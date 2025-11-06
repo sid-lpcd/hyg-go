@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { updatePlanWithActivities } from "../../../utils/apiHelper";
+import { useBasket } from "../../../context/BasketContext";
 import "./CheckoutSection.scss";
-const CheckoutSection = ({ basketState, setBasketState }) => {
+const CheckoutSection = () => {
+  const { basketState, updateGratuity } = useBasket();
   const navigate = useNavigate();
 
   const [gratuityPercentage, setGratuityPercentage] = useState(0);
@@ -13,41 +15,28 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
 
     if (value < 0) {
       setGratuityPercentage(0);
-      setBasketState({
-        ...basketState,
-        gratuity: (totalCost * 0).toFixed(2),
-      });
+      updateGratuity((totalCost * 0));
       return;
     }
     setGratuityPercentage(parseFloat(value));
-    setBasketState({
-      ...basketState,
-      gratuity: (totalCost * parseFloat(value)).toFixed(2),
-    });
+    updateGratuity((totalCost * parseFloat(value) / 100));
   };
 
   const handleIncrease = () => {
-    setGratuityPercentage(gratuityPercentage + 2.5);
-    setBasketState({
-      ...basketState,
-      gratuity: (totalCost * ((gratuityPercentage + 2.5) / 100)).toFixed(2),
-    });
+    const newPercentage = gratuityPercentage + 2.5;
+    setGratuityPercentage(newPercentage);
+    updateGratuity((totalCost * (newPercentage / 100)));
   };
 
   const handleDecrease = () => {
     if (gratuityPercentage <= 0) {
       setGratuityPercentage(0);
-      setBasketState({
-        ...basketState,
-        gratuity: (totalCost * 0).toFixed(2),
-      });
+      updateGratuity(0);
       return;
     }
-    setGratuityPercentage(gratuityPercentage - 2.5);
-    setBasketState({
-      ...basketState,
-      gratuity: (totalCost * ((gratuityPercentage - 2.5) / 100)).toFixed(2),
-    });
+    const newPercentage = gratuityPercentage - 2.5;
+    setGratuityPercentage(newPercentage);
+    updateGratuity((totalCost * (newPercentage / 100)));
   };
 
   const savePlan = async () => {
@@ -109,7 +98,7 @@ const CheckoutSection = ({ basketState, setBasketState }) => {
           </div>
           {gratuityPercentage > 0 && (
             <span className="checkout__gratuity">
-              (£{basketState?.gratuity})
+              (£{basketState?.gratuity?.toFixed(2)})
             </span>
           )}
         </div>

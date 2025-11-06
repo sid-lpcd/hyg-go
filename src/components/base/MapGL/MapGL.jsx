@@ -2,6 +2,7 @@ import { act, useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./MapGL.scss";
+import { useBasket } from "../../../context/BasketContext";
 
 const MapGL = ({
   initialLocation,
@@ -12,9 +13,9 @@ const MapGL = ({
   fetchMarkersWithinBounds,
   isMarkerClickable = false,
   onMarkerClick,
-  basketState,
   isMoveable = true,
 }) => {
+  const { hasActivity, basketState } = useBasket();
   const [center, setCenter] = useState(initialLocation);
   const [zoom, setZoom] = useState(initialZoom);
   const [isCentered, setIsCentered] = useState(true);
@@ -71,15 +72,7 @@ const MapGL = ({
   };
 
   const checkBasket = (marker) => {
-    if (
-      basketState?.activities?.find(
-        (item) => item.activityId === marker.activityId
-      )
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return hasActivity(marker.activityId);
   };
 
   const setMarkers = () => {

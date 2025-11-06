@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getBasket } from "../../../utils/localStorageHelper";
 import { getNumbers } from "../../../utils/generalHelpers";
 import { v4 as uuidv4 } from "uuid";
+import { useBasket } from "../../../context/BasketContext";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
 import CheckIcon from "../../../assets/icons/check-icon.svg?react";
 import StarIcon from "../../../assets/icons/star-icon.svg?react";
@@ -12,11 +12,10 @@ import "./ActivityCard.scss";
 const ActivityCard = ({
   activity,
   openActivity,
-  basketState,
-  setBasketState,
   cartPage = false,
   openDeleteModal,
 }) => {
+  const { basketState, removeActivity, hasActivity } = useBasket();
   const [inBasket, setInBasket] = useState(false);
   function roundHalf(num) {
     return Math.round(num * 2) / 2;
@@ -51,11 +50,7 @@ const ActivityCard = ({
   const handleRemoveFromBasket = (e, check = false) => {
     e.stopPropagation();
     if (!check) {
-      const basket = getBasket();
-      basket.activities = basket.activities.filter(
-        (item) => item.activityId !== activity.activityId
-      );
-      setBasketState(basket);
+      removeActivity(activity.activityId);
     } else {
       console.log("check");
       openDeleteModal(activity);
@@ -63,15 +58,7 @@ const ActivityCard = ({
   };
 
   const checkBasket = (activity) => {
-    if (
-      basketState.activities.find(
-        (item) => item.activityId === activity.activityId
-      )
-    ) {
-      setInBasket(true);
-    } else {
-      setInBasket(false);
-    }
+    setInBasket(hasActivity(activity.activityId));
   };
 
   const getDuration = (activity) => {

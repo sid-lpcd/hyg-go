@@ -10,7 +10,7 @@ import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import { getNumbers } from "../../../utils/generalHelpers";
 import MapGL from "../../base/MapGL/MapGL";
-import { getBasket } from "../../../utils/localStorageHelper";
+import { useBasket } from "../../../context/BasketContext";
 import "swiper/css";
 import "swiper/css/pagination";
 import "./ActivityModal.scss";
@@ -19,11 +19,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 const ActivityModal = ({
   activityId,
   planInfo,
-  basketState,
-  setBasketState,
   onClose,
   showMap,
 }) => {
+  const { basketState, addActivity, removeActivity, hasActivity } = useBasket();
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -136,15 +135,20 @@ const ActivityModal = ({
   };
 
   const handleAddToBasket = () => {
-    const basket = getBasket();
-
-    const existingActivity = basket?.activities?.find(
+    const existingActivity = basketState?.activities?.find(
       (item) => item.activityId === activity.activityId
     );
+    
+    const activityToAdd = {
+      ...activity,
+      ticketCount,
+      totalPrice,
+    };
+
     if (existingActivity) {
-      existingActivity.ticketCount = ticketCount;
-      existingActivity.totalPrice = totalPrice;
-      setBasketState(basket);
+      // Remove the existing activity and add the updated one
+      removeActivity(activity.activityId);
+      addActivity(activityToAdd);
       setIsUpdated(true);
 
       setTimeout(() => {
@@ -153,35 +157,24 @@ const ActivityModal = ({
       return;
     }
 
-    basket.activities.push({
-      ...activity,
-      ticketCount,
-      totalPrice,
-    });
-
-    setBasketState(basket);
+    addActivity(activityToAdd);
     onClose();
   };
 
   const handleRemoveFromBasket = () => {
-    const basket = getBasket();
-    basket.activities = basket.activities.filter(
-      (item) => item.activityId !== activity.activityId
-    );
-    setBasketState(basket);
+    removeActivity(activity.activityId);
   };
 
   const checkBasket = (activity) => {
     if (basketState) {
+      setInBasket(hasActivity(activity.activityId));
+      
       const existingActivity = basketState.activities.find(
         (item) => item.activityId === activity.activityId
       );
       if (existingActivity) {
         setTicketCount(existingActivity.ticketCount);
         setTotalPrice(existingActivity.totalPrice);
-        setInBasket(true);
-      } else {
-        setInBasket(false);
       }
     }
   };

@@ -8,6 +8,7 @@ import CalendarPlan from "./pages/CreatePlanPages/CalendarPlan/CalendarPlan";
 import RegisterPage from "./pages/EarlyAccessPage/EarlyAccessPage";
 import UserPage from "./pages/UserPage/UserPage";
 import ProtectedRoute from "./context/ProtectedRoute";
+import { BasketProvider } from "./context/BasketContext";
 
 function App() {
   return (
@@ -43,7 +44,9 @@ function App() {
           path="/create-plan/:id/*"
           element={
             <ProtectedRoute>
-              <SelectActivitiesPage />
+              <BasketProvider>
+                <SelectActivitiesPage />
+              </BasketProvider>
             </ProtectedRoute>
           }
         />

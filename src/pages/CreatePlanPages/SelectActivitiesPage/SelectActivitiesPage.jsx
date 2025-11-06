@@ -6,7 +6,6 @@ import {
   updatePlanWithActivities,
 } from "../../../utils/apiHelper";
 import Header from "../../../components/sections/Header/Header";
-import { getBasket, setBasket, deleteBasket } from "../../../utils/localStorageHelper";
 import { calcLength, getNumbers } from "../../../utils/generalHelpers";
 import { ToastContainer, toast } from "react-toastify";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
@@ -22,6 +21,7 @@ import ActivityModal from "../../../components/sections/ActivityModal/ActivityMo
 import CheckoutSection from "../../../components/sections/CheckoutSection/CheckoutSection";
 import "./SelectActivitiesPage.scss";
 import "react-toastify/dist/ReactToastify.css";
+import { useBasket } from "../../../context/BasketContext";
 
 const SelectActivitiesPage = () => {
   const location = useLocation();
@@ -29,10 +29,17 @@ const SelectActivitiesPage = () => {
 
   const navigate = useNavigate();
 
+  const { 
+    basketState, 
+    setBasketState, 
+    addActivity, 
+    removeActivity,
+    clearBasket 
+  } = useBasket();
+
   const [page, setPage] = useState(location.pathname.split("/").pop());
   const [openTripModal, setOpenTripModal] = useState(false);
   const [planInfo, setPlanInfo] = useState(null);
-  const [basketState, setBasketState] = useState(null);
   const [progress, setProgress] = useState(null);
   const [totalTripLength, setTotalTripLength] = useState(null);
   const [planStatus, setPlanStatus] = useState(
@@ -43,13 +50,14 @@ const SelectActivitiesPage = () => {
 
   const handleSaveTrip = async (e) => {
     e.preventDefault();
-    if (basketState.length === 0) return;
+    if (!basketState || basketState.activities.length === 0) return;
     try {
       const response = await updatePlanWithActivities(
         planInfo.planId,
         basketState.activities
       );
       console.log(response);
+      clearBasket();
     } catch (error) {
       console.error(error);
     }
@@ -60,11 +68,7 @@ const SelectActivitiesPage = () => {
   const getActivityDuration = (activity) => {
     let duration = 1;
     try {
-      duration = Math.floor(
-        (getNumbers(activity?.duration, 0) +
-          getNumbers(activity?.duration, 1)) /
-          2
-      );
+      duration = activity?.duration ?? 1;
     } catch (error) {
       console.error(error);
     }
@@ -87,14 +91,19 @@ const SelectActivitiesPage = () => {
 
     setProgress(activityTime);
   };
-  const compareBasket = (response) => {
-    const basket = getBasket();
 
-    if (basket.planId !== response.planId) {
-      setBasketState({ planId: response.planId, activities: response.activities, gratuity: 0 });
+  const compareBasket = (response) => {
+    console.log("Comparing basket with response:", basketState, response);
+    if (!basketState?.planId || basketState.planId !== response.planId) {
+      const newBasket = { 
+        planId: response.planId, 
+        activities: response.activities, 
+        gratuity: 0 
+      };
+      setBasketState(newBasket);
+      updatedProgress(newBasket); 
     } else {
-      setBasketState(basket);
-      updatedProgress(basket);
+      updatedProgress(basketState);
     }
   };
 
@@ -109,12 +118,6 @@ const SelectActivitiesPage = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    if (!basketState) return;
-    setBasket(basketState);
-    updatedProgress(basketState);
-  }, [basketState]);
 
   useEffect(() => {
     setPage(location.pathname.split("/").pop());
@@ -155,9 +158,6 @@ const SelectActivitiesPage = () => {
         {page === "activities" && (
           <ListActivitiesSection
             locationId={planInfo?.locationId}
-            planInfo={planInfo}
-            basketState={basketState}
-            setBasketState={setBasketState}
             setSelectedActivity={(activity) => {
               setSelectedActivity(activity);
               setShowMap(true);
@@ -167,15 +167,12 @@ const SelectActivitiesPage = () => {
         {page === "map" && (
           <MapSection
             locationId={planInfo?.locationId}
-            basketState={basketState}
             setSelectedActivity={setSelectedActivity}
           />
         )}
         {page === "basket" && (
           <BasketSection
             planInfo={planInfo}
-            basketState={basketState}
-            setBasketState={setBasketState}
             setSelectedActivity={(activity) => {
               setSelectedActivity(activity);
               setShowMap(true);
@@ -189,14 +186,11 @@ const SelectActivitiesPage = () => {
         }`}
       >
         {page === "basket" ? (
-          <CheckoutSection
-            basketState={basketState}
-            setBasketState={setBasketState}
-          />
+          <CheckoutSection />
         ) : (
           <ProgressBar total={totalTripLength} current={progress} />
         )}
-        <Navigation basketState={basketState} />
+        <Navigation />
       </div>
 
       <Modal
@@ -213,8 +207,6 @@ const SelectActivitiesPage = () => {
         <ActivityModal
           activityId={selectedActivity?.activityId}
           planInfo={planInfo}
-          basketState={basketState}
-          setBasketState={setBasketState}
           onClose={() => setSelectedActivity(null)}
           showMap={showMap}
         />
@@ -233,7 +225,7 @@ const SelectActivitiesPage = () => {
         <Form
           title="Do you want to save this trip?"
           handleCancel={() =>{ 
-            deleteBasket();
+            clearBasket();
             navigate("/")
           }}
           handleSubmit={(e) => handleSaveTrip(e)}

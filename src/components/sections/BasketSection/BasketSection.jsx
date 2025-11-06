@@ -4,23 +4,19 @@ import Form from "../../base/Form/Form";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { InfinitySpin } from "react-loader-spinner";
+import { useBasket } from "../../../context/BasketContext";
 import "./BasketSection.scss";
 
 const BasketSection = ({
   planInfo,
-  basketState,
-  setBasketState,
   setSelectedActivity,
 }) => {
+  const { basketState, removeActivity } = useBasket();
   const [selectedActivityDelete, setSelectedActivityDelete] = useState(null);
 
   const removeActivityFromBasket = (e, activity) => {
     e.preventDefault();
-
-    const newBasket = basketState?.activities?.filter(
-      (item) => item.activityId !== activity.activityId
-    );
-    setBasketState({ ...basketState, activities: newBasket });
+    removeActivity(activity.activityId);
     setSelectedActivityDelete(null);
   };
 
@@ -47,8 +43,6 @@ const BasketSection = ({
                 key={activity.activityId ? activity.activityId : uuidv4()}
                 activity={activity}
                 openActivity={() => setSelectedActivity(activity)}
-                basketState={basketState}
-                setBasketState={setBasketState}
                 cartPage={true}
                 openDeleteModal={() => setSelectedActivityDelete(activity)}
               />

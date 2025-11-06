@@ -1,0 +1,33 @@
+import { LocationType } from './index';
+
+export interface Location {
+  locationId: number;
+  name: string;
+  type: string;
+  parentLocationId?: number;
+  lookupId?: string;
+  destinationUrl?: string;
+  defaultCurrencyCode?: string;
+  timeZone?: string;
+  iataCodes?: any;
+  countryCallingCode?: string;
+  languages?: any;
+  latitude?: number;
+  longitude?: number;
+  region?: string;
+  country?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BoundingBox {
+  swLat: number;
+  neLat: number;
+  swLng: number;
+  neLng: number;
+}
+
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}

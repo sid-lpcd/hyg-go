@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllActivitiesForLocation } from "../../../utils/apiHelper";
+import { useBasket } from "../../../context/BasketContext";
 import { InfinitySpin } from "react-loader-spinner";
 import { v4 as uuidv4 } from "uuid";
 import Error from "../../../assets/icons/error-icon.svg?react";
@@ -8,10 +9,9 @@ import "./ListActivitiesSection.scss";
 
 const ListActivitiesSection = ({
   locationId,
-  basketState,
-  setBasketState,
   setSelectedActivity,
 }) => {
+  const { basketState } = useBasket();
   let filters = {};
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
@@ -169,8 +169,6 @@ const ListActivitiesSection = ({
                 key={activity.activityId ? activity.activityId : uuidv4()}
                 activity={activity}
                 openActivity={() => setSelectedActivity(activity)}
-                basketState={basketState}
-                setBasketState={setBasketState}
               />
             );
           })}

@@ -8,11 +8,13 @@ import {
   getActivityById,
   getLocationById,
 } from "../../../utils/apiHelper";
+import { useBasket } from "../../../context/BasketContext";
 import MapGL from "../../base/MapGL/MapGL";
 import "./MapSection.scss";
 import { useSearchParams } from "react-router-dom";
 
-const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
+const MapSection = ({ locationId, setSelectedActivity }) => {
+  const { basketState } = useBasket();
   const [searchParams, setSearchParams] = useSearchParams();
 
   let filters = {};
@@ -127,7 +129,6 @@ const MapSection = ({ locationId, basketState, setSelectedActivity }) => {
           isResetVisible={true}
           markersList={activities}
           labels={filters}
-          basketState={basketState}
           fetchMarkersWithinBounds={fetchMarkersWithinBounds}
           isMarkerClickable={true}
           onMarkerClick={setSelectedActivity}
