@@ -30,7 +30,7 @@ const ActivityModal = ({
 
   const [activity, setActivity] = useState(null);
   const [ticketCount, setTicketCount] = useState({people: { adult: 1}});
-  const [ticketTotalPrice, setTotalPrice] = useState(0);
+  const [ticketTotalPrice, setTicketTotalPrice] = useState(0);
   const [labels, setLabels] = useState([]);
   const [ticketPrices, setTicketPrices] = useState({});
   const [inBasket, setInBasket] = useState(false);
@@ -100,11 +100,11 @@ const ActivityModal = ({
         sumPrice +=
           getNumbers(activity.prices[price], 0) * ticketCount.people[price];
       } catch (error) {
-        sumPrice += 0 * ticketCount.people[price];
+        sumPrice += 0;
       }
     }
 
-    setTotalPrice(sumPrice);
+    setTicketTotalPrice(sumPrice);
   };
   const activityRender = async () => {
     if (!activityId) return;
@@ -174,7 +174,7 @@ const ActivityModal = ({
       );
       if (existingActivity) {
         setTicketCount(existingActivity.ticketCount);
-        setTotalPrice(existingActivity.ticketTotalPrice);
+        setTicketTotalPrice(Number(existingActivity.ticketTotalPrice));
       }
     }
   };

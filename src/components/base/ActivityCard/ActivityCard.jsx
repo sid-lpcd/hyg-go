@@ -52,7 +52,6 @@ const ActivityCard = ({
     if (!check) {
       removeActivity(activity.activityId);
     } else {
-      console.log("check");
       openDeleteModal(activity);
     }
   };

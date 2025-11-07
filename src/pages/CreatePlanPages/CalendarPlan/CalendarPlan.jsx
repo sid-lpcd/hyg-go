@@ -81,7 +81,7 @@ const CalendarPlan = () => {
           className="calendar__confirm-btn"
           onClick={async (e) => {
             await handleSaveTrip(e);
-            await deleteBasket();
+            // await deleteBasket();
             navigate("/");
           }}
         >

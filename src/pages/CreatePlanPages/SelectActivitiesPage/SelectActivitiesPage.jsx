@@ -65,26 +65,16 @@ const SelectActivitiesPage = () => {
     setOpenTripModal(false);
   };
 
-  const getActivityDuration = (activity) => {
-    let duration = 1;
-    try {
-      duration = activity?.duration ?? 1;
-    } catch (error) {
-      console.error(error);
-    }
-    return duration;
-  };
-
   const updatedProgress = (basket) => {
     let activityTime = 0;
     console.log("Calculating progress for basket:", basket);
     if (basket.activities.length === 0) {
       activityTime = 0;
     } else if (basket.activities.length === 1) {
-      activityTime = getActivityDuration(basket.activities[0]);
+      activityTime = Number(basket.activities[0]?.duration) || 1;
     } else {
       activityTime = basket.activities.reduce(
-        (total, activity) => total + getActivityDuration(activity),
+        (total, activity) => total + (Number(activity?.duration) || 1),
         0
       );
     }
