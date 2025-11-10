@@ -8,10 +8,10 @@ import ProfileSection from "../../components/sections/ProfileSection/ProfileSect
 import "./UserPage.scss";
 import { useNavigate } from "react-router-dom";
 
-const UserPage = () => {
+const UserPage = (): JSX.Element => {
   const navigate = useNavigate();
   const { authState } = useAuth();
-  const [showLogin, setShowLogin] = useState(true);
+  const [showLogin, setShowLogin] = useState<boolean>(true);
 
   return (
     <>

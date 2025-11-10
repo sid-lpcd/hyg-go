@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { getToken, setToken, deleteToken, isTokenExpired, getTokenIfValid } from "../utils/tokenHelper";
 import {
   loginUser,
@@ -8,81 +8,104 @@ import {
 } from "../utils/apiHelper";
 import { useNavigate } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
+import { 
+  User, 
+  LoginUserRequest, 
+  RegisterUserRequest, 
+  UpdateUserRequest,
+  LoginUserResponse,
+  RegisterUserResponse
+} from "../types/contract";
+import { AuthState, AuthStateResponse } from "../types/common";
 
-const AuthContext = createContext();
+interface AuthContextType {
+  authState: AuthState;
+  login: (formData: LoginUserRequest) => Promise<AuthStateResponse>;
+  register: (formData: RegisterUserRequest) => Promise<AuthStateResponse>;
+  logout: () => void;
+  update: (formData: Partial<UpdateUserRequest>) => Promise<AuthStateResponse>;
+}
 
-export const AuthProvider = ({ children }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const [authState, setAuthState] = useState({
+  const [authState, setAuthState] = useState<AuthState>({
     isLoggedIn: false,
     user: null,
     token: null,
     expiresAt: null,
   });
 
-  const login = async (formData) => {
+  const login = async (formData: LoginUserRequest): Promise<AuthStateResponse> => {
     try {
       const response = await loginUser(formData);
       setToken(response.token, response.expiresAt);
       setAuthState({
         isLoggedIn: true,
-        user: response.user,
+        user: response.user || null,
         token: response.token,
-        expiresAt: response.expiresAt,
+        expiresAt: response.expiresAt || null,
       });
       return { success: true };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: (err as Error).message };
     }
   };
 
-  const register = async (formData) => {
+  const register = async (formData: RegisterUserRequest): Promise<AuthStateResponse> => {
     try {
       const response = await registerUser(formData);
       setToken(response.token, response.expiresAt);
       setAuthState({
         isLoggedIn: true,
-        user: response.user,
+        user: response.user || null,
         token: response.token,
-        expiresAt: response.expiresAt,
+        expiresAt: response.expiresAt || null,
       });
       return { success: true };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: (err as Error).message };
     }
   };
 
-  const update = async (formData) => {
+  const update = async (formData: Partial<UpdateUserRequest>): Promise<AuthStateResponse> => {
     try {
-      const response = await updateUser({
-        user_id: authState.user.user_id,
+      const updateData: UpdateUserRequest = {
+        userId: authState.user!.userId,
         ...formData,
-      });
-      setToken(response.token, response.expiresAt);
-      setAuthState({
+      };
+      const response = await updateUser(updateData);
+      // Note: updateUser returns { user: User }, need to check if it also returns token
+      setAuthState(prevState => ({
+        ...prevState,
         isLoggedIn: true,
         user: response.user,
-        token: response.token,
-        expiresAt: response.expiresAt,
-      });
+      }));
       return { success: true };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: (err as Error).message };
     }
   };
 
-  const logout = () => {
+  const logout = (): void => {
     deleteToken();
     setAuthState({
       isLoggedIn: false,
       user: null,
       token: null,
+      expiresAt: null,
     });
   };
-  const refreshToken = async () => {
+
+  const refreshToken = async (): Promise<void> => {
     try {
       const response = await refreshTokenUser();
       setToken(response.token, response.expiresAt);
@@ -90,6 +113,7 @@ export const AuthProvider = ({ children }) => {
         token: response.token,
         expiresAt: response.expiresAt,
         isLoggedIn: true,
+        user: authState.user, // Preserve user data
       });
       setLoading(false);
     } catch (err) {
@@ -103,7 +127,7 @@ export const AuthProvider = ({ children }) => {
       logout();
       navigate("/user");
     }
-  }, [authState]);
+  }, [authState, navigate]);
 
   useEffect(() => {
     const tokenData = getTokenIfValid();
@@ -143,4 +167,10 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

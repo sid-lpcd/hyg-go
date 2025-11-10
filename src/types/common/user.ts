@@ -30,8 +30,3 @@ export enum UserRole {
   USER = 'user',
   ADMIN = 'admin'
 }
-
-export interface AuthToken {
-  token: string;
-  expiresAt?: string;
-}

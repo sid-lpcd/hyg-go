@@ -36,6 +36,7 @@ import {
   RegisterUserResponse,
   LoginUserResponse
 } from "../types/contract";
+import { AuthUser } from "../types/common";
 
 const API_BASE_URL =
   import.meta.env.VITE_ENV_TYPE === "DEV"
@@ -386,7 +387,7 @@ export const getPublicPlanById = async (id: number): Promise<Plan> => {
   }
 };
 
-// User API functions
+// Temporary
 export const registerEarlyUser = async (user: RegisterEarlyUserRequest): Promise<{ success: boolean; message: string } | undefined> => {
   try {
     const response: AxiosResponse<{ success: boolean; message: string }> = await apiClient.post(
@@ -399,7 +400,7 @@ export const registerEarlyUser = async (user: RegisterEarlyUserRequest): Promise
   }
 };
 
-export const loginUser = async (user: LoginUserRequest): Promise<LoginUserResponse> => {
+export const loginUser = async (user: LoginUserRequest): Promise<AuthUser> => {
   try {
     const response = await apiClient.post(`/users/login`, user);
     return ModelMappers.mapAuthResponse(response);
@@ -408,7 +409,7 @@ export const loginUser = async (user: LoginUserRequest): Promise<LoginUserRespon
   }
 };
 
-export const registerUser = async (user: RegisterUserRequest): Promise<RegisterUserResponse> => {
+export const registerUser = async (user: RegisterUserRequest): Promise<AuthUser> => {
   try {
     const response = await apiClient.post(
       `/users/register`,
@@ -420,7 +421,7 @@ export const registerUser = async (user: RegisterUserRequest): Promise<RegisterU
   }
 };
 
-export const refreshTokenUser = async (): Promise<{ token: AuthToken }> => {
+export const refreshTokenUser = async (): Promise<AuthToken> => {
   try {
     const response = await apiClient.get(`/users/refresh`);
     return ModelMappers.mapAuthResponse(response);
@@ -429,30 +430,26 @@ export const refreshTokenUser = async (): Promise<{ token: AuthToken }> => {
   }
 };
 
-export const updateUser = async (user: UpdateUserRequest): Promise<{ user: User }> => {
+export const updateUser = async (user: UpdateUserRequest): Promise<User> => {
   try {
     const response = await apiClient.patch(
       `/users/${user.userId}`,
       user
     );
-    return {
-      user: ModelMappers.mapUser(response)
-    };
+    return ModelMappers.mapUser(response);
   } catch (error) {
     throw error as ApiError;
   }
 };
 
-export const getUserProfile = async (authToken: string): Promise<{ user: User }> => {
+export const getUserProfile = async (authToken: string): Promise<User> => {
   try {
     const response = await apiClient.get(`/users/profile`, {
       headers: {
         authorisation: `Bearer ${authToken}`,
       },
     });
-    return {
-      user: ModelMappers.mapUser(response)
-    };
+    return ModelMappers.mapUser(response);
   } catch (error) {
     throw error as ApiError;
   }

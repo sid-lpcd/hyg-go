@@ -6,7 +6,7 @@ import {
   updatePlanWithActivities,
 } from "../../../utils/apiHelper";
 import Header from "../../../components/sections/Header/Header";
-import { calcLength, getNumbers } from "../../../utils/generalHelpers";
+import { computeAvailableHoursWithinDates, getNumbers } from "../../../utils/generalHelpers";
 import { ToastContainer, toast } from "react-toastify";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
@@ -100,7 +100,7 @@ const SelectActivitiesPage = () => {
       const response = await getPlanById(locationId);
       console.log("Fetched plan info:", response);
       setPlanInfo(response);
-      setTotalTripLength(calcLength(response.startDate, response.endDate));
+      setTotalTripLength(computeAvailableHoursWithinDates(response.startDate, response.endDate));
       compareBasket(response);
     } catch (error) {
       console.error(error);

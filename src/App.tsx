@@ -5,12 +5,11 @@ import MainCreatePage from "./pages/CreatePlanPages/MainCreatePage/MainCreatePag
 import SelectActivitiesPage from "./pages/CreatePlanPages/SelectActivitiesPage/SelectActivitiesPage";
 import { MainPage } from "./pages/MainPage/MainPage";
 import CalendarPlan from "./pages/CreatePlanPages/CalendarPlan/CalendarPlan";
-import RegisterPage from "./pages/EarlyAccessPage/EarlyAccessPage";
 import UserPage from "./pages/UserPage/UserPage";
 import ProtectedRoute from "./context/ProtectedRoute";
 import { BasketProvider } from "./context/BasketContext";
 
-function App() {
+function App(): JSX.Element {
   return (
     <>
       <Routes>
