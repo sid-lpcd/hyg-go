@@ -51,7 +51,7 @@ export interface PassMetadata {
   participantCount: number;
   validationCount: number;
   revocationReason?: string;
-  revokedAt?: string;
+  revokedAt?: Date;
 }
 
 export interface Pass {
@@ -61,12 +61,12 @@ export interface Pass {
   userId: number;
   status: PlanPassStatus;
   version: number;
-  issuedAt: string;
-  expiresAt: string;
-  lastValidatedAt?: string;
+  issuedAt: Date;
+  expiresAt: Date;
+  lastValidatedAt?: Date;
   metadata: PassMetadata;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface PassEntitlement {
@@ -79,13 +79,13 @@ export interface PassEntitlement {
   totalPrice: number;
   currency: string;
   status: EntitlementStatus;
-  validFrom?: string;
-  validUntil?: string;
+  validFrom?: Date;
+  validUntil?: Date;
   usageCount: number;
   maxUsage?: number;
   metadata?: Record<string, any>;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ClientInfo {
@@ -129,5 +129,5 @@ export interface PassWallet {
   activePasses: number;
   expiredPasses: number;
   revokedPasses: number;
-  lastUpdated: string;
+  lastUpdated: Date;
 }

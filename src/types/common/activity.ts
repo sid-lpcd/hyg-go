@@ -1,3 +1,15 @@
+import { PersonType } from './index';
+
+export interface Price {
+  minPrice: number;
+  maxPrice: number;
+  currencyCode: string;
+}
+
+export type Prices = Partial<Record<PersonType, Price>> & {
+  [PersonType.ADULT]: Price; // Adult is required, others are optional
+};
+
 export interface Activity {
   activityId: number;
   name: string;
@@ -5,8 +17,8 @@ export interface Activity {
   tags?: string | string[];
   category?: ActivityCategory;
   description?: string;
-  prices?: any;
-  duration?: string;
+  prices?: Prices | null;
+  duration?: number;
   imageUrl?: string;
   openingHours?: string;
   latitude?: number;
@@ -16,8 +28,8 @@ export interface Activity {
   images?: any;
   externalUrl?: string;
   activityViatorId?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export enum ActivityCategory {

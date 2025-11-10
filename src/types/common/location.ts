@@ -16,8 +16,8 @@ export interface Location {
   longitude?: number;
   region?: string;
   country?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface BoundingBox {

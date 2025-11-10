@@ -1,4 +1,9 @@
-import { UserRole } from './index';
+import { PersonType } from './index';
+
+// People counting interface
+export type People = Partial<Record<PersonType, number>> & {
+  [PersonType.ADULT]: number; // Adult is required, others are optional
+};
 
 export interface User {
   userId: number;
@@ -28,6 +33,5 @@ export enum UserRole {
 
 export interface AuthToken {
   token: string;
-  refreshToken?: string;
   expiresAt?: string;
 }

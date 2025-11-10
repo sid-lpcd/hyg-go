@@ -6,3 +6,12 @@ export * from './plan';
 export * from './passWallet';
 export * from './planCollaborator';
 export * from './basket';
+
+// Person types enum for consistent keys across pricing and ticket interfaces
+export enum PersonType {
+  ADULT = 'adult',
+  CHILD = 'child',
+  INFANT = 'infant',
+  SENIOR = 'senior',
+  STUDENT = 'student'
+}

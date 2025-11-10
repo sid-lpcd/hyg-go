@@ -11,6 +11,7 @@ import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import { getNumbers } from "../../../utils/generalHelpers";
 import MapGL from "../../base/MapGL/MapGL";
 import { useBasket } from "../../../context/BasketContext";
+import { PersonType } from "../../../types/common";
 import "swiper/css";
 import "swiper/css/pagination";
 import "./ActivityModal.scss";
@@ -29,7 +30,7 @@ const ActivityModal = ({
   const locationId = location.pathname.split("/")[2];
 
   const [activity, setActivity] = useState(null);
-  const [ticketCount, setTicketCount] = useState({people: { adult: 1}});
+  const [ticketCount, setTicketCount] = useState({ [PersonType.ADULT]: 1});
   const [ticketTotalPrice, setTicketTotalPrice] = useState(0);
   const [labels, setLabels] = useState([]);
   const [ticketPrices, setTicketPrices] = useState({});
@@ -68,22 +69,19 @@ const ActivityModal = ({
   const initialRender = (prices) => {
     let tempLabels = [];
     let tempPrices = {};
-    let count = {
-      people: {},
-    };
+    let count = {};
 
-    for (let price in prices) {
-      tempLabels.push(price);
-      try {
-        tempPrices[price] = getNumbers(prices[price], 0);
-      } catch (error) {
-        tempPrices[price] = 0;
+    Object.values(PersonType).forEach(personType => {
+      if (prices && prices[personType]) {
+        tempLabels.push(personType);
+        const priceObj = prices[personType];
+        tempPrices[personType] = priceObj?.minPrice || 0;
+        const tickets = planInfo.people.hasOwnProperty(personType)
+          ? planInfo.people[personType]
+          : 0;
+        count[personType] = tickets;
       }
-      const tickets = planInfo.people.hasOwnProperty(price)
-        ? planInfo.people[price]
-        : 0;
-      count.people[price] = tickets;
-    }
+    });
 
     setTicketPrices(tempPrices);
     setLabels(tempLabels);
@@ -95,14 +93,12 @@ const ActivityModal = ({
 
     if (!activity?.prices) return;
 
-    for (let price in activity.prices) {
-      try {
-        sumPrice +=
-          getNumbers(activity.prices[price], 0) * ticketCount.people[price];
-      } catch (error) {
-        sumPrice += 0;
+    Object.values(PersonType).forEach(personType => {
+      if (activity.prices[personType]) {
+        const priceObj = activity.prices[personType];
+        sumPrice += (priceObj?.minPrice || 0) * (ticketCount[personType] || 0);
       }
-    }
+    });
 
     setTicketTotalPrice(sumPrice);
   };
@@ -114,7 +110,7 @@ const ActivityModal = ({
       setActivity({ ...response, images: response.images.slice(1, 5) });
 
       if (!response?.prices) {
-        setTicketCount(1);
+        setTicketCount({ [PersonType.ADULT]: 1 });
       } else {
         initialRender(response.prices);
       }
@@ -127,10 +123,7 @@ const ActivityModal = ({
   const handleChangeTicket = (label, val) => {
     setTicketCount({
       ...ticketCount,
-      people: {
-        ...ticketCount.people,
-        [label]: ticketCount.people[label] + val,
-      },
+      [label]: (ticketCount[label] || 0) + val,
     });
   };
 
@@ -173,7 +166,7 @@ const ActivityModal = ({
         (item) => item.activityId === activity.activityId
       );
       if (existingActivity) {
-        setTicketCount(existingActivity.ticketCount);
+        setTicketCount(existingActivity.ticketCount || { [PersonType.ADULT]: 1 });
         setTicketTotalPrice(Number(existingActivity.ticketTotalPrice));
       }
     }
@@ -322,9 +315,9 @@ const ActivityModal = ({
                 <PeopleControl
                   key={uuidv4()}
                   label={`${label} Tickets (£${ticketPrices[label]})`}
-                  count={ticketCount.people[label]}
+                  count={ticketCount[label] || 0}
                   onChange={(val) => handleChangeTicket(label, val)}
-                  min={label === "adult" ? 1 : 0}
+                  min={label === PersonType.ADULT ? 1 : 0}
                 />
               ))}
             </div>

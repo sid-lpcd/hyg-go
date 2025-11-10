@@ -7,18 +7,19 @@ export interface RegisterEarlyUserResponse {
   message: string;
 }
 
-export interface LoginUserResponse {
-  user: User;
-  token: AuthToken;
+export interface LoginUserResponse extends AuthToken {
+  user?: {
+    userId: number;
+    email: string;
+    username: string;
+  };
 }
 
-export interface RegisterUserResponse {
-  user: User;
-  token: AuthToken;
-}
-
-export interface RefreshTokenResponse {
-  token: AuthToken;
+export interface RegisterUserResponse extends AuthToken {
+  user?: {
+    userId: number;
+    email: string;
+  };
 }
 
 export interface UpdateUserResponse {

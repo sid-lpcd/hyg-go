@@ -26,16 +26,14 @@ export const AuthProvider = ({ children }) => {
   const login = async (formData) => {
     try {
       const response = await loginUser(formData);
-      if (response.status === 200) {
-        setToken(response.data.token, response.data.expiresAt);
-        setAuthState({
-          isLoggedIn: true,
-          user: response.data.user,
-          token: response.data.token,
-          expiresAt: response.data.expiresAt,
-        });
-        return { success: true };
-      }
+      setToken(response.token, response.expiresAt);
+      setAuthState({
+        isLoggedIn: true,
+        user: response.user,
+        token: response.token,
+        expiresAt: response.expiresAt,
+      });
+      return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -44,16 +42,14 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     try {
       const response = await registerUser(formData);
-      if (response.status === 201) {
-        setToken(response.data.token, response.data.expiresAt);
-        setAuthState({
-          isLoggedIn: true,
-          user: response.data.user,
-          token: response.data.token,
-          expiresAt: response.data.expiresAt,
-        });
-        return { success: true };
-      }
+      setToken(response.token, response.expiresAt);
+      setAuthState({
+        isLoggedIn: true,
+        user: response.user,
+        token: response.token,
+        expiresAt: response.expiresAt,
+      });
+      return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -65,16 +61,14 @@ export const AuthProvider = ({ children }) => {
         user_id: authState.user.user_id,
         ...formData,
       });
-      if (response.status === 200) {
-        setToken(response.data.token, response.data.expiresAt);
-        setAuthState({
-          isLoggedIn: true,
-          user: response.data.user,
-          token: response.data.token,
-          expiresAt: response.data.expiresAt,
-        });
-        return { success: true };
-      }
+      setToken(response.token, response.expiresAt);
+      setAuthState({
+        isLoggedIn: true,
+        user: response.user,
+        token: response.token,
+        expiresAt: response.expiresAt,
+      });
+      return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -91,15 +85,13 @@ export const AuthProvider = ({ children }) => {
   const refreshToken = async () => {
     try {
       const response = await refreshTokenUser();
-      if (response.status === 200) {
-        setToken(response.data.token, response.data.expiresAt);
-        setAuthState({
-          token: response.data.token,
-          expiresAt: response.data.expiresAt,
-          isLoggedIn: true,
-        });
-        setLoading(false);
-      }
+      setToken(response.token, response.expiresAt);
+      setAuthState({
+        token: response.token,
+        expiresAt: response.expiresAt,
+        isLoggedIn: true,
+      });
+      setLoading(false);
     } catch (err) {
       logout();
       navigate("/user");

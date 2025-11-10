@@ -14,5 +14,5 @@ export * from './responses/user';
 export * from './responses/planCollaborator';
 export * from './responses/passWallet';
 
-// Common types exports
-export * from './common';
+// Common types exports  
+export * from '../common';

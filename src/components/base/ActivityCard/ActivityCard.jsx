@@ -104,8 +104,8 @@ const ActivityCard = ({
 
             {activity?.ticketTotalPrice !== 0 && (
               <p className="activity-card__tickets">
-                {Object.keys(activity.ticketCount.people).reduce(
-                  (acc, value) => acc + activity.ticketCount.people[value],
+                {Object.values(activity.ticketCount || {}).reduce(
+                  (acc, value) => acc + (value || 0),
                   0
                 )}{" "}
                 tickets

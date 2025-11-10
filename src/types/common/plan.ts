@@ -1,19 +1,17 @@
-export interface People {
-  adults: number;
-  children?: number;
-  infants?: number;
-}
+import { ActivityCategory, PersonType, Prices } from './index';
+
+export type TicketCount = Partial<Record<PersonType, number>> & {
+  [PersonType.ADULT]: number; // Adult is required, others are optional
+};
+
+export type People = Partial<Record<PersonType, number>> & {
+  [PersonType.ADULT]: number; // At least one adult required
+};
 
 export interface Tag {
   id: number;
   name: string;
   color?: string;
-}
-
-export interface TicketCount {
-  adults: number;
-  children?: number;
-  infants?: number;
 }
 
 export interface RouteInfo {
@@ -39,9 +37,9 @@ export interface PlanActivityWithDetails extends PlanActivity {
   name: string;
   description?: string;
   locationId: number;
-  category?: string; // ActivityCategory will be imported when needed
-  prices?: any;
-  duration?: string;
+  category?: ActivityCategory;
+  prices?: Prices;
+  duration?: number;
   imageUrl?: string;
   externalUrl?: string;
   latitude?: number;

@@ -1,8 +1,8 @@
-export const formatDateTripDisplay = (startDate, endDate) => {
+export const formatDateTripDisplay = (startDate: string | Date, endDate: string | Date): string => {
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  const options = { day: "2-digit", month: "short", year: "2-digit" };
+  const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "2-digit" };
 
   if (
     start.getFullYear() === end.getFullYear() &&
@@ -26,7 +26,7 @@ export const formatDateTripDisplay = (startDate, endDate) => {
   )} - ${end.toLocaleDateString("en-GB", options)}`;
 };
 
-export const formatDateDisplay = (date, fallback = new Date()) => {
+export const formatDateDisplay = (date?: string | Date | null, fallback: Date = new Date()): string => {
   return new Date(date || fallback).toLocaleDateString("en-GB", {
     year: "numeric",
     month: "short",
@@ -34,13 +34,13 @@ export const formatDateDisplay = (date, fallback = new Date()) => {
   });
 };
 
-export const formatDateApi = (dateString) => {
-  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+export const formatDateApi = (dateString: string | Date): string => {
+  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
   const date = new Date(dateString);
   return date.toLocaleDateString("en-CA", options); // 'en-CA' gives 'YYYY-MM-DD'
 };
 
-export function combineDateTimeUTC(date, time) {
+export function combineDateTimeUTC(date: string, time: string): string {
   // Regular Expression to validate the expected date format
   const validFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
   if (!validFormat.test(date)) {
