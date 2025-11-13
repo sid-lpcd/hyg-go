@@ -14,5 +14,8 @@ export * from './responses/user';
 export * from './responses/planCollaborator';
 export * from './responses/passWallet';
 
+// WebSocket types exports
+export * from './webSocket/webSocketContract';
+
 // Common types exports  
 export * from '../common';

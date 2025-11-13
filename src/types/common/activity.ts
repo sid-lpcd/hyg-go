@@ -51,3 +51,8 @@ export enum ActivityCategory {
   MODERN_WONDERS = 'modern_wonders',
   PHOTOGRAPHY_HOTSPOTS = 'photography_hotspots'
 }
+
+export interface ActivitySelectedFilters {
+  category: string[];
+  tags: string[];
+}

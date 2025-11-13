@@ -1,28 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 import { getNumbers } from "../../../utils/generalHelpers";
 import { v4 as uuidv4 } from "uuid";
 import { useBasket } from "../../../context/BasketContext";
+import { Activity, Price } from "../../../types/common/activity";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
 import CheckIcon from "../../../assets/icons/check-icon.svg?react";
 import StarIcon from "../../../assets/icons/star-icon.svg?react";
 import HalfStarIcon from "../../../assets/icons/star-half-icon.svg?react";
 import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
 import "./ActivityCard.scss";
+import { PlanActivityWithDetails } from "../../../types/common/plan";
+
+interface ActivityCardProps {
+  activity: Activity | PlanActivityWithDetails;
+  openActivity: (activity?: Activity | PlanActivityWithDetails) => void;
+  cartPage?: boolean;
+  openDeleteModal?: (activity: Activity | PlanActivityWithDetails) => void;
+}
 
 const ActivityCard = ({
   activity,
   openActivity,
   cartPage = false,
   openDeleteModal,
-}) => {
+}: ActivityCardProps): JSX.Element | null => {
   const { basketState, removeActivity, hasActivity } = useBasket();
-  const [inBasket, setInBasket] = useState(false);
-  function roundHalf(num) {
+  const [inBasket, setInBasket] = useState<boolean>(false);
+
+  function roundHalf(num: number): number {
     return Math.round(num * 2) / 2;
   }
-  const renderStars = (rating, maxRating = 5) => {
-    const stars = [];
-    const roundRating = roundHalf(parseFloat(rating));
+
+  const renderStars = (rating: number | undefined, maxRating: number = 5): JSX.Element[] => {
+    if (!rating) return [];
+    const stars: JSX.Element[] = [];
+    const roundRating = roundHalf(rating);
+    
     for (let i = 0; i < maxRating; i++) {
       if (i + 0.5 === roundRating) {
         stars.push(
@@ -47,72 +60,66 @@ const ActivityCard = ({
     return stars;
   };
 
-  const handleRemoveFromBasket = (e, check = false) => {
-    e.stopPropagation();
-    if (!check) {
+  const handleRemoveFromBasket = (confirmDeletion: boolean = false): void => {
+    if (!confirmDeletion) {
       removeActivity(activity.activityId);
     } else {
-      openDeleteModal(activity);
+      openDeleteModal?.(activity);
     }
   };
 
-  const checkBasket = (activity) => {
+  const checkBasket = (activity: Activity): void => {
     setInBasket(hasActivity(activity.activityId));
   };
 
-  const getDuration = (activity) => {
-    try {
-      return getNumbers(activity, 0) + " - " + getNumbers(activity, 1) + " hrs";
-    } catch (error) {
-      return "Free";
-    }
+  const getDuration = (duration: number | undefined): string => {
+    if (!duration) return "Duration not available";
+    return `~${duration} hr(s)`;
   };
 
-  const getPrice = (activity) => {
-    try {
-      return "£" + getNumbers(activity, 0) + " - £" + getNumbers(activity, 1);
-    } catch (error) {
-      return "Free";
-    }
+  const getPrice = (price: Price | undefined): string => {
+    if (!price) return "Free";
+    return `${price.minPrice} - ${price.maxPrice} ${price.currencyCode}`;
   };
 
   useEffect(() => {
     if (!basketState) return;
     checkBasket(activity);
-  }, [basketState]);
+  }, [basketState, activity]);
 
   if (!activity) {
-    return;
+    return null;
   }
 
   if (cartPage) {
+    const planActivity = activity as PlanActivityWithDetails;
     return (
       <article
         className="activity-card activity-card--cart"
-        onClick={openActivity}
+        onClick={() => openActivity(activity)}
       >
         <img
-          src={activity.imageUrl}
-          alt={activity.title}
+          src={planActivity.imageUrl}
+          alt={planActivity.name}
           className="activity-card__image activity-card__image--cart"
         />
         <div className="activity-card__content activity-card__content--cart">
           <div className="activity-card__box activity-card__box--cart">
             <h3 className="activity-card__title activity-card__title--cart">
-              {activity.name?.split("(")[0]}
+              {planActivity.name?.split("(")[0]}
             </h3>
 
-            {activity?.ticketTotalPrice !== 0 && (
+            {planActivity.ticketTotalPrice !== 0 && (
               <p className="activity-card__tickets">
-                {Object.values(activity.ticketCount || {}).reduce(
-                  (acc, value) => acc + (value || 0),
+                {Object.values(planActivity.ticketCount || {}).reduce(
+                  (acc: number, value: any) => acc + (value || 0),
                   0
                 )}{" "}
                 tickets
               </p>
             )}
             <p className="activity-card__price-value activity-card__price-value--cart">
-              £ {(activity?.ticketTotalPrice === 0) ? "-" : activity?.ticketTotalPrice}
+              £ {(planActivity.ticketTotalPrice === 0) ? "-" : planActivity.ticketTotalPrice}
             </p>
           </div>
           <div
@@ -130,7 +137,7 @@ const ActivityCard = ({
     <article className="activity-card" onClick={() => openActivity(activity)}>
       <img
         src={activity.imageUrl}
-        alt={activity.title}
+        alt={activity.name}
         className="activity-card__image"
       />
       <div className="activity-card__content">
@@ -159,7 +166,7 @@ const ActivityCard = ({
           </p>
         )}
         <span className="activity-card__price-value">
-          {activity.prices?.adult ? getPrice(activity.prices.adult) : "Free"}
+          {getPrice(activity.prices?.adult)}
         </span>
         {inBasket ? (
           <button

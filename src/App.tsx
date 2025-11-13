@@ -22,7 +22,6 @@ function App(): JSX.Element {
           }
         />
         <Route path="/user" element={<UserPage />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/create-plan"
           element={

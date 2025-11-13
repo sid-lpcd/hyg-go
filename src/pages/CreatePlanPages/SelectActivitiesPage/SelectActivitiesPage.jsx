@@ -56,7 +56,6 @@ const SelectActivitiesPage = () => {
         planInfo.planId,
         basketState.activities
       );
-      console.log(response);
       clearBasket();
     } catch (error) {
       console.error(error);
@@ -67,7 +66,6 @@ const SelectActivitiesPage = () => {
 
   const updatedProgress = (basket) => {
     let activityTime = 0;
-    console.log("Calculating progress for basket:", basket);
     if (basket.activities.length === 0) {
       activityTime = 0;
     } else if (basket.activities.length === 1) {
@@ -83,7 +81,6 @@ const SelectActivitiesPage = () => {
   };
 
   const compareBasket = (response) => {
-    console.log("Comparing basket with response:", basketState, response);
     if (!basketState?.planId || basketState.planId !== response.planId) {
       const newBasket = { 
         planId: response.planId, 
@@ -98,7 +95,6 @@ const SelectActivitiesPage = () => {
   const getPlanInfo = async () => {
     try {
       const response = await getPlanById(locationId);
-      console.log("Fetched plan info:", response);
       setPlanInfo(response);
       setTotalTripLength(computeAvailableHoursWithinDates(response.startDate, response.endDate));
       compareBasket(response);
