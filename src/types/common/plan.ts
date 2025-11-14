@@ -67,3 +67,16 @@ export interface Plan {
 export interface PlanWithActivities extends Plan {
   activities: PlanActivity[];
 }
+
+
+// Todo: Update this when public plans a thing
+export interface PublicPlanUser {
+  name: string;
+  profileImage: string;
+}
+
+export interface PublicPlan extends Plan {
+  location: string;
+  imageUrl: string;
+  user: PublicPlanUser;
+}

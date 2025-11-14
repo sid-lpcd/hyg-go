@@ -56,3 +56,8 @@ export interface ActivitySelectedFilters {
   category: string[];
   tags: string[];
 }
+
+export interface MapMarker extends Pick<Activity, 'activityId' | 'latitude' | 'longitude' | 'category'> {
+  latitude: number; 
+  longitude: number;
+}

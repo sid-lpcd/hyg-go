@@ -2,7 +2,13 @@ import { useNavigate } from "react-router-dom";
 import PeopleIcon from "../../../assets/icons/profile-icon.svg?react";
 import { formatDateTripDisplay } from "../../../utils/dateFormat";
 import "./TripCard.scss";
-const TripCard = ({ trip }) => {
+import { Plan } from "../../../types/common";
+
+interface TripCardProps {
+  trip: Plan;
+}
+
+const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   const navigate = useNavigate();
   return (
     <div

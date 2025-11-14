@@ -6,24 +6,37 @@ import { combineDateTimeUTC, formatDateApi } from "../../../utils/dateFormat";
 import Modal from "react-responsive-modal";
 import AddNewActivityForm from "../AddNewActivityForm/AddNewActivityForm";
 import { InfinitySpin } from "react-loader-spinner";
-const CalendarScheduleSection = ({ planInfo, activities }) => {
-  const calendarRef = useRef(null);
+import { Plan, PlanActivityWithDetails } from "../../../types/common";
+import { CalendarEvent } from "../../../types/common/calendar";
 
-  const [openModalNew, setOpenModalNew] = useState(false);
-  const [displayedActivities, setDisplayedActivities] = useState([]);
-  const [remainingActivities, setRemainingActivities] = useState([]);
+interface CalendarScheduleSectionProps {
+  planInfo: Plan;
+  activities: PlanActivityWithDetails[];
+}
+
+const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planInfo, activities }) => {
+  const calendarRef = useRef<FullCalendar>(null);
+
+  const [openModalNew, setOpenModalNew] = useState<boolean>(false);
+  const [displayedActivities, setDisplayedActivities] = useState<CalendarEvent[]>([]);
+  const [remainingActivities, setRemainingActivities] = useState<PlanActivityWithDetails[]>([]);
+  const [error, setError] = useState<string>("");
 
   const handleEventClick = () => {};
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setOpenModalNew(false);
     setError("");
   };
 
-  function addNewEvent(newActivity) {
-    let calendarApi = calendarRef.current.getApi();
+  const createEventId = (): string => {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  };
 
-    if (newActivity) {
+  function addNewEvent(newActivity: PlanActivityWithDetails): void {
+    const calendarApi: CalendarApi | undefined = calendarRef.current?.getApi();
+
+    if (newActivity && calendarApi) {
       calendarApi.addEvent({
         id: createEventId(),
         title: newActivity.name,
@@ -34,8 +47,8 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
     }
   }
 
-  const multiDayEventFormat = (activity) => {
-    const events = [];
+  const multiDayEventFormat = (activity: PlanActivityWithDetails): CalendarEvent[] => {
+    const events: CalendarEvent[] = [];
 
     const endDateTime = new Date(activity.endDate);
 
@@ -48,7 +61,7 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
 
       // Determine the end time for the current day's event
       const currentEnd =
-        nextDay <= endDateTime ? new Date(nextDay - 1000) : endDateTime;
+        nextDay <= endDateTime ? new Date(nextDay.getTime() - 1000) : endDateTime;
 
       // Push the event for the current day
       events.push({
@@ -65,8 +78,8 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
     return events;
   };
 
-  const formatActivities = (activities) => {
-    let displayedActivities = [];
+  const formatActivities = (activities: PlanActivityWithDetails[]): CalendarEvent[] => {
+    let displayedActivities: CalendarEvent[] = [];
 
     console.log("Formatting activities:", activities);
     activities.forEach((activity) => {
@@ -74,7 +87,7 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
         displayedActivities.push(...multiDayEventFormat(activity));
         return;
       }
-      let event = {
+      const event: CalendarEvent = {
         id: activity.activityId,
         title: activity.name,
         start: activity.startDate,
@@ -89,8 +102,8 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
     return displayedActivities;
   };
 
-  const addDays = (dateString) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const addDays = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
     const date = new Date(dateString);
 
     date.setDate(date.getDate() + 1);
@@ -100,7 +113,7 @@ const CalendarScheduleSection = ({ planInfo, activities }) => {
 
   useEffect(() => {
     if (activities) {
-      let tempDisplayedActivities = [];
+      const tempDisplayedActivities: CalendarEvent[] = [];
       tempDisplayedActivities.push(...formatActivities(activities));
       setDisplayedActivities(tempDisplayedActivities);
     }

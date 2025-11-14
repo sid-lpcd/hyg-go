@@ -1,8 +1,20 @@
+import React from "react";
 import "./Form.scss";
 import Error from "../../../assets/icons/error-icon.svg?react";
 import { v4 as uuidv4 } from "uuid";
+import { FormLabel } from "../../../types/common";
 
-export default function Form({
+interface FormProps {
+  title: string;
+  labels?: FormLabel[];
+  formData: Record<string, any>;
+  errorData: Record<string, boolean>;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleCancel: () => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+
+const Form: React.FC<FormProps> = ({
   title,
   labels,
   formData,
@@ -10,13 +22,13 @@ export default function Form({
   handleChange,
   handleCancel,
   handleSubmit,
-}) {
+}) => {
   return (
     <form className="form" onSubmit={handleSubmit}>
       <h2 className="form__title">{title}</h2>
       <div className="form__section">
         {labels?.map((label) => {
-          let input = <></>;
+          let input: JSX.Element = <></>;
           switch (label.type) {
             case "input":
               input = (
@@ -109,4 +121,6 @@ export default function Form({
       </div>
     </form>
   );
-}
+};
+
+export default Form;

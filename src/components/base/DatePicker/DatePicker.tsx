@@ -2,9 +2,19 @@ import React, { useState, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import "./DatePicker.scss";
+import { Plan } from "../../../types/common/plan";
 
-const DatePicker = ({ tripData, setTripData, onClose }) => {
-  const [localDates, setLocalDates] = useState({
+interface DatePickerProps {
+  tripData: Partial<Plan>;
+  setTripData: (data: Partial<Plan>) => void;
+  onClose: () => void;
+}
+
+const DatePicker: React.FC<DatePickerProps> = ({ tripData, setTripData, onClose }) => {
+  const [localDates, setLocalDates] = useState<{
+    startDate: Date | null;
+    endDate: Date | null;
+  }>({
     startDate: tripData.startDate || null,
     endDate: tripData.endDate || null,
   });
@@ -16,7 +26,7 @@ const DatePicker = ({ tripData, setTripData, onClose }) => {
     });
   }, [tripData]);
 
-  const handleDayClick = (day) => {
+  const handleDayClick = (day: Date): void => {
     if (localDates.startDate && localDates.endDate) {
       setLocalDates({
         startDate: day,
@@ -34,7 +44,7 @@ const DatePicker = ({ tripData, setTripData, onClose }) => {
     }
   };
 
-  const handleDone = () => {
+  const handleDone = (): void => {
     setTripData({
       ...tripData,
       startDate: localDates.startDate,

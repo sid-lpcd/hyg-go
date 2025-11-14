@@ -31,3 +31,14 @@ export interface Coordinates {
   latitude: number;
   longitude: number;
 }
+
+export interface LocationAutocompleteOption {
+  name: string;
+  region?: string;
+  country?: string;
+}
+
+export interface Bounds {
+  southwest: [number, number];
+  northeast: [number, number];
+}

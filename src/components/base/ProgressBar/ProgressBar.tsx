@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import "./ProgressBar.scss";
-const ProgressBar = ({ total, current }) => {
-  const [percentage, setPercentage] = useState(0);
-  const [displayedPercentage, setDisplayedPercentage] = useState(0);
 
-  const calcPercentage = () => {
+interface ProgressBarProps {
+  total: number;
+  current: number;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ total, current }) => {
+  const [percentage, setPercentage] = useState<number>(0);
+  const [displayedPercentage, setDisplayedPercentage] = useState<number>(0);
+
+  const calcPercentage = (): number => {
     const percentageCalc = Math.floor((current / total) * 100);
     setPercentage(percentageCalc);
     return percentageCalc;
   };
 
-  const startAnimation = (tempPercentage) => {
+  const startAnimation = (tempPercentage: number): void => {
     let start = displayedPercentage;
     const end = tempPercentage;
     const step = (end - start) / 20;

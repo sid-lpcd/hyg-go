@@ -1,8 +1,13 @@
 import React from "react";
 import FlameIcon from "../../../assets/icons/fire-icon.svg?react";
 import "./CardSmall.scss";
+import { PublicPlan } from "../../../types/common/plan";
 
-const CardSmall = ({ plan }) => {
+interface CardSmallProps {
+  plan: PublicPlan;
+}
+
+const CardSmall: React.FC<CardSmallProps> = ({ plan }) => {
   const { title, location, likes, imageUrl, user } = plan;
 
   return (

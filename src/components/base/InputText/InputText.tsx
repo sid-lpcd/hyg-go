@@ -3,8 +3,20 @@ import Error from "../../../assets/icons/error-icon.svg?react";
 import "./InputText.scss";
 import SearchIcon from "../../../assets/icons/search-icon.svg?react";
 import { v4 as uuidv4 } from "uuid";
+import { LocationAutocompleteOption } from "../../../types/common";
 
-const InputText = ({
+interface InputTextProps {
+  isAutocomplete?: boolean;
+  getOptions?: (value?: string) => Promise<LocationAutocompleteOption[]>;
+  placeholder: string;
+  inputValue: string | LocationAutocompleteOption;
+  setInputValue: (value: string | LocationAutocompleteOption) => void;
+  error?: boolean;
+  setError?: () => void;
+  currentLocation?: boolean;
+}
+
+const InputText: React.FC<InputTextProps> = ({
   isAutocomplete,
   getOptions,
   placeholder,
@@ -14,51 +26,55 @@ const InputText = ({
   setError,
   currentLocation = false,
 }) => {
-  const [filteredOptions, setFilteredOptions] = useState([]);
-  const [autocompleteActive, setAutocompleteActive] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState<LocationAutocompleteOption[]>([]);
+  const [autocompleteActive, setAutocompleteActive] = useState<boolean>(false);
 
-  const dropdownRef = useRef();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = async (e) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const value = e.target.value;
     setInputValue(value);
-    setError();
+    setError?.();
 
-    if (isAutocomplete && value.length > 2) {
+    if (isAutocomplete && getOptions && value.length > 2) {
       const filtered = await getOptions(value);
       setFilteredOptions(filtered);
       setAutocompleteActive(true);
     }
   };
 
-  const handleSearch = async () => {
-    if (isAutocomplete) {
-      const filtered = await getOptions(inputValue.name);
-      setFilteredOptions(filtered[0]);
+  const handleSearch = async (): Promise<void> => {
+    if (isAutocomplete && getOptions) {
+      const inputName = typeof inputValue === 'string' ? inputValue : inputValue.name;
+      const filtered = await getOptions(inputName);
+      setFilteredOptions([filtered[0]]);
       setAutocompleteActive(true);
     }
   };
-  const handleFocus = async () => {
-    if (currentLocation && inputValue.length < 2) {
+
+  const handleFocus = async (): Promise<void> => {
+    if (currentLocation && getOptions && (typeof inputValue === 'string' ? inputValue.length < 2 : true)) {
       const filtered = await getOptions();
       setFilteredOptions(filtered);
       setAutocompleteActive(true);
     }
-    if (isAutocomplete && filteredOptions && inputValue.length > 2) {
+    const inputLength = typeof inputValue === 'string' ? inputValue.length : inputValue.name.length;
+    if (isAutocomplete && filteredOptions && inputLength > 2) {
       setAutocompleteActive(true);
     }
   };
-  const handleBlur = (event) => {
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
     if (
       dropdownRef.current &&
-      dropdownRef.current.contains(event.relatedTarget)
+      dropdownRef.current.contains(event.relatedTarget as Node)
     ) {
       return;
     }
     setAutocompleteActive(false);
   };
 
-  const handleOptionClick = (option) => {
+  const handleOptionClick = (option: LocationAutocompleteOption): void => {
     setInputValue(option);
     setFilteredOptions([]);
   };
@@ -69,7 +85,7 @@ const InputText = ({
         <SearchIcon className="input-text__search-icon" />
         <input
           type="text"
-          value={inputValue}
+          value={typeof inputValue === 'string' ? inputValue : inputValue.name}
           onChange={handleChange}
           placeholder={placeholder}
           className="input-text__input"
@@ -90,7 +106,7 @@ const InputText = ({
           >
             {filteredOptions.map((option) => {
               if (
-                currentLocation &
+                currentLocation &&
                 (option.name === "Use my current location")
               ) {
                 return (

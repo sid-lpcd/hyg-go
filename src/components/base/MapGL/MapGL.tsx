@@ -1,10 +1,24 @@
-import { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./MapGL.scss";
 import { useBasket } from "../../../context/BasketContext";
+import { BoundingBox, Bounds } from "../../../types/common";
+import { MapMarker } from "../../../types/common";
 
-const MapGL = ({
+interface MapGLProps {
+  initialLocation: [number, number];
+  initialZoom?: number;
+  isResetVisible?: boolean;
+  markersList: MapMarker[];
+  labels?: string[];
+  fetchMarkersWithinBounds?: (bounds: BoundingBox) => void;
+  isMarkerClickable?: boolean;
+  onMarkerClick?: (activity: MapMarker) => void;
+  isMoveable?: boolean;
+}
+
+const MapGL: React.FC<MapGLProps> = ({
   initialLocation,
   initialZoom = 14,
   isResetVisible,
@@ -16,15 +30,16 @@ const MapGL = ({
   isMoveable = true,
 }) => {
   const { hasActivity, basketState } = useBasket();
-  const [center, setCenter] = useState(initialLocation);
-  const [zoom, setZoom] = useState(initialZoom);
-  const [isCentered, setIsCentered] = useState(true);
-  const [previousBounds, setPreviousBounds] = useState(null);
+  const [center, setCenter] = useState<[number, number]>(initialLocation);
+  const [zoom, setZoom] = useState<number>(initialZoom);
+  const [isCentered, setIsCentered] = useState<boolean>(true);
+  const [previousBounds, setPreviousBounds] = useState<Bounds | null>(null);
 
-  const mapRef = useRef();
-  const mapContainerRef = useRef();
+  const mapRef = useRef<mapboxgl.Map>();
+  const mapContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (): void => {
+    if (!mapRef.current) return;
     mapRef.current.flyTo({
       center: initialLocation,
       zoom: initialZoom,
@@ -32,11 +47,11 @@ const MapGL = ({
     setIsCentered(true);
   };
 
-  const createLabelsObject = (labelsArray, colors, defaultColor = "gray") => {
+  const createLabelsObject = (labelsArray: string[], colors: string[], defaultColor: string = "gray"): Record<string, string> => {
     const labels = labelsArray.reduce((acc, label) => {
       acc[label] = colors.shift() || defaultColor;
       return acc;
-    }, {});
+    }, {} as Record<string, string>);
     labels.default = defaultColor; // Add a default color
     return labels;
   };
@@ -67,15 +82,16 @@ const MapGL = ({
     ? createLabelsObject(labels, colors)
     : { default: "red" };
 
-  const getMarkerCategory = (marker) => {
-    return labelsWithColors[marker.category] || labelsWithColors.default;
+  const getMarkerCategory = (marker: MapMarker): string => {
+    return labelsWithColors[marker.category || ''] || labelsWithColors.default;
   };
 
-  const checkBasket = (marker) => {
+  const checkBasket = (marker: MapMarker): boolean => {
     return hasActivity(marker.activityId);
   };
 
-  const setMarkers = () => {
+  const setMarkers = (): void => {
+    if (!mapRef.current) return;
     markersList.forEach((marker) => {
       let colorMarker = getMarkerCategory(marker);
 
@@ -88,28 +104,33 @@ const MapGL = ({
         .addClassName(`marker-${marker.activityId}`)
         .addTo(mapRef.current);
 
-      if (isMarkerClickable) {
-        markerEl.getElement().addEventListener("click", (e) => {
-          const markerTarget = e.target?.parentElement?.parentElement;
+      if (isMarkerClickable && onMarkerClick) {
+        markerEl.getElement().addEventListener("click", (e: Event) => {
+          const target = e.target as HTMLElement;
+          const markerTarget = target?.parentElement?.parentElement;
 
-          const classNames = markerTarget.className.split(" ");
-          const activityId = classNames[classNames.length - 1].split("-")[1];
+          if (markerTarget) {
+            const classNames = markerTarget.className.split(" ");
+            const activityId = classNames[classNames.length - 1].split("-")[1];
 
-          const activity = markersList.find(
-            (item) => item.activityId === parseInt(activityId)
-          );
+            const activity = markersList.find(
+              (item) => item.activityId === parseInt(activityId)
+            );
 
-          onMarkerClick(activity);
+            if (activity) {
+              onMarkerClick(activity);
+            }
+          }
         });
       }
     });
   };
 
-  const isSignificantChange = (old, current, distanceThreshold) =>
+  const isSignificantChange = (old: [number, number], current: [number, number], distanceThreshold: number): boolean =>
     Math.abs(old[0] - current[0]) > distanceThreshold ||
     Math.abs(old[1] - current[1]) > distanceThreshold;
 
-  const shouldFetchMarkers = (oldBounds, newBounds) => {
+  const shouldFetchMarkers = (oldBounds: Bounds | null, newBounds: Bounds): boolean => {
     if (!oldBounds) return true;
 
     return (
@@ -123,7 +144,7 @@ const MapGL = ({
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPGL_API_KEY;
     mapRef.current = new mapboxgl.Map({
-      container: mapContainerRef.current,
+      container: mapContainerRef.current!,
       center: center,
       zoom: zoom,
     });
@@ -168,7 +189,9 @@ const MapGL = ({
     markersList.length && setMarkers();
 
     return () => {
-      mapRef.current.remove();
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
     };
   }, []);
 

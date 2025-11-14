@@ -15,13 +15,13 @@ export const createActivitiesWebSocket = (
         switch (response.type) {
           case 'batchComplete':
             const batchCompleteData = response.data as BatchCompleteData;
+            onActivitiesReceived([], batchCompleteData.hasMoreBatches);
             onLoadingChange(false);
             break;
             
           case 'activitiesBatch':
             const batchData = response.data as ActivitiesBatchData;
-            onActivitiesReceived(batchData.activities, true);
-            onLoadingChange(false);
+            onActivitiesReceived(batchData.activities);
             break;
             
           case 'activity':

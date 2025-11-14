@@ -1,6 +1,12 @@
 import "./Button.scss";
 
-const Button = ({ classProp, btnText, clickHandler }) => {
+interface ButtonProps {
+  classProp: string;
+  btnText: string;
+  clickHandler: () => void;
+}
+
+const Button: React.FC<ButtonProps> = ({ classProp, btnText, clickHandler }) => {
   return (
     <button
       className={`${classProp}__btn`}
