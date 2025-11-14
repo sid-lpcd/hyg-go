@@ -28,8 +28,8 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
         <div className="trip-card__details">
           <span className="trip-card__people">
             {trip.people
-              ? Object.keys(trip.people).reduce(
-                  (sum, type) => sum + trip.people[type],
+              ? Object.values(trip.people).reduce(
+                  (sum, count) => sum + (count || 0),
                   0
                 )
               : 1}

@@ -2,12 +2,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/timegrid";
 import "./CalendarScheduleSection.scss";
 import { useEffect, useRef, useState } from "react";
-import { combineDateTimeUTC, formatDateApi } from "../../../utils/dateFormat";
 import Modal from "react-responsive-modal";
 import AddNewActivityForm from "../AddNewActivityForm/AddNewActivityForm";
 import { InfinitySpin } from "react-loader-spinner";
 import { Plan, PlanActivityWithDetails } from "../../../types/common";
 import { CalendarEvent } from "../../../types/common/calendar";
+import { CalendarApi } from "@fullcalendar/core/index.js";
 
 interface CalendarScheduleSectionProps {
   planInfo: Plan;
@@ -19,8 +19,8 @@ const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planI
 
   const [openModalNew, setOpenModalNew] = useState<boolean>(false);
   const [displayedActivities, setDisplayedActivities] = useState<CalendarEvent[]>([]);
-  const [remainingActivities, setRemainingActivities] = useState<PlanActivityWithDetails[]>([]);
-  const [error, setError] = useState<string>("");
+  const [remainingActivities] = useState<PlanActivityWithDetails[]>([]);
+  const [, setError] = useState<string>("");
 
   const handleEventClick = () => {};
 
@@ -65,7 +65,7 @@ const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planI
 
       // Push the event for the current day
       events.push({
-        id: activity.activityId,
+        id: activity.activityId.toString(),
         title: activity.name,
         start: currentStart.toISOString(),
         end: currentEnd.toISOString(),
@@ -88,7 +88,7 @@ const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planI
         return;
       }
       const event: CalendarEvent = {
-        id: activity.activityId,
+        id: activity.activityId.toString(),
         title: activity.name,
         start: activity.startDate,
         end: activity.endDate,
@@ -123,10 +123,8 @@ const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planI
     return (
       <div className="loader-overlay">
         <InfinitySpin
-          visible={true}
           width="200"
           color="#ffffff"
-          ariaLabel="infinity-spin-loading"
         />
       </div>
     );

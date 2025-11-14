@@ -1,5 +1,4 @@
-import { useEffect, useState, MouseEvent } from "react";
-import { getNumbers } from "../../../utils/generalHelpers";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useBasket } from "../../../context/BasketContext";
 import { Activity, Price } from "../../../types/common/activity";
@@ -68,8 +67,8 @@ const ActivityCard = ({
     }
   };
 
-  const checkBasket = (activity: Activity): void => {
-    setInBasket(hasActivity(activity.activityId));
+  const checkBasket = (activityId: number): void => {
+    setInBasket(hasActivity(activityId));
   };
 
   const getDuration = (duration: number | undefined): string => {
@@ -84,7 +83,7 @@ const ActivityCard = ({
 
   useEffect(() => {
     if (!basketState) return;
-    checkBasket(activity);
+    checkBasket(activity.activityId);
   }, [basketState, activity]);
 
   if (!activity) {
@@ -124,7 +123,7 @@ const ActivityCard = ({
           </div>
           <div
             className="activity-card__remove"
-            onClick={(e) => handleRemoveFromBasket(e, true)}
+            onClick={() => handleRemoveFromBasket(true)}
           >
             <CloseIcon className="activity-card__remove-icon" />
           </div>
@@ -132,46 +131,46 @@ const ActivityCard = ({
       </article>
     );
   }
-
+  const typeActivity = activity as Activity;
   return (
-    <article className="activity-card" onClick={() => openActivity(activity)}>
+    <article className="activity-card" onClick={() => openActivity(typeActivity)}>
       <img
-        src={activity.imageUrl}
-        alt={activity.name}
+        src={typeActivity.imageUrl}
+        alt={typeActivity.name}
         className="activity-card__image"
       />
       <div className="activity-card__content">
         {inBasket && <CheckIcon className="activity-card__check-icon" />}
-        <h3 className="activity-card__title">{activity.name?.split("(")[0]}</h3>
+        <h3 className="activity-card__title">{typeActivity.name?.split("(")[0]}</h3>
         <p className="activity-card__description">
-          {activity.description?.length
-            ? activity.description.length > 60
-              ? activity.description.substring(0, 60) + "..."
-              : activity.description
+          {typeActivity.description?.length
+            ? typeActivity.description.length > 60
+              ? typeActivity.description.substring(0, 60) + "..."
+              : typeActivity.description
             : "No description available"}
         </p>
         {/* Add category icon here? */}
-        <div className="activity-card__tags">{activity.tags}</div>
+        <div className="activity-card__tags">{typeActivity.tags}</div>
         <div className="activity-card__reviews">
           <div className="activity-card__stars">
-            {renderStars(activity.reviewsAverageRating)}
+            {renderStars(typeActivity.reviewsAverageRating)}
           </div>
           <p className="activity-card__reviews-count">
-            {activity.reviewsTotalCount}
+            {typeActivity.reviewsTotalCount}
           </p>
         </div>
-        {activity.duration && (
+        {typeActivity.duration && (
           <p className="activity-card__duration">
-            {getDuration(activity.duration)}
+            {getDuration(typeActivity.duration)}
           </p>
         )}
         <span className="activity-card__price-value">
-          {getPrice(activity.prices?.adult)}
+          {getPrice(typeActivity.prices?.adult)}
         </span>
         {inBasket ? (
           <button
             className="activity-card__add-btn activity-card__add-btn--remove"
-            onClick={(e) => handleRemoveFromBasket(e, false)}
+            onClick={() => handleRemoveFromBasket(false)}
           >
             Remove
           </button>

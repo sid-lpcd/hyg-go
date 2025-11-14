@@ -1,6 +1,4 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { getAllActivitiesForLocation } from "../../../utils/apiHelper";
-import { useBasket } from "../../../context/BasketContext";
 import { Activity, ActivitySelectedFilters } from "../../../types/common/activity";
 import { InfinitySpin } from "react-loader-spinner";
 import { v4 as uuidv4 } from "uuid";
@@ -9,6 +7,7 @@ import ActivityCard from "../../base/ActivityCard/ActivityCard";
 import "./ListActivitiesSection.scss";
 import { WebSocketManager } from "../../../utils/websocket/factory";
 import { createActivitiesWebSocket } from "../../../utils/websocket/activities";
+import { ActivitiesMessage } from "../../../types/contract/webSocket/webSocketContract";
 
 interface ListActivitiesSectionProps {
   locationId: number;
@@ -18,11 +17,8 @@ interface ListActivitiesSectionProps {
 const ListActivitiesSection = ({
   locationId,
   setSelectedActivity,
-}: ListActivitiesSectionProps): JSX.Element => {
-  const { basketState } = useBasket();
-  
-  // State management
-  const [selectedFilters, setSelectedFilters] = useState<ActivitySelectedFilters>({
+}: ListActivitiesSectionProps): JSX.Element => {  
+  const [selectedFilters] = useState<ActivitySelectedFilters>({
     category: [],
     tags: [],
   });
@@ -97,7 +93,7 @@ const ListActivitiesSection = ({
   }, [initializeWebSocket]);
 
   const fetchActivitiesRequest = (offset: number, limit: number, currentLocationId: number) => {
-    const requestData: ActivityWebSocketData = {
+    const requestData: ActivitiesMessage = {
       action: "getActivities",
       locationId: currentLocationId,
       offset,
@@ -167,10 +163,8 @@ const ListActivitiesSection = ({
     return (
       <div className="loader-overlay">
         <InfinitySpin
-          visible={true}
           width="200"
           color="#ffffff"
-          ariaLabel="infinity-spin-loading"
         />
       </div>
     );
@@ -188,7 +182,7 @@ const ListActivitiesSection = ({
             <ActivityCard
               key={activity.activityId || uuidv4()}
               activity={activity}
-              openActivity={setSelectedActivity}
+              openActivity={(activity) => activity && setSelectedActivity(activity as Activity)}
             />
           ))}
         </div>
@@ -198,10 +192,8 @@ const ListActivitiesSection = ({
           loadingMore ? (
             <div className="list-activities__loading-more">
               <InfinitySpin
-                visible={true}
                 width="200"
                 color="#ffffff"
-                ariaLabel="infinity-spin-loading"
               />
             </div>
           ) : (

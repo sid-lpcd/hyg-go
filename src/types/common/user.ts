@@ -1,10 +1,3 @@
-import { PersonType } from './index';
-
-// People counting interface
-export type People = Partial<Record<PersonType, number>> & {
-  [PersonType.ADULT]: number; // Adult is required, others are optional
-};
-
 export interface User {
   userId: number;
   username: string;

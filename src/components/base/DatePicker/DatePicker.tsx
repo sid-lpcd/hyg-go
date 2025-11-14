@@ -12,17 +12,17 @@ interface DatePickerProps {
 
 const DatePicker: React.FC<DatePickerProps> = ({ tripData, setTripData, onClose }) => {
   const [localDates, setLocalDates] = useState<{
-    startDate: Date | null;
-    endDate: Date | null;
+    startDate: Date | undefined;
+    endDate: Date | undefined;
   }>({
-    startDate: tripData.startDate || null,
-    endDate: tripData.endDate || null,
+    startDate: tripData.startDate ? new Date(tripData.startDate) : undefined,
+    endDate: tripData.endDate ? new Date(tripData.endDate) : undefined,
   });
 
   useEffect(() => {
     setLocalDates({
-      startDate: tripData.startDate || null,
-      endDate: tripData.endDate || null,
+      startDate: tripData.startDate ? new Date(tripData.startDate) : undefined,
+      endDate: tripData.endDate ? new Date(tripData.endDate) : undefined,
     });
   }, [tripData]);
 
@@ -30,7 +30,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ tripData, setTripData, onClose 
     if (localDates.startDate && localDates.endDate) {
       setLocalDates({
         startDate: day,
-        endDate: null,
+        endDate: undefined,
       });
       return;
     }
@@ -38,7 +38,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ tripData, setTripData, onClose 
       setLocalDates({ ...localDates, startDate: day });
       return;
     } else if (day < localDates.startDate) {
-      setLocalDates({ ...localDates, startDate: day, endDate: null });
+      setLocalDates({ ...localDates, startDate: day, endDate: undefined });
     } else {
       setLocalDates({ ...localDates, endDate: day });
     }
@@ -47,8 +47,8 @@ const DatePicker: React.FC<DatePickerProps> = ({ tripData, setTripData, onClose 
   const handleDone = (): void => {
     setTripData({
       ...tripData,
-      startDate: localDates.startDate,
-      endDate: localDates.endDate,
+      startDate: localDates.startDate?.toISOString(),
+      endDate: localDates.endDate?.toISOString(),
     });
     onClose();
   };
@@ -58,12 +58,12 @@ const DatePicker: React.FC<DatePickerProps> = ({ tripData, setTripData, onClose 
       <div className="datepicker-container">
         <DayPicker
           modifiers={{
-            selected: localDates.startDate
+            selected: localDates.startDate && localDates.endDate
               ? {
                   after: localDates.startDate,
                   before: localDates.endDate,
                 }
-              : undefined,
+              : localDates.startDate,
             range_start: localDates.startDate,
             range_end: localDates.endDate,
           }}

@@ -1,5 +1,3 @@
-import { LocationType } from './index';
-
 export interface Location {
   locationId: number;
   name: string;

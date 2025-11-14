@@ -102,7 +102,7 @@ const MapGL: React.FC<MapGLProps> = ({
       const markerEl = new mapboxgl.Marker({ color: colorMarker })
         .setLngLat([marker.longitude, marker.latitude])
         .addClassName(`marker-${marker.activityId}`)
-        .addTo(mapRef.current);
+        .addTo(mapRef.current!);
 
       if (isMarkerClickable && onMarkerClick) {
         markerEl.getElement().addEventListener("click", (e: Event) => {
@@ -149,6 +149,8 @@ const MapGL: React.FC<MapGLProps> = ({
       zoom: zoom,
     });
 
+    if (!mapRef.current) return;
+
     if (!isMoveable) {
       mapRef.current.dragPan.disable();
       mapRef.current.dragRotate.disable();
@@ -156,8 +158,8 @@ const MapGL: React.FC<MapGLProps> = ({
       mapRef.current.scrollZoom.disable();
     } else {
       mapRef.current.on("move", () => {
-        const mapCenter = mapRef.current.getCenter();
-        const mapZoom = mapRef.current.getZoom();
+        const mapCenter = mapRef.current!.getCenter();
+        const mapZoom = mapRef.current!.getZoom();
 
         setCenter([mapCenter.lng, mapCenter.lat]);
         setZoom(mapZoom);
@@ -165,10 +167,14 @@ const MapGL: React.FC<MapGLProps> = ({
       });
 
       mapRef.current.on("moveend", () => {
-        if (fetchMarkersWithinBounds) {
-          const { _sw: southwest, _ne: northeast } = mapRef.current.getBounds();
+        if (fetchMarkersWithinBounds && mapRef.current) {
+          const bounds = mapRef.current.getBounds();
+          if (!bounds) return;
+          
+          const southwest = bounds.getSouthWest();
+          const northeast = bounds.getNorthEast();
 
-          const currentBounds = {
+          const currentBounds: Bounds = {
             southwest: [southwest.lng, southwest.lat],
             northeast: [northeast.lng, northeast.lat],
           };
