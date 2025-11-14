@@ -1,7 +1,7 @@
 // Token management and validation helper functions
-import { AuthToken } from '../types/common/user';
+import { AuthToken } from '../types/common/auth';
 
-export function setToken(token: string, expiresAt: string): void {
+export function setToken(token: string, expiresAt?: string): void {
   localStorage.setItem("authToken", JSON.stringify({ token, expiresAt }));
 }
 

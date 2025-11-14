@@ -47,8 +47,8 @@ const DatePicker: React.FC<DatePickerProps> = ({ tripData, setTripData, onClose 
   const handleDone = (): void => {
     setTripData({
       ...tripData,
-      startDate: localDates.startDate?.toISOString(),
-      endDate: localDates.endDate?.toISOString(),
+      startDate: localDates.startDate,
+      endDate: localDates.endDate,
     });
     onClose();
   };

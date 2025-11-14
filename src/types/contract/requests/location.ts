@@ -1,5 +1,4 @@
 // Location-related API request types
-import { LocationType } from '../../common';
 
 export interface GetLocationsRequest {
   search?: string;
@@ -7,7 +6,7 @@ export interface GetLocationsRequest {
 
 export interface CreateLocationRequest {
   name: string;
-  type: LocationType | string;
+  type: string;
   parentLocationId?: number;
   lookupId?: string;
   destinationUrl?: string;
@@ -24,7 +23,7 @@ export interface CreateLocationRequest {
 
 export interface UpdateLocationRequest {
   name?: string;
-  type?: LocationType | string;
+  type?: string;
   parentLocationId?: number;
   lookupId?: string;
   destinationUrl?: string;

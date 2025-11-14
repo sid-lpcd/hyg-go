@@ -1,5 +1,5 @@
 // User-related API request types
-import { UserRole } from '../common';
+import { UserRole } from '../../common';
 
 export interface RegisterEarlyUserRequest {
   email: string;

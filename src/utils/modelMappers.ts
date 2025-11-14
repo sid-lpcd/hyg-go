@@ -3,14 +3,11 @@ import {
   Location, 
   Plan, 
   User, 
-  AuthToken,
-  PaginatedResponse,
   PersonType,
   PlanWithActivities,
-  LoginUserResponse,
-  RegisterUserResponse,
   PlanActivityWithDetails
 } from '../types/contract';
+import { AuthUser } from '../types/common';
 import { Price, Prices } from '../types/common/activity';
 
 export class ModelMappers {
@@ -119,8 +116,8 @@ export class ModelMappers {
       return {
         planId: this.ensureNumber(apiActivity.planId) || 0,
         activityId: this.ensureNumber(apiActivity.activityId) || 0,
-        startDate: this.ensureString(apiActivity.startDate) || new Date().toISOString(),
-        endDate: this.ensureString(apiActivity.endDate) || new Date().toISOString(),
+        startDate: this.parseDate(apiActivity.startDate) || new Date(),
+        endDate: this.parseDate(apiActivity.endDate) || new Date(),
         ticketCount: this.mapTicketCount(apiActivity.ticketCount) || { [PersonType.ADULT]: 1 },
         ticketTotalPrice: this.ensureNumber(apiActivity.ticketTotalPrice) || 0,
         routeInfo: apiActivity.routeInfo,
@@ -162,14 +159,14 @@ export class ModelMappers {
     } as Activity;
   }
 
-  static mapActivities(apiActivities: any[]): Activity[] {
+  static mapActivities(apiActivities: any[]): (Activity | PlanActivityWithDetails)[] {
     if (!Array.isArray(apiActivities)) return [];
     return apiActivities.map(activity => this.mapActivity(activity));
   }
 
   // Location mapping
   static mapLocation(apiLocation: any): Location {
-    if (!apiLocation) return null;
+    if (!apiLocation) return apiLocation;
     
     return {
       locationId: this.ensureNumber(apiLocation.locationId) || 0,
@@ -205,7 +202,7 @@ export class ModelMappers {
       return {
         planId: this.ensureNumber(apiPlan.planId) || 0,
         userId: this.ensureNumber(apiPlan.userId) || 0,
-        activities: this.mapActivities(apiPlan.activities) || [],
+        activities: this.mapActivities(apiPlan.activities) as PlanActivityWithDetails[] || [],
         title: this.ensureString(apiPlan.title) || '',
         description: this.ensureString(apiPlan.description),
         locationId: this.ensureNumber(apiPlan.locationId) || 0,
@@ -272,14 +269,15 @@ export class ModelMappers {
     } as User;
   }
 
-  static mapAuthResponse(apiResponse: any): LoginUserResponse | RegisterUserResponse {
-    if (!apiResponse) return null;
+  static mapAuthResponse(apiResponse: any): AuthUser {
+    if (!apiResponse) {
+      return { token: '', user: undefined };
+    }
     return {
       user: apiResponse.user ? {
-          userId: this.ensureNumber(apiResponse.user.userId),
-          email: this.ensureString(apiResponse.user.email),
-          username: this.ensureString(apiResponse.user.username),
-        } : null,
+          userId: this.ensureNumber(apiResponse.user.userId) || 0,
+          email: this.ensureString(apiResponse.user.email) || '',
+        } : undefined,
       token: this.ensureString(apiResponse.token) || '',
       expiresAt: this.ensureString(apiResponse.expiresAt) || '',
     };

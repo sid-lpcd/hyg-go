@@ -90,8 +90,8 @@ const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planI
       const event: CalendarEvent = {
         id: activity.activityId.toString(),
         title: activity.name,
-        start: activity.startDate,
-        end: activity.endDate,
+        start: activity.startDate.toISOString(),
+        end: activity.endDate.toISOString(),
         allDay: false,
       };
 
@@ -102,10 +102,8 @@ const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planI
     return displayedActivities;
   };
 
-  const addDays = (dateString: string): string => {
+  const addDays = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
-    const date = new Date(dateString);
-
     date.setDate(date.getDate() + 1);
 
     return date.toLocaleDateString("en-CA", options); // Format back to YYYY-MM-DD

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { getToken, setToken, deleteToken, isTokenExpired, getTokenIfValid } from "../utils/tokenHelper";
+import { setToken, deleteToken, isTokenExpired, getTokenIfValid } from "../utils/tokenHelper";
 import {
   loginUser,
   refreshTokenUser,
@@ -9,12 +9,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
 import { 
-  User, 
   LoginUserRequest, 
   RegisterUserRequest, 
   UpdateUserRequest,
-  LoginUserResponse,
-  RegisterUserResponse
 } from "../types/contract";
 import { AuthState, AuthStateResponse } from "../types/common";
 
@@ -39,9 +36,9 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const [authState, setAuthState] = useState<AuthState>({
     isLoggedIn: false,
-    user: null,
-    token: null,
-    expiresAt: null,
+    user: undefined,
+    token: "",
+    expiresAt: undefined,
   });
 
   const login = async (formData: LoginUserRequest): Promise<AuthStateResponse> => {
@@ -50,9 +47,9 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       setToken(response.token, response.expiresAt);
       setAuthState({
         isLoggedIn: true,
-        user: response.user || null,
+        user: response.user || undefined,
         token: response.token,
-        expiresAt: response.expiresAt || null,
+        expiresAt: response.expiresAt || undefined,
       });
       return { success: true };
     } catch (err) {
@@ -66,9 +63,9 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       setToken(response.token, response.expiresAt);
       setAuthState({
         isLoggedIn: true,
-        user: response.user || null,
+        user: response.user || undefined,
         token: response.token,
-        expiresAt: response.expiresAt || null,
+        expiresAt: response.expiresAt || undefined,
       });
       return { success: true };
     } catch (err) {
@@ -83,11 +80,10 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
         ...formData,
       };
       const response = await updateUser(updateData);
-      // Note: updateUser returns { user: User }, need to check if it also returns token
       setAuthState(prevState => ({
         ...prevState,
         isLoggedIn: true,
-        user: response.user,
+        user: { userId: response.userId, email: response.email },
       }));
       return { success: true };
     } catch (err) {
@@ -99,9 +95,9 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     deleteToken();
     setAuthState({
       isLoggedIn: false,
-      user: null,
-      token: null,
-      expiresAt: null,
+      user: undefined,
+      token: "",
+      expiresAt: undefined,
     });
   };
 
@@ -149,10 +145,8 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     return (
       <div className="loader-overlay">
         <InfinitySpin
-          visible={true}
           width="200"
           color="#ffffff"
-          ariaLabel="infinity-spin-loading"
         />
       </div>
     );

@@ -92,6 +92,7 @@ const Form: React.FC<FormProps> = ({
                   ))}
                 </select>
               );
+              break;
             default:
               break;
           }

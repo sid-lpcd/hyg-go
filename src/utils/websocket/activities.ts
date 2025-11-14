@@ -1,5 +1,6 @@
 import { createWebSocketConnection, WebSocketManager } from './factory';
 import { Activity } from '../../types/common/activity';
+import { ActivitiesBatchData, BatchCompleteData, ErrorData, ResponseMessage } from '@/types';
 
 export const createActivitiesWebSocket = (
   onActivitiesReceived: (activities: Activity[], hasMore: boolean) => void,
@@ -21,7 +22,7 @@ export const createActivitiesWebSocket = (
             
           case 'activitiesBatch':
             const batchData = response.data as ActivitiesBatchData;
-            onActivitiesReceived(batchData.activities);
+            onActivitiesReceived(batchData.activities, true);
             break;
             
           case 'activity':

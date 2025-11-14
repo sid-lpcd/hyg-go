@@ -1,5 +1,5 @@
 // Activity-related API request types
-import { ActivityCategory } from '../common';
+import { ActivityCategory } from '../../common';
 
 export interface GetActivitiesRequest {
   bounds?: {

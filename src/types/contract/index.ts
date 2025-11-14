@@ -7,12 +7,7 @@ export * from './requests/planCollaborator';
 export * from './requests/passWallet';
 
 // Response types exports
-export * from './responses/activity';
-export * from './responses/location';
-export * from './responses/plan';
-export * from './responses/user';
-export * from './responses/planCollaborator';
-export * from './responses/passWallet';
+export * from './responses';
 
 // WebSocket types exports
 export * from './webSocket/webSocketContract';

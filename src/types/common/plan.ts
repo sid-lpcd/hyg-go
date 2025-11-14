@@ -24,13 +24,13 @@ export interface RouteInfo {
 export interface PlanActivity {
   planId: number;
   activityId: number;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   ticketCount: TicketCount;
   ticketTotalPrice: number;
   routeInfo?: RouteInfo;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface PlanActivityWithDetails extends PlanActivity {
@@ -52,16 +52,16 @@ export interface Plan {
   title: string;
   description?: string;
   locationId: number;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   people: People;
   isPublic: boolean;
   mainImageUrl?: string;
   userImagesTrip?: any;
   tags?: Tag[];
   likes: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface PlanWithActivities extends Plan {

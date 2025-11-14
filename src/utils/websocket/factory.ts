@@ -46,8 +46,7 @@ export class WebSocketManager {
       try {
         this.ws = new WebSocket(this.url);
 
-        this.ws.onopen = (event) => {
-          console.log('WebSocket connected successfully');
+        this.ws.onopen = (_event) => {
           this.isConnectingState = false;
           this.reconnectAttempts = 0;
           this.config.onOpen?.();
@@ -59,7 +58,6 @@ export class WebSocketManager {
         };
 
         this.ws.onclose = (event) => {
-          console.log('WebSocket connection closed', event.code, event.reason);
           this.isConnectingState = false;
           this.config.onClose?.(event);
 
