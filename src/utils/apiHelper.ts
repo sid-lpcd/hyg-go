@@ -14,6 +14,7 @@ import {
   LoginUserRequest,
   RegisterUserRequest,
   UpdateUserRequest,
+  UpdatePlanActivityRequest,
   
   // Response types
   Activity,
@@ -24,7 +25,7 @@ import {
   ApiError,
   
   // Common types
-  BoundingBox
+  BoundingBox,
 } from "../types/contract";
 import { AuthUser } from "../types/common";
 
@@ -337,7 +338,7 @@ export const updatePlan = async (id: number, updatedPlan: UpdatePlanRequest): Pr
   }
 };
 
-export const updatePlanWithActivities = async (id: number, activities: any[]): Promise<Plan> => {
+export const updatePlanWithActivities = async (id: number, activities: UpdatePlanActivityRequest[]): Promise<Plan> => {
   try {
     const response: any = await apiClient.patch(
       `${API_BASE_URL}/plans/${id}/activities`,

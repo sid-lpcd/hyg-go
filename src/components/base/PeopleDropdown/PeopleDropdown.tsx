@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import "./PeopleDropdown.scss";
-import { People, PersonType, Plan } from "../../../types/common";
+import { People, PersonType, TripData } from "../../../types/common";
 
 interface PeopleDropdownProps {
-  tripData: Partial<Plan>;
-  setTripData: (data: Partial<Plan>) => void;
+  tripData: TripData;
+  setTripData: (data: TripData) => void;
   onClose: () => void;
 }
 

@@ -1,28 +1,30 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { InfinitySpin } from "react-loader-spinner";
 import TripCard from "../../base/TripCard/TripCard";
 import "./TripPlans.scss";
 import { useNavigate } from "react-router-dom";
-import { getAllPlans, getAllPlansForUser } from "../../../utils/apiHelper";
+import { getAllPlansForUser } from "../../../utils/apiHelper";
 import { useAuth } from "../../../context/AuthContext";
+import { Plan } from "../../../types/common";
 
-function TripPlans() {
+const TripPlans: React.FC = () => {
   const { authState } = useAuth();
   const navigate = useNavigate();
 
-  const [trips, setTrips] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isAddBtnVisible, setIsAddBtnVisible] = useState(false);
-  const addDivRef = useRef(null);
-  const scrollRef = useRef(null);
+  const [trips, setTrips] = useState<Plan[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isAddBtnVisible, setIsAddBtnVisible] = useState<boolean>(false);
+  const addDivRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const fetchTrips = async () => {
+  const fetchTrips = async (): Promise<void> => {
     try {
       const response = await getAllPlansForUser(new Date().toISOString().split('T')[0]);
       setTrips(response);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching trips:", error);
+      setLoading(false);
     }
   };
 
@@ -31,7 +33,7 @@ function TripPlans() {
     fetchTrips();
   }, [authState]);
 
-  const handleScroll = () => {
+  const handleScroll = (): void => {
     if (addDivRef.current) {
       const elemInfo = addDivRef.current.getBoundingClientRect();
 
@@ -47,23 +49,33 @@ function TripPlans() {
     if (!scrollRef.current) return;
 
     handleScroll();
-    scrollRef.current.addEventListener("scroll", handleScroll);
+    const scrollElement = scrollRef.current;
+    scrollElement.addEventListener("scroll", handleScroll);
+    
     return () => {
-      scrollRef?.current?.removeEventListener("scroll", handleScroll);
+      scrollElement?.removeEventListener("scroll", handleScroll);
     };
   }, [loading]);
 
-  if (loading)
+  if (loading) {
     return (
       <div className="loader-overlay">
         <InfinitySpin
-          visible={true}
           width="200"
           color="#ffffff"
-          ariaLabel="infinity-spin-loading"
         />
       </div>
     );
+  }
+
+  if (!trips) {
+    return (
+      <div className="planned-trips">
+        <h2 className="planned-trips__title">Your planned trips</h2>
+        <p>No trips found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="planned-trips">
@@ -94,6 +106,6 @@ function TripPlans() {
       )}
     </div>
   );
-}
+};
 
 export default TripPlans;

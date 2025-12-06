@@ -1,15 +1,13 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { BasketState } from '../types/common/basket';
-import { Activity } from '../types/common/activity';
-import { PlanActivity } from '../types/common/plan';
+import { BasketActivity, BasketState } from '../types/common/basket';
 import { setBasket as setBasketStorage, getBasket as getBasketStorage, deleteBasket as deleteBasketStorage } from '../utils/localStorageHelper';
 
 // Action types
 type BasketAction =
   | { type: 'INITIALIZE_BASKET'; payload: BasketState | null }
   | { type: 'SET_BASKET'; payload: BasketState }
-  | { type: 'ADD_ACTIVITY'; payload: Activity | PlanActivity }
-  | { type: 'REMOVE_ACTIVITY'; payload: number } // activityId
+  | { type: 'ADD_ACTIVITY'; payload: BasketActivity }
+  | { type: 'REMOVE_ACTIVITY'; payload: number }
   | { type: 'UPDATE_GRATUITY'; payload: number }
   | { type: 'CLEAR_BASKET' }
   | { type: 'UPDATE_PLAN_ID'; payload: number };
@@ -17,7 +15,7 @@ type BasketAction =
 // Context type
 interface BasketContextType {
   basketState: BasketState | null;
-  addActivity: (activity: Activity | PlanActivity) => void;
+  addActivity: (activity: BasketActivity) => void;
   removeActivity: (activityId: number) => void;
   updateGratuity: (gratuity: number) => void;
   clearBasket: () => void;
@@ -128,7 +126,7 @@ export function BasketProvider({ children }: BasketProviderProps) {
     }
   }, [basketState]);
 
-  const addActivity = (activity: Activity | PlanActivity) => {
+  const addActivity = (activity: BasketActivity) => {
     dispatch({ type: 'ADD_ACTIVITY', payload: activity });
   };
 
@@ -179,7 +177,6 @@ export function BasketProvider({ children }: BasketProviderProps) {
   );
 }
 
-// Custom hook to use the basket context
 export function useBasket(): BasketContextType {
   const context = useContext(BasketContext);
   if (context === undefined) {
@@ -188,8 +185,7 @@ export function useBasket(): BasketContextType {
   return context;
 }
 
-// Optional: Selector hooks for specific basket data
-export function useBasketActivities(): (Activity | PlanActivity)[] {
+export function useBasketActivities(): (BasketActivity)[] {
   const { basketState } = useBasket();
   return basketState?.activities || [];
 }

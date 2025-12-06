@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import "./DatePicker.scss";
-import { Plan } from "../../../types/common/plan";
+import { TripData } from "@/types";
 
 interface DatePickerProps {
-  tripData: Partial<Plan>;
-  setTripData: (data: Partial<Plan>) => void;
+  tripData: TripData;
+  setTripData: (data: TripData) => void;
   onClose: () => void;
 }
 

@@ -1,9 +1,15 @@
 // Basket and shopping cart related types
 import { Activity } from './activity';
-import { PlanActivity } from './plan';
+import { TicketCount } from './plan';
 
 export interface BasketState {
   planId: number;
-  activities: (Activity | PlanActivity)[];
+  activities: BasketActivity[];
   gratuity: number;
+}
+
+export interface BasketActivity extends Activity{
+  planId: number;
+  ticketCount: TicketCount;
+  ticketTotalPrice: number;
 }

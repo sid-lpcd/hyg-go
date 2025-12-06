@@ -8,7 +8,11 @@ import WalletIcon from "../../../assets/icons/wallet-icon.svg?react";
 import { Link, useLocation } from "react-router-dom";
 import { useBasketCount } from "../../../context/BasketContext";
 
-const Navigation = ({ pageType = "create" }) => {
+interface NavigationProps {
+  pageType?: "create" | "travel";
+}
+
+const Navigation: React.FC<NavigationProps> = ({ pageType = "create" }) => {
   const location = useLocation();
   const baseURL = location.pathname.split("/").slice(0, -1).join("/");
   const basketCount = useBasketCount();

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { v4 as uuidv4 } from "uuid";
@@ -8,16 +8,22 @@ import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
 import { getActivityById } from "../../../utils/apiHelper";
 import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
-import { getNumbers } from "../../../utils/generalHelpers";
 import MapGL from "../../base/MapGL/MapGL";
 import { useBasket } from "../../../context/BasketContext";
-import { PersonType } from "../../../types/common";
+import { PersonType, Activity, Plan, TicketCount, BasketActivity } from "../../../types/common";
 import "swiper/css";
 import "swiper/css/pagination";
 import "./ActivityModal.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const ActivityModal = ({
+interface ActivityModalProps {
+  activityId?: number;
+  planInfo: Plan | undefined;
+  onClose: () => void;
+  showMap: boolean;
+}
+
+const ActivityModal: React.FC<ActivityModalProps> = ({
   activityId,
   planInfo,
   onClose,
@@ -29,19 +35,21 @@ const ActivityModal = ({
   const location = useLocation();
   const locationId = location.pathname.split("/")[2];
 
-  const [activity, setActivity] = useState(null);
-  const [ticketCount, setTicketCount] = useState({ [PersonType.ADULT]: 1});
-  const [ticketTotalPrice, setTicketTotalPrice] = useState(0);
-  const [labels, setLabels] = useState([]);
-  const [ticketPrices, setTicketPrices] = useState({});
-  const [inBasket, setInBasket] = useState(false);
-  const [isUpdated, setIsUpdated] = useState(false);
-  function roundHalf(num) {
+  const [activity, setActivity] = useState<Activity | null>(null);
+  const [ticketCount, setTicketCount] = useState<TicketCount>({ [PersonType.ADULT]: 1 });
+  const [ticketTotalPrice, setTicketTotalPrice] = useState<number>(0);
+  const [labels, setLabels] = useState<PersonType[]>([]);
+  const [ticketPrices, setTicketPrices] = useState<Record<PersonType, number>>({} as Record<PersonType, number>);
+  const [inBasket, setInBasket] = useState<boolean>(false);
+  const [isUpdated, setIsUpdated] = useState<boolean>(false);
+
+  function roundHalf(num: number): number {
     return Math.round(num * 2) / 2;
   }
-  const renderStars = (rating, maxRating = 5) => {
-    const stars = [];
-    const roundRating = roundHalf(parseFloat(rating));
+
+  const renderStars = (rating: number | undefined, maxRating: number = 5): JSX.Element[] => {
+    const stars: JSX.Element[] = [];
+    const roundRating = roundHalf(parseFloat(rating?.toString() || "0"));
     for (let i = 0; i < maxRating; i++) {
       if (i < roundRating) {
         stars.push(
@@ -66,10 +74,12 @@ const ActivityModal = ({
     return stars;
   };
 
-  const initialRender = (prices) => {
-    let tempLabels = [];
-    let tempPrices = {};
-    let count = {};
+  const initialRender = (prices: Activity['prices']): void => {
+    if (!prices || !planInfo) return;
+
+    let tempLabels: PersonType[] = [];
+    let tempPrices: Record<PersonType, number> = {} as Record<PersonType, number>;
+    let count: TicketCount = {} as TicketCount;
 
     Object.values(PersonType).forEach(personType => {
       if (prices && prices[personType]) {
@@ -77,7 +87,7 @@ const ActivityModal = ({
         const priceObj = prices[personType];
         tempPrices[personType] = priceObj?.minPrice || 0;
         const tickets = planInfo.people.hasOwnProperty(personType)
-          ? planInfo.people[personType]
+          ? planInfo.people[personType] || 0
           : 0;
         count[personType] = tickets;
       }
@@ -88,13 +98,13 @@ const ActivityModal = ({
     setTicketCount(count);
   };
 
-  const calcPrice = () => {
+  const calcPrice = (): void => {
     let sumPrice = 0;
 
     if (!activity?.prices) return;
 
     Object.values(PersonType).forEach(personType => {
-      if (activity.prices[personType]) {
+      if (activity.prices && activity.prices[personType]) {
         const priceObj = activity.prices[personType];
         sumPrice += (priceObj?.minPrice || 0) * (ticketCount[personType] || 0);
       }
@@ -102,12 +112,13 @@ const ActivityModal = ({
 
     setTicketTotalPrice(sumPrice);
   };
-  const activityRender = async () => {
+
+  const activityRender = async (): Promise<void> => {
     if (!activityId) return;
 
     try {
       const response = await getActivityById(activityId);
-      setActivity({ ...response, images: response.images.slice(1, 5) });
+      setActivity({ ...response, images: response.images?.slice(1, 5) || [] });
 
       if (!response?.prices) {
         setTicketCount({ [PersonType.ADULT]: 1 });
@@ -120,20 +131,23 @@ const ActivityModal = ({
     }
   };
 
-  const handleChangeTicket = (label, val) => {
+  const handleChangeTicket = (label: PersonType, val: number): void => {
     setTicketCount({
       ...ticketCount,
       [label]: (ticketCount[label] || 0) + val,
     });
   };
 
-  const handleAddToBasket = () => {
+  const handleAddToBasket = (): void => {
+    if (!activity) return;
+
     const existingActivity = basketState?.activities?.find(
       (item) => item.activityId === activity.activityId
     );
-    
-    const activityToAdd = {
+
+    const activityToAdd: BasketActivity = {
       ...activity,
+      planId: basketState!.planId,
       ticketCount,
       ticketTotalPrice,
     };
@@ -154,11 +168,12 @@ const ActivityModal = ({
     onClose();
   };
 
-  const handleRemoveFromBasket = () => {
+  const handleRemoveFromBasket = (): void => {
+    if (!activity) return;
     removeActivity(activity.activityId);
   };
 
-  const checkBasket = (activity) => {
+  const checkBasket = (activity: Activity): void => {
     if (basketState) {
       setInBasket(hasActivity(activity.activityId));
       
@@ -166,8 +181,9 @@ const ActivityModal = ({
         (item) => item.activityId === activity.activityId
       );
       if (existingActivity) {
-        setTicketCount(existingActivity.ticketCount || { [PersonType.ADULT]: 1 });
-        setTicketTotalPrice(Number(existingActivity.ticketTotalPrice));
+        const basketActivity = existingActivity as Activity & { ticketCount?: TicketCount; ticketTotalPrice?: number };
+        setTicketCount(basketActivity.ticketCount || { [PersonType.ADULT]: 1 });
+        setTicketTotalPrice(Number(basketActivity.ticketTotalPrice) || 0);
       }
     }
   };
@@ -182,17 +198,15 @@ const ActivityModal = ({
   }, [activityId]);
 
   useEffect(() => {
-    calcPrice(activity?.prices);
-  }, [ticketCount]);
+    calcPrice();
+  }, [ticketCount, activity?.prices]);
 
   if (!activity || !basketState) {
     return (
       <div className="loader-overlay">
         <InfinitySpin
-          visible={true}
           width="200"
           color="#1e6655"
-          ariaLabel="infinity-spin-loading"
         />
       </div>
     );
@@ -214,7 +228,7 @@ const ActivityModal = ({
 
       <article className="activity__images">
         <Swiper slidesPerView={1} pagination={true} modules={[Pagination]}>
-          {activity.images.map((image, index) => (
+          {activity.images?.map((image: any, index: number) => (
             <SwiperSlide key={index}>
               <img
                 src={image.url}
@@ -228,7 +242,7 @@ const ActivityModal = ({
 
       <article className="activity__details">
         <h2 className="activity__subtitle">Details</h2>
-        {activity.freeAttraction && (
+        {(activity as any).freeAttraction && (
           <p className="activity__info">
             <strong>Free</strong>
           </p>
@@ -236,7 +250,7 @@ const ActivityModal = ({
         <p className="activity__info">Reviews</p>
         <div className="activity__reviews">
           <div className="activity-card__stars">
-            {renderStars(activity?.reviewsTotalCount)}
+            {renderStars(activity?.reviewsAverageRating)}
           </div>
           <p className="activity__reviews-count">
             {activity?.reviewsTotalCount}
@@ -246,37 +260,39 @@ const ActivityModal = ({
         {activity.duration && (
           <p className="activity__duration">
             {activity.duration
+              ?.toString()
               ?.match(/\d+\.?\d*/g)
-              .map(Number)
-              .map(Math.floor)[0] +
+              ?.map(Number)
+              ?.map(Math.floor)[0] +
               " - " +
               activity.duration
+                ?.toString()
                 ?.match(/\d+\.?\d*/g)
-                .map(Number)
-                .map(Math.floor)[1] +
+                ?.map(Number)
+                ?.map(Math.floor)[1] +
               " hrs"}
           </p>
         )}
-        {activity.openingHours && (
+        {(activity as any).openingHours && (
           <p className="activity__info">
-            <strong>Opening Hours:</strong> {activity?.openingHours}
+            <strong>Opening Hours:</strong> {(activity as any)?.openingHours}
           </p>
         )}
         <p className="activity__info">
           <strong>Address:</strong>
-          {activity.address?.street && `${activity?.address?.street}, `}
-          {activity?.address?.city && `${activity?.address?.city}, `}
-          {activity?.address?.state && `${activity?.address?.state}, `}
-          {activity?.address?.postcode && activity?.address?.postcode}
+          {(activity as any).address?.street && `${(activity as any)?.address?.street}, `}
+          {(activity as any)?.address?.city && `${(activity as any)?.address?.city}, `}
+          {(activity as any)?.address?.state && `${(activity as any)?.address?.state}, `}
+          {(activity as any)?.address?.postcode && (activity as any)?.address?.postcode}
         </p>
       </article>
 
       <article className="activity__content">
         <h2 className="activity__subtitle">Introduction</h2>
-        <p>{activity?.viatorUniqueContent?.introduction}</p>
+        <p>{(activity as any)?.viatorUniqueContent?.introduction}</p>
         <h3 className="activity__section-title">Overview</h3>
-        {activity?.viatorUniqueContent?.overview?.sections?.map(
-          (section, index) => (
+        {(activity as any)?.viatorUniqueContent?.overview?.sections?.map(
+          (section: any, index: number) => (
             <div key={index} className="activity__overview">
               <h4>{section.title}</h4>
               <p>{section.text}</p>
@@ -294,9 +310,14 @@ const ActivityModal = ({
           }}
         >
           <MapGL
-            initialLocation={[activity?.longitude, activity?.latitude]}
+            initialLocation={[activity.longitude, activity.latitude]}
             isResetVisible={true}
-            markersList={[activity]}
+            markersList={[{
+              activityId: activity.activityId,
+              latitude: activity.latitude,
+              longitude: activity.longitude,
+              category: activity.category
+            }]}
             isMoveable={false}
           />
         </div>

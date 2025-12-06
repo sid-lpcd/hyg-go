@@ -1,5 +1,5 @@
 // Plan-related API request types
-import { People, Tag } from '../../common/plan';
+import { People, RouteInfo, Tag, TicketCount } from '../../common/plan';
 
 export interface CreatePlanRequest {
   userId: number;
@@ -29,8 +29,14 @@ export interface UpdatePlanRequest {
   likes?: number;
 }
 
-export interface UpdatePlanActivitiesRequest {
-  activities: any[]; // Define this based on your PlanActivity structure
+export interface UpdatePlanActivityRequest {
+	planId?: number;
+	activityId?: number;
+	startDate?: string;
+	endDate?: string;
+	ticketCount?: TicketCount;
+	ticketTotalPrice?: number;
+	routeInfo?: RouteInfo;
 }
 
 export interface GetPlansForUserRequest {

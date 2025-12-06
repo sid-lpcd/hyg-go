@@ -17,7 +17,7 @@ export interface Activity {
   tags?: string | string[];
   category?: ActivityCategory;
   description?: string;
-  prices?: Prices | null;
+  prices?: Prices;
   duration?: number;
   imageUrl?: string;
   openingHours?: string;

@@ -1,17 +1,15 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  getAllCategoriesForLocation,
   getPlanById,
   updatePlanWithActivities,
 } from "../../../utils/apiHelper";
 import Header from "../../../components/sections/Header/Header";
-import { computeAvailableHoursWithinDates, getNumbers } from "../../../utils/generalHelpers";
+import { computeAvailableHoursWithinDates } from "../../../utils/generalHelpers";
 import { ToastContainer, toast } from "react-toastify";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
 import Navigation from "../../../components/sections/Navigation/Navigation";
-import Form from "../../../components/base/Form/Form";
 import Modal from "react-responsive-modal";
 import ListActivitiesSection from "../../../components/sections/ListActivitiesSection/ListActivitiesSection";
 import MapSection from "../../../components/sections/MapSection/MapSection";
@@ -22,8 +20,13 @@ import CheckoutSection from "../../../components/sections/CheckoutSection/Checko
 import "./SelectActivitiesPage.scss";
 import "react-toastify/dist/ReactToastify.css";
 import { useBasket } from "../../../context/BasketContext";
+import { Plan, BasketState, PlanActivityWithDetails } from "../../../types";
 
-const SelectActivitiesPage = () => {
+interface LocationState {
+  planStatus?: string;
+}
+
+const SelectActivitiesPage: React.FC = () => {
   const location = useLocation();
   const locationId = location.pathname.split("/")[2];
 
@@ -32,28 +35,26 @@ const SelectActivitiesPage = () => {
   const { 
     basketState, 
     setBasketState, 
-    addActivity, 
-    removeActivity,
     clearBasket 
   } = useBasket();
 
-  const [page, setPage] = useState(location.pathname.split("/").pop());
-  const [openTripModal, setOpenTripModal] = useState(false);
-  const [planInfo, setPlanInfo] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [totalTripLength, setTotalTripLength] = useState(null);
-  const [planStatus, setPlanStatus] = useState(
-    location.state?.planStatus || null
+  const [page, setPage] = useState<string | undefined>(location.pathname.split("/").pop());
+  const [openTripModal, setOpenTripModal] = useState<boolean>(false);
+  const [planInfo, setPlanInfo] = useState<Plan | undefined>(undefined);
+  const [progress, setProgress] = useState<number>(0);
+  const [totalTripLength, setTotalTripLength] = useState<number>(0);
+  const [planStatus] = useState<string | null>(
+    (location.state as LocationState)?.planStatus || null
   );
-  const [selectedActivity, setSelectedActivity] = useState(null);
-  const [showMap, setShowMap] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState<PlanActivityWithDetails | null>(null);
+  const [showMap, setShowMap] = useState<boolean>(false);
 
-  const handleSaveTrip = async (e) => {
+  const handleSaveTrip = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (!basketState || basketState.activities.length === 0) return;
     try {
-      const response = await updatePlanWithActivities(
-        planInfo.planId,
+      await updatePlanWithActivities(
+        planInfo!.planId,
         basketState.activities
       );
       clearBasket();
@@ -64,15 +65,19 @@ const SelectActivitiesPage = () => {
     setOpenTripModal(false);
   };
 
-  const updatedProgress = (basket) => {
+  const updatedProgress = (basket: BasketState): void => {
     let activityTime = 0;
     if (basket.activities.length === 0) {
       activityTime = 0;
     } else if (basket.activities.length === 1) {
-      activityTime = Number(basket.activities[0]?.duration) || 1;
+      const activity = basket.activities[0];
+      activityTime = ('duration' in activity ? Number(activity.duration) : 1) || 1;
     } else {
       activityTime = basket.activities.reduce(
-        (total, activity) => total + (Number(activity?.duration) || 1),
+        (total, activity) => {
+          const duration = 'duration' in activity ? Number(activity.duration) : 1;
+          return total + (duration || 1);
+        },
         0
       );
     }
@@ -80,11 +85,11 @@ const SelectActivitiesPage = () => {
     setProgress(activityTime);
   };
 
-  const compareBasket = (response) => {
+  const compareBasket = (response: Plan): void => {
     if (!basketState?.planId || basketState.planId !== response.planId) {
-      const newBasket = { 
+      const newBasket: BasketState = { 
         planId: response.planId, 
-        activities: response.activities, 
+        activities: [], // Plan doesn't have activities, so we start with empty array
         gratuity: 0 
       };
       setBasketState(newBasket);
@@ -92,9 +97,9 @@ const SelectActivitiesPage = () => {
     }
   };
 
-  const getPlanInfo = async () => {
+  const getPlanInfo = async (): Promise<void> => {
     try {
-      const response = await getPlanById(locationId);
+      const response = await getPlanById(parseInt(locationId));
       setPlanInfo(response);
       setTotalTripLength(computeAvailableHoursWithinDates(response.startDate, response.endDate));
       compareBasket(response);
@@ -147,8 +152,8 @@ const SelectActivitiesPage = () => {
       <main className={`main${page === "basket" ? " main--basket" : ""}`}>
         {page === "activities" && (
           <ListActivitiesSection
-            locationId={planInfo?.locationId}
-            setSelectedActivity={(activity) => {
+            locationId={planInfo?.locationId || 0}
+            setSelectedActivity={(activity: PlanActivityWithDetails) => {
               setSelectedActivity(activity);
               setShowMap(true);
             }}
@@ -156,14 +161,14 @@ const SelectActivitiesPage = () => {
         )}
         {page === "map" && (
           <MapSection
-            locationId={planInfo?.locationId}
+            locationId={planInfo?.locationId || 0}
             setSelectedActivity={setSelectedActivity}
           />
         )}
         {page === "basket" && (
           <BasketSection
             planInfo={planInfo}
-            setSelectedActivity={(activity) => {
+            setSelectedActivity={(activity: PlanActivityWithDetails) => {
               setSelectedActivity(activity);
               setShowMap(true);
             }}
@@ -184,7 +189,7 @@ const SelectActivitiesPage = () => {
       </div>
 
       <Modal
-        open={selectedActivity}
+        open={!!selectedActivity}
         onClose={() => setSelectedActivity(null)}
         center
         classNames={{
@@ -212,14 +217,28 @@ const SelectActivitiesPage = () => {
         }}
         animationDuration={500}
       >
-        <Form
-          title="Do you want to save this trip?"
-          handleCancel={() =>{ 
-            clearBasket();
-            navigate("/")
-          }}
-          handleSubmit={(e) => handleSaveTrip(e)}
-        />
+        <div className="form">
+          <h2 className="form__title">Do you want to save this trip?</h2>
+          <div className="form__buttons">
+            <button
+              type="button"
+              className="form__button form__button--cancel"
+              onClick={() => {
+                clearBasket();
+                navigate("/");
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="form__button form__button--submit"
+              onClick={handleSaveTrip}
+            >
+              Save Trip
+            </button>
+          </div>
+        </div>
       </Modal>
     </>
   );

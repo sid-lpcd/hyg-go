@@ -22,39 +22,60 @@ import {
   getLocationById,
   updatePlan,
 } from "../../../utils/apiHelper";
+import { 
+  Plan, 
+  FormLabel, 
+  LocationAutocompleteOption,
+  PersonType,
+  TripData,
+  CreatePlanFormData
+} from "../../../types";
+import { CreatePlanRequest, UpdatePlanRequest } from "../../../types/contract/requests/plan";
 
-const MainCreatePage = () => {
+interface LocationState {
+  planInfo?: Plan;
+}
+
+interface ErrorData extends Record<string, boolean> {
+  title: boolean;
+  description: boolean;
+  locationId: boolean;
+  startDate: boolean;
+  endDate: boolean;
+}
+
+const MainCreatePage: React.FC = () => {
   const locationState = useLocation();
   const navigate = useNavigate();
 
-  const [location, setLocation] = useState("");
-  const [nextLocationUrl, setNextLocationUrl] = useState(false);
-  const [openTripModal, setOpenTripModal] = useState(false);
-  const [openDatesModal, setOpenDatesModal] = useState(false);
-  const [openPeopleModal, setOpenPeopleModal] = useState(false);
-  const [tripData, setTripData] = useState({
+  const [location, setLocation] = useState<string>("");
+  const [nextLocationUrl, setNextLocationUrl] = useState<boolean>(false);
+  const [openTripModal, setOpenTripModal] = useState<boolean>(false);
+  const [openDatesModal, setOpenDatesModal] = useState<boolean>(false);
+  const [openPeopleModal, setOpenPeopleModal] = useState<boolean>(false);
+  const [tripData, setTripData] = useState<TripData>({
     title: "",
     description: "",
     locationId: null,
-    startDate: formatDateDisplay(null),
-    endDate: formatDateDisplay(null, Date.now() + 24 * 60 * 60 * 1000),
-    people: { adult: 1, children: 0, infant: 0 },
+    startDate: undefined,
+    endDate: undefined,
+    people: { [PersonType.ADULT]: 1, [PersonType.CHILD]: 0, [PersonType.INFANT]: 0 },
   });
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreatePlanFormData>({
     title: "",
     description: "",
   });
-  const [errorData, setErrorData] = useState({
+  const [errorData, setErrorData] = useState<ErrorData>({
     title: false,
     description: false,
     locationId: false,
     startDate: false,
     endDate: false,
   });
-  const [updateVisible, setUpdateVisible] = useState(false);
-  const [prevPlan, setPrevPlan] = useState(locationState.state || null);
+  const [updateVisible, setUpdateVisible] = useState<boolean>(false);
+  const [prevPlan, setPrevPlan] = useState<Plan | null>((locationState.state as LocationState)?.planInfo || null);
 
-  const labels = [
+  const labels: FormLabel[] = [
     {
       name: "title",
       text: "Trip title",
@@ -69,33 +90,29 @@ const MainCreatePage = () => {
     },
   ];
 
-  const onOpenModal = () => {
-    if (updateVisible) {
-      let { title, description } = prevPlan;
-      setFormData({ ...formData, title, description, update: true });
+  const onOpenModal = (): void => {
+    if (updateVisible && prevPlan) {
+      const { title, description } = prevPlan;
+      setFormData({ ...formData, title: title || "", description: description || "", update: true });
     }
     setOpenTripModal(true);
   };
-  const onCloseModal = () => {
+
+  const onCloseModal = (): void => {
     setOpenTripModal(false);
   };
 
-  const handleSelectLocation = async (location) => {
-    if (typeof location === "string") {
-      setLocation(location);
-    } else if (location.error) {
-      setLocation(location.error);
+  const handleSelectLocation = async (locationInput: string | LocationAutocompleteOption): Promise<void> => {
+    if (typeof locationInput === "string") {
+      setLocation(locationInput);
     } else {
-      if (location.name === "Use my current location") {
+      if (locationInput.name === "Use my current location") {
         navigator.geolocation.getCurrentPosition(async (pos) => {
           const { latitude, longitude } = pos.coords;
           try {
-            const response = await getLocationByCoordinates(
-              latitude,
-              longitude
-            );
+            const response = await getLocationByCoordinates(latitude, longitude);
             if (!response) {
-              setLocation(location.error);
+              setLocation("Location not found");
               return;
             }
             setLocation(
@@ -103,32 +120,34 @@ const MainCreatePage = () => {
                 response.region ? `, ${response.region}` : ""
               } ${response.country ? `, ${response.country}` : ""}`
             );
+            setTripData({ ...tripData, locationId: response.locationId });
           } catch (error) {
             console.error(error);
           }
         });
       } else {
         setLocation(
-          `${location.name}${location.region ? `, ${location.region}` : ""} ${
-            location.country ? `, ${location.country}` : ""
+          `${locationInput.name}${locationInput.region ? `, ${locationInput.region}` : ""} ${
+            locationInput.country ? `, ${locationInput.country}` : ""
           }`
         );
-  setTripData({ ...tripData, locationId: location.locationId });
+        const locationWithId = locationInput as any;
+        setTripData({ ...tripData, locationId: locationWithId.locationId || null });
       }
     }
   };
 
-  const handleChangeForm = (e) => {
+  const handleChangeForm = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrorData({ ...errorData, [name]: false });
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     navigate("/");
   };
 
-  const handleSubmit = async (e, location) => {
+  const handleSubmit = async (e: React.FormEvent, locationUrl: boolean): Promise<void> => {
     e.preventDefault();
 
     let hasErrors = false;
@@ -136,8 +155,8 @@ const MainCreatePage = () => {
     const { update, ...newFormData } = formData;
 
     Object.keys(newFormData).forEach((key) => {
-      if (!newFormData[key]) {
-        newErrorData[key] = true;
+      if (!newFormData[key as keyof typeof newFormData]) {
+        newErrorData[key as keyof ErrorData] = true;
         hasErrors = true;
       }
     });
@@ -145,25 +164,42 @@ const MainCreatePage = () => {
     setErrorData(newErrorData);
 
     if (hasErrors) return;
+    
     try {
-      let response = null;
-      let planStatus = null;
+      let response: Plan | null = null;
+      let planStatus: string;
       console.log("Trip Data, previous plan and update:", tripData, prevPlan, update);
-      if (tripData.locationId === prevPlan?.locationId && update === true) {
-        await updatePlan(prevPlan?.planId, {
-          ...tripData,
+      
+      if (tripData.locationId === prevPlan?.locationId && update === true && prevPlan?.planId) {
+        const updateData: UpdatePlanRequest = {
           ...newFormData,
-        });
+          startDate: formatDateDisplay(tripData.startDate),
+          endDate: formatDateDisplay(tripData.endDate),
+          people: tripData.people,
+          locationId: tripData.locationId || undefined,
+        };
+        await updatePlan(prevPlan.planId, updateData);
         response = prevPlan;
         planStatus = "updated";
       } else {
-        response = await addPlan({ ...tripData, ...newFormData });
+        if (!tripData.locationId) throw new Error("Location is required");
+        
+        const createData: CreatePlanRequest = {
+          ...newFormData,
+          userId: 1, // This should come from auth context
+          locationId: tripData.locationId,
+          startDate: formatDateDisplay(tripData.startDate),
+          endDate: formatDateDisplay(tripData.endDate),
+          people: tripData.people,
+          isPublic: false,
+        };
+        response = await addPlan(createData);
         planStatus = "created";
       }
 
       if (response) {
         setOpenTripModal(false);
-        navigate(`/${location ? `create-plan/${response.planId}/activities` : ""}`, {
+        navigate(`/${locationUrl ? `create-plan/${response.planId}/activities` : ""}`, {
           state: {
             planStatus: planStatus,
           },
@@ -175,25 +211,33 @@ const MainCreatePage = () => {
     }
   };
 
-  const openUpdate = () => {
-    let { title, description } = prevPlan;
-    setFormData({ ...formData, title, description, update: true });
-    handleCreatePlan();
-  };
-
-  const getLocations = async (name) => {
-    try {
-      if (!name)
-        return [{ locationId: null, name: "Use my current location" }];
-      const response = await getAllLocations(name);
-      response.unshift({ locationId: null, name: "Use my current location" });
-      return response;
-    } catch (error) {
-      return { error: "No locations found" };
+  const openUpdate = (): void => {
+    if (prevPlan) {
+      const { title, description } = prevPlan;
+      setFormData({ ...formData, title: title || "", description: description || "", update: true });
+      handleCreatePlan();
     }
   };
 
-  const handleCreatePlan = () => {
+  const getLocations = async (name?: string): Promise<LocationAutocompleteOption[]> => {
+    try {
+      if (!name)
+        return [{ name: "Use my current location" }];
+      const response = await getAllLocations(name);
+      const mappedResponse = response.map((loc: any) => ({
+        name: loc.name,
+        region: loc.region,
+        country: loc.country,
+        locationId: loc.locationId
+      }));
+      mappedResponse.unshift({ name: "Use my current location", region: undefined, country: undefined, locationId: undefined });
+      return mappedResponse;
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const handleCreatePlan = (): void => {
     let hasErrors = false;
     const { title, description, ...newErrorData } = errorData;
     const {
@@ -203,8 +247,8 @@ const MainCreatePage = () => {
     } = tripData;
 
     Object.keys(newFormData).forEach((key) => {
-      if (!newFormData[key]) {
-        newErrorData[key] = true;
+      if (!newFormData[key as keyof typeof newFormData]) {
+        newErrorData[key as keyof typeof newErrorData] = true;
         hasErrors = true;
       }
     });
@@ -217,7 +261,7 @@ const MainCreatePage = () => {
     setOpenTripModal(true);
   };
 
-  const getLocationInfo = async (locationId) => {
+  const getLocationInfo = async (locationId: number): Promise<void> => {
     try {
       const response = await getLocationById(locationId);
       handleSelectLocation(response);
@@ -227,8 +271,10 @@ const MainCreatePage = () => {
   };
 
   useEffect(() => {
-    if (!locationState.state) return;
-    let { planInfo } = locationState.state;
+    const state = locationState.state as LocationState;
+    if (!state?.planInfo) return;
+    
+    const { planInfo } = state;
     setPrevPlan(planInfo);
 
     if (planInfo) {
@@ -236,8 +282,8 @@ const MainCreatePage = () => {
       getLocationInfo(planInfo.locationId);
       setTripData({
         ...tripData,
-        startDate,
-        endDate,
+        startDate: startDate,
+        endDate: endDate,
         locationId,
         people,
         planId,
@@ -257,7 +303,7 @@ const MainCreatePage = () => {
         leftElement={
           <BackArrowIcon
             onClick={() => {
-              tripData.location_id ? onOpenModal() : handleCancel();
+              tripData.locationId ? onOpenModal() : handleCancel();
             }}
             className="header__icon"
           />
@@ -265,7 +311,7 @@ const MainCreatePage = () => {
         rightElement={
           <CloseIcon
             onClick={() => {
-              tripData.location_id ? onOpenModal() : handleCancel();
+              tripData.locationId ? onOpenModal() : handleCancel();
             }}
             className="header__icon"
           />
@@ -295,7 +341,7 @@ const MainCreatePage = () => {
             <p className="dates__text">
               {`${formatDateDisplay(tripData.startDate)} - ${formatDateDisplay(
                 tripData.endDate,
-                Date.now() + 24 * 60 * 60 * 1000
+                new Date(Date.now() + 24 * 60 * 60 * 1000)
               )}`}
             </p>
           </article>
@@ -306,7 +352,7 @@ const MainCreatePage = () => {
           >
             <ProfileIcon className="people-dropdown__icon" />
             <p className="people-dropdown__summary">
-              {`${tripData.people.adult} Adults, ${tripData.people.children} Children, ${tripData.people.infant} Infants`}
+              {`${tripData.people[PersonType.ADULT]} Adults, ${tripData.people[PersonType.CHILD] || 0} Children, ${tripData.people[PersonType.INFANT] || 0} Infants`}
             </p>
           </article>
 
@@ -347,8 +393,18 @@ const MainCreatePage = () => {
         animationDuration={500}
       >
         <PeopleDropdown
-          tripData={tripData}
-          setTripData={setTripData}
+          tripData={{
+            ...tripData,
+            locationId: tripData.locationId,
+            startDate: tripData.startDate,
+            endDate: tripData.endDate,
+          }}
+          setTripData={(data: TripData) => {
+            setTripData({
+              ...tripData,
+              ...data
+            });
+          }}
           onClose={() => setOpenPeopleModal(false)}
         />
       </Modal>
@@ -366,7 +422,12 @@ const MainCreatePage = () => {
       >
         <DatePicker
           tripData={tripData}
-          setTripData={setTripData}
+          setTripData={(data: TripData) => {
+            setTripData({
+              ...tripData,
+              ...data
+            });
+          }}
           onClose={() => setOpenDatesModal(false)}
         />
       </Modal>
