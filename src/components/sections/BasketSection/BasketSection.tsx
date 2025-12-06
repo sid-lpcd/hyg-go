@@ -5,20 +5,19 @@ import Form from "../../base/Form/Form";
 import { v4 as uuidv4 } from "uuid";
 import { InfinitySpin } from "react-loader-spinner";
 import { useBasket } from "../../../context/BasketContext";
-import { Plan, Activity } from "../../../types/common";
-import { PlanActivityWithDetails } from "../../../types/common/plan";
+import { Plan, Activity, BasketActivity } from "../../../types/common";
 import "./BasketSection.scss";
 
 interface BasketSectionProps {
   planInfo?: Plan;
-  setSelectedActivity: (activity: PlanActivityWithDetails) => void;
+  setSelectedActivity: (activity: BasketActivity) => void;
 }
 
 const BasketSection: React.FC<BasketSectionProps> = ({
   setSelectedActivity,
 }) => {
   const { basketState, removeActivity } = useBasket();
-  const [selectedActivityDelete, setSelectedActivityDelete] = useState<Activity | PlanActivityWithDetails | null>(null);
+  const [selectedActivityDelete, setSelectedActivityDelete] = useState<Activity | BasketActivity | null>(null);
   const [confirmFormData] = useState<Record<string, any>>({});
   const [confirmErrorData] = useState<Record<string, boolean>>({});
 

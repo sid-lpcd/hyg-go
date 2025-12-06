@@ -9,12 +9,13 @@ import HalfStarIcon from "../../../assets/icons/star-half-icon.svg?react";
 import FullStarIcon from "../../../assets/icons/star-full-icon.svg?react";
 import "./ActivityCard.scss";
 import { PlanActivityWithDetails } from "../../../types/common/plan";
+import { BasketActivity } from "@/types";
 
 interface ActivityCardProps {
-  activity: Activity | PlanActivityWithDetails;
-  openActivity: (activity?: Activity | PlanActivityWithDetails) => void;
+  activity: Activity | BasketActivity;
+  openActivity: (activity?: Activity | BasketActivity) => void;
   cartPage?: boolean;
-  openDeleteModal?: (activity: Activity | PlanActivityWithDetails) => void;
+  openDeleteModal?: (activity: Activity | BasketActivity) => void;
 }
 
 const ActivityCard = ({
@@ -123,7 +124,9 @@ const ActivityCard = ({
           </div>
           <div
             className="activity-card__remove"
-            onClick={() => handleRemoveFromBasket(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleRemoveFromBasket(true)}}
           >
             <CloseIcon className="activity-card__remove-icon" />
           </div>

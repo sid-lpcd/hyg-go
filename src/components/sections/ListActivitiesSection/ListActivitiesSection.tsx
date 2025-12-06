@@ -8,11 +8,11 @@ import "./ListActivitiesSection.scss";
 import { WebSocketManager } from "../../../utils/websocket/factory";
 import { createActivitiesWebSocket } from "../../../utils/websocket/activities";
 import { ActivitiesMessage } from "../../../types/contract/webSocket/webSocketContract";
-import { PlanActivityWithDetails } from "@/types";
+import { BasketActivity } from "@/types";
 
 interface ListActivitiesSectionProps {
   locationId: number;
-  setSelectedActivity: (activity: PlanActivityWithDetails) => void;
+  setSelectedActivity: (activity: BasketActivity) => void;
 }
 
 const ListActivitiesSection = ({
@@ -183,7 +183,7 @@ const ListActivitiesSection = ({
             <ActivityCard
               key={activity.activityId || uuidv4()}
               activity={activity}
-              openActivity={(activity) => activity && setSelectedActivity(activity as PlanActivityWithDetails)}
+              openActivity={(activity) => activity && setSelectedActivity(activity as BasketActivity)}
             />
           ))}
         </div>

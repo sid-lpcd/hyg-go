@@ -85,9 +85,6 @@ const CheckoutSection: React.FC = () => {
           >
             -
           </button>
-          <button className="checkout__btn-gratuity" onClick={handleIncrease}>
-            +
-          </button>
           <div>
             <input
               type="number"
@@ -97,12 +94,15 @@ const CheckoutSection: React.FC = () => {
               onChange={handleChange}
             />
             <span className="checkout__percentage">%</span>
+            {gratuityPercentage > 0 && (
+              <span className="checkout__gratuity">
+                (£{basketState?.gratuity?.toFixed(2)})
+              </span>
+            )}
           </div>
-          {gratuityPercentage > 0 && (
-            <span className="checkout__gratuity">
-              (£{basketState?.gratuity?.toFixed(2)})
-            </span>
-          )}
+          <button className="checkout__btn-gratuity" onClick={handleIncrease}>
+            +
+          </button>
         </div>
       </div>
       <button

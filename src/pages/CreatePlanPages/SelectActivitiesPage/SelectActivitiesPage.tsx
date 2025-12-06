@@ -20,7 +20,7 @@ import CheckoutSection from "../../../components/sections/CheckoutSection/Checko
 import "./SelectActivitiesPage.scss";
 import "react-toastify/dist/ReactToastify.css";
 import { useBasket } from "../../../context/BasketContext";
-import { Plan, BasketState, PlanActivityWithDetails } from "../../../types";
+import { Plan, BasketState, BasketActivity } from "../../../types";
 
 interface LocationState {
   planStatus?: string;
@@ -46,7 +46,7 @@ const SelectActivitiesPage: React.FC = () => {
   const [planStatus] = useState<string | null>(
     (location.state as LocationState)?.planStatus || null
   );
-  const [selectedActivity, setSelectedActivity] = useState<PlanActivityWithDetails | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<BasketActivity | null>(null);
   const [showMap, setShowMap] = useState<boolean>(false);
 
   const handleSaveTrip = async (e: React.FormEvent): Promise<void> => {
@@ -86,6 +86,7 @@ const SelectActivitiesPage: React.FC = () => {
   };
 
   const compareBasket = (response: Plan): void => {
+    console.log('Comparing basket with plan:', response, basketState);
     if (!basketState?.planId || basketState.planId !== response.planId) {
       const newBasket: BasketState = { 
         planId: response.planId, 
@@ -102,7 +103,6 @@ const SelectActivitiesPage: React.FC = () => {
       const response = await getPlanById(parseInt(locationId));
       setPlanInfo(response);
       setTotalTripLength(computeAvailableHoursWithinDates(response.startDate, response.endDate));
-      compareBasket(response);
     } catch (error) {
       console.error(error);
     }
@@ -113,6 +113,12 @@ const SelectActivitiesPage: React.FC = () => {
       updatedProgress(basketState);
     }
   }, [basketState]);
+
+  useEffect(() => {
+    if (planInfo && basketState !== undefined) {
+      compareBasket(planInfo);
+    }
+  }, [planInfo, basketState]);
 
   useEffect(() => {
     setPage(location.pathname.split("/").pop());
@@ -153,7 +159,7 @@ const SelectActivitiesPage: React.FC = () => {
         {page === "activities" && (
           <ListActivitiesSection
             locationId={planInfo?.locationId || 0}
-            setSelectedActivity={(activity: PlanActivityWithDetails) => {
+            setSelectedActivity={(activity: BasketActivity) => {
               setSelectedActivity(activity);
               setShowMap(true);
             }}
@@ -168,7 +174,7 @@ const SelectActivitiesPage: React.FC = () => {
         {page === "basket" && (
           <BasketSection
             planInfo={planInfo}
-            setSelectedActivity={(activity: PlanActivityWithDetails) => {
+            setSelectedActivity={(activity: BasketActivity) => {
               setSelectedActivity(activity);
               setShowMap(true);
             }}

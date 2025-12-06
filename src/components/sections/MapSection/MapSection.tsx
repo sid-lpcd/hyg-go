@@ -11,11 +11,11 @@ import { useBasket } from "../../../context/BasketContext";
 import MapGL from "../../base/MapGL/MapGL";
 import "./MapSection.scss";
 import { useSearchParams } from "react-router-dom";
-import { Activity, ActivitySelectedFilters, BoundingBox, MapMarker, PlanActivityWithDetails } from "../../../types/common";
+import { Activity, ActivitySelectedFilters, BasketActivity, BoundingBox, MapMarker } from "../../../types/common";
 
 interface MapSectionProps {
   locationId?: number;
-  setSelectedActivity: (activity: PlanActivityWithDetails) => void;
+  setSelectedActivity: (activity: BasketActivity) => void;
 }
 
 const MapSection: React.FC<MapSectionProps> = ({ locationId, setSelectedActivity }) => {
@@ -109,7 +109,7 @@ const MapSection: React.FC<MapSectionProps> = ({ locationId, setSelectedActivity
     // Find the full activity from the activities array
     const activity = activities?.find(act => act.activityId === marker.activityId);
     if (activity) {
-      setSelectedActivity(activity as PlanActivityWithDetails);
+      setSelectedActivity(activity as BasketActivity);
     }
   };
 

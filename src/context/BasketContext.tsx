@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, useRef, ReactNode } from 'react';
 import { BasketActivity, BasketState } from '../types/common/basket';
 import { setBasket as setBasketStorage, getBasket as getBasketStorage, deleteBasket as deleteBasketStorage } from '../utils/localStorageHelper';
 
@@ -109,12 +109,18 @@ interface BasketProviderProps {
 }
 
 export function BasketProvider({ children }: BasketProviderProps) {
-  const [basketState, dispatch] = useReducer(basketReducer, initialState);
 
-  // Initialize basket from localStorage on mount
+  const [basketState, dispatch] = useReducer(basketReducer, initialState);
+  const hasInitialized = useRef(false);
+
+  // Initialize basket from localStorage on mount (guarded)
   useEffect(() => {
-    const savedBasket = getBasketStorage();
-    dispatch({ type: 'INITIALIZE_BASKET', payload: savedBasket });
+    if (!hasInitialized.current) {
+      const savedBasket = getBasketStorage();
+      console.log('Loaded basket from storage:', savedBasket);
+      dispatch({ type: 'INITIALIZE_BASKET', payload: savedBasket });
+      hasInitialized.current = true;
+    }
   }, []);
 
   // Save to localStorage whenever basket changes
