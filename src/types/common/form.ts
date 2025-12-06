@@ -26,3 +26,23 @@ export interface AddActivityFormData {
   activity: string;
   start_date: string;
 }
+
+// Registration form types
+export interface RegisterFormData {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  country: string;
+  password: string;
+  rePassword: string;
+}
+
+export interface RegisterErrorState {
+  firstName: boolean;
+  lastName: boolean;
+  username: boolean;
+  email: boolean;
+  password: boolean;
+  rePassword: boolean;
+}

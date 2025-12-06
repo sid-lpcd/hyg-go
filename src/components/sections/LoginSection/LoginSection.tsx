@@ -1,20 +1,22 @@
-import { useState } from "react";
+
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import Error from "../../../assets/icons/error-icon.svg?react";
+import ErrorIcon from "../../../assets/icons/error-icon.svg?react";
 import "./LoginSection.scss";
 import { useNavigate } from "react-router-dom";
+import { LoginUserRequest } from "@/types";
 
-const LoginSection = () => {
+const LoginSection: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginUserRequest>({
     usernameOrEmail: "",
     password: "",
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setError("");
     const { name, value } = e.target;
     setFormData({
@@ -23,7 +25,7 @@ const LoginSection = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -72,7 +74,7 @@ const LoginSection = () => {
         </div>
         {error && (
           <p className="login-page__error">
-            <Error /> {error}
+            <ErrorIcon /> {error}
           </p>
         )}
         <button type="submit" className="login-page__btn">

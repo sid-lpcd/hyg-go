@@ -1,14 +1,17 @@
-import { useState } from "react";
-import { useAuth } from "../../../context/AuthContext";
-import Error from "../../../assets/icons/error-icon.svg?react";
-import "./RegisterSection.scss";
-import { useNavigate } from "react-router-dom";
 
-const RegisterSection = () => {
+
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+import ErrorIcon from "../../../assets/icons/error-icon.svg?react";
+import "./RegisterSection.scss";
+import type { RegisterFormData, RegisterErrorState } from "../../../types/common/form";
+
+const RegisterSection: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterFormData>({
     firstName: "",
     lastName: "",
     username: "",
@@ -17,7 +20,7 @@ const RegisterSection = () => {
     password: "",
     rePassword: "",
   });
-  const [error, setError] = useState({
+  const [error, setError] = useState<RegisterErrorState>({
     firstName: false,
     lastName: false,
     username: false,
@@ -25,9 +28,9 @@ const RegisterSection = () => {
     password: false,
     rePassword: false,
   });
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setError({ ...error, [name]: false });
@@ -36,13 +39,13 @@ const RegisterSection = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     let hasErrors = false;
-    const newErrorData = { ...error };
+    const newErrorData: RegisterErrorState = { ...error };
 
-    Object.keys(formData).forEach((key) => {
+    (Object.keys(formData) as Array<keyof RegisterFormData>).forEach((key) => {
       if (key !== "country" && !formData[key]) {
         newErrorData[key] = true;
         hasErrors = true;
@@ -98,7 +101,7 @@ const RegisterSection = () => {
           />
           {error.firstName && (
             <p className="register-page__error">
-              <Error /> This is a required field
+              <ErrorIcon /> This is a required field
             </p>
           )}
         </div>
@@ -115,7 +118,7 @@ const RegisterSection = () => {
           />
           {error.lastName && (
             <p className="register-page__error">
-              <Error /> This is a required field
+              <ErrorIcon /> This is a required field
             </p>
           )}
         </div>
@@ -132,7 +135,7 @@ const RegisterSection = () => {
           />
           {error.username && (
             <p className="register-page__error">
-              <Error /> This is a required field
+              <ErrorIcon /> This is a required field
             </p>
           )}
         </div>
@@ -149,7 +152,7 @@ const RegisterSection = () => {
           />
           {error.email && (
             <p className="register-page__error">
-              <Error /> This is a required field
+              <ErrorIcon /> This is a required field
             </p>
           )}
         </div>
@@ -178,7 +181,7 @@ const RegisterSection = () => {
           />
           {error.password && (
             <p className="register-page__error">
-              <Error /> This is a required field
+              <ErrorIcon /> This is a required field
             </p>
           )}
         </div>
@@ -195,7 +198,7 @@ const RegisterSection = () => {
           />
           {error.rePassword && (
             <p className="register-page__error">
-              <Error /> Passwords do not match
+              <ErrorIcon /> Passwords do not match
             </p>
           )}
         </div>

@@ -36,7 +36,7 @@ const CalendarPlan = () => {
     } catch (error) {
       console.error(error);
     }
-    // navigate(`/`);
+    navigate(`/`);
     setOpenTripModal(false);
   };
 

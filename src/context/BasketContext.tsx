@@ -117,7 +117,6 @@ export function BasketProvider({ children }: BasketProviderProps) {
   useEffect(() => {
     if (!hasInitialized.current) {
       const savedBasket = getBasketStorage();
-      console.log('Loaded basket from storage:', savedBasket);
       dispatch({ type: 'INITIALIZE_BASKET', payload: savedBasket });
       hasInitialized.current = true;
     }

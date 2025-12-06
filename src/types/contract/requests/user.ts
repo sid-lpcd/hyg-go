@@ -8,7 +8,7 @@ export interface RegisterEarlyUserRequest {
 }
 
 export interface LoginUserRequest {
-  email: string;
+  usernameOrEmail: string;
   password: string;
 }
 

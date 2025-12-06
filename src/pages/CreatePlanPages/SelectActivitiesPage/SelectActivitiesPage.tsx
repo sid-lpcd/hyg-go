@@ -86,7 +86,6 @@ const SelectActivitiesPage: React.FC = () => {
   };
 
   const compareBasket = (response: Plan): void => {
-    console.log('Comparing basket with plan:', response, basketState);
     if (!basketState?.planId || basketState.planId !== response.planId) {
       const newBasket: BasketState = { 
         planId: response.planId, 
