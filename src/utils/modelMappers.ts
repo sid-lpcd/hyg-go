@@ -5,9 +5,10 @@ import {
   User, 
   PersonType,
   PlanWithActivities,
-  PlanActivityWithDetails
+  PlanActivityWithDetails,
+  PassGenerationResponse
 } from '../types/contract';
-import { AuthUser } from '../types/common';
+import { AuthUser, EntitlementStatus, EntitlementType, Pass, PassEntitlement, PlanPassStatus } from '../types/common';
 import { Price, Prices } from '../types/common/activity';
 
 export class ModelMappers {
@@ -196,6 +197,7 @@ export class ModelMappers {
 
   // Plan mapping
   static mapPlan(apiPlan: any): Plan | PlanWithActivities {
+    console.log(apiPlan)
     if (!apiPlan) return apiPlan;
 
     if (apiPlan.activities != null){
@@ -281,6 +283,61 @@ export class ModelMappers {
       token: this.ensureString(apiResponse.token) || '',
       expiresAt: this.ensureString(apiResponse.expiresAt) || '',
     };
+  }
+
+  static mapPassGeneration(apiPassGeneration: any): PassGenerationResponse {
+    if (!apiPassGeneration) return apiPassGeneration;
+    console.log("Mapping Pass Generation:", apiPassGeneration);
+    return {
+      pass: this.mapPass(apiPassGeneration.pass),
+      entitlements: apiPassGeneration.entitlements.map((e: any) => this.mapEntitlement(e)),
+      qrCodeToken: this.ensureString(apiPassGeneration.qrCodeToken),
+      qrCodeUrl: this.ensureString(apiPassGeneration.qrCodeUrl),
+      success: apiPassGeneration.success,
+      message: this.ensureString(apiPassGeneration.message)
+    } as PassGenerationResponse;
+  }
+
+  static mapPass(apiPass: any): Pass {
+    if (!apiPass) return apiPass;
+    
+    return {
+      id: this.ensureString(apiPass.id),
+      planId: this.ensureNumber(apiPass.planId),
+      passId: this.ensureString(apiPass.passId),
+      userId: this.ensureNumber(apiPass.userId),
+      plan: this.mapPlan(apiPass.plan),
+      activities: this.mapActivities(apiPass.activities),
+      status: apiPass.status as PlanPassStatus,
+      version: this.ensureNumber(apiPass.version),
+      issuedAt: this.parseDate(apiPass.issuedAt),
+      expiresAt: this.parseDate(apiPass.expiresAt),
+      lastValidatedAt: this.parseDate(apiPass.lastValidatedAt),
+      createdAt: this.parseDate(apiPass.createdAt),
+      updatedAt: this.parseDate(apiPass.updatedAt),
+    } as Pass;
+  }
+
+  static mapEntitlement(apiEntitlement: any): PassEntitlement {
+    if (!apiEntitlement) return apiEntitlement;
+    
+    return {
+      id: this.ensureString(apiEntitlement.id),
+      passId: this.ensureString(apiEntitlement.passId),
+      entitlementType: apiEntitlement.entitlementType as EntitlementType,
+      referenceId: this.ensureString(apiEntitlement.id),
+      ticketCount: this.mapTicketCount(apiEntitlement.ticketCount),
+      prices: this.mapPrices(apiEntitlement.prices),
+      totalPrice: this.ensureNumber(apiEntitlement.totalPrice),
+      currency: this.ensureString(apiEntitlement.currency),
+      status: apiEntitlement as EntitlementStatus,
+      validFrom: this.parseDate(apiEntitlement.validFrom),
+      validUntil: this.parseDate(apiEntitlement.validUntil),
+      usageCount: this.ensureNumber(apiEntitlement.usageCount),
+      maxUsage: this.ensureNumber(apiEntitlement.maxUsage),
+      createdAt: this.parseDate(apiEntitlement.createdAt),
+      updatedAt: this.parseDate(apiEntitlement.valiupdatedAtdFrom)
+    } as PassEntitlement;
   }
 }
 

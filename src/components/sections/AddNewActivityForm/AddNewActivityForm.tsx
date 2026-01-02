@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import "./AddNewActivityForm.scss";
 import Form from "../../base/Form/Form";
-import { Plan, Activity, FormLabel, CalendarEvent, AddActivityFormData } from "../../../types/common";
+import { Plan, FormLabel, CalendarEvent, AddActivityFormData, PlanActivityWithDetails } from "../../../types/common";
 
 interface AddNewActivityFormProps {
   planInfo?: Plan;
-  availableActivities: Activity[];
+  availableActivities: PlanActivityWithDetails[];
   addNewEvent: (event: CalendarEvent) => void;
   handleCloseModal: () => void;
 }
@@ -41,7 +41,7 @@ const AddNewActivityForm: React.FC<AddNewActivityFormProps> = ({
     },
   ];
 
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<PlanActivityWithDetails | null>(null);
   const [formData, setFormData] = useState<AddActivityFormData>({
     activity: "",
     start_date: "",
@@ -53,7 +53,7 @@ const AddNewActivityForm: React.FC<AddNewActivityFormProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
-    let activityTemp: Activity | null = null;
+    let activityTemp: PlanActivityWithDetails | null = null;
     
     if (name === "activity") {
       activityTemp = availableActivities.find(

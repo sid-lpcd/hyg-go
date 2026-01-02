@@ -6,6 +6,7 @@ import CalendarScheduleSection from "../../../components/sections/CalendarSchedu
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   createAIPlan,
+  generatePass,
   getPlanById,
   updatePlanWithActivities
 } from "../../../utils/apiHelper";
@@ -33,6 +34,8 @@ const CalendarPlan = () => {
         planInfo.planId,
         activities
       );
+      const pass = await generatePass(planInfo.planId)
+      console.log(pass)
     } catch (error) {
       console.error(error);
     }

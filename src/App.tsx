@@ -8,6 +8,7 @@ import CalendarPlan from "./pages/CreatePlanPages/CalendarPlan/CalendarPlan";
 import UserPage from "./pages/UserPage/UserPage";
 import ProtectedRoute from "./context/ProtectedRoute";
 import { BasketProvider } from "./context/BasketContext";
+import WalletPage from "./pages/WalletPage/WalletPage";
 
 function App(): JSX.Element {
   return (
@@ -20,6 +21,14 @@ function App(): JSX.Element {
               <MainPage />
             </ProtectedRoute>
           }
+        />
+        <Route 
+          path="/wallet" 
+          element={
+            <ProtectedRoute>
+              <WalletPage />
+            </ProtectedRoute>
+          } 
         />
         <Route path="/user" element={<UserPage />} />
         <Route

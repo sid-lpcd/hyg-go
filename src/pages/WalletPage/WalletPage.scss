@@ -1,0 +1,19 @@
+@use "../../styles/partials/variables" as *;
+@use "../../styles/partials/mixins" as *;
+
+.wallet__passes {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 1.5rem;
+	margin-top: 1rem;
+}
+
+.wallet__loading,
+.wallet__error {
+	width: 100%;
+	text-align: center;
+	font-size: 1.2rem;
+	margin: 2rem 0;
+	color: $color-error;
+}

@@ -1,5 +1,8 @@
 // PassWallet related types
 
+import { Prices } from "./activity";
+import { Plan, PlanActivityWithDetails, TicketCount } from "./plan";
+
 // Enums
 export enum PlanPassStatus {
   ACTIVE = 'active',
@@ -59,12 +62,13 @@ export interface Pass {
   planId: number;
   passId: string;
   userId: number;
+  plan: Plan;
+  activities: PlanActivityWithDetails[];
   status: PlanPassStatus;
   version: number;
   issuedAt: Date;
   expiresAt: Date;
   lastValidatedAt?: Date;
-  metadata: PassMetadata;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,8 +78,8 @@ export interface PassEntitlement {
   passId: string;
   entitlementType: EntitlementType;
   referenceId: string;
-  quantity: number;
-  unitPrice: number;
+  ticketCount: TicketCount;
+  prices: Prices;
   totalPrice: number;
   currency: string;
   status: EntitlementStatus;
@@ -83,7 +87,6 @@ export interface PassEntitlement {
   validUntil?: Date;
   usageCount: number;
   maxUsage?: number;
-  metadata?: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
 }

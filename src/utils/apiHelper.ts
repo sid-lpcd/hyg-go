@@ -26,8 +26,9 @@ import {
   
   // Common types
   BoundingBox,
+  PassGenerationResponse,
 } from "../types/contract";
-import { AuthUser } from "../types/common";
+import { AuthUser, Pass } from "../types/common";
 
 const API_BASE_URL =
   import.meta.env.VITE_ENV_TYPE === "DEV"
@@ -441,6 +442,25 @@ export const getUserProfile = async (authToken: string): Promise<User> => {
       },
     });
     return ModelMappers.mapUser(response);
+  } catch (error) {
+    throw error as ApiError;
+  }
+};
+
+export const generatePass = async (planId: number): Promise<PassGenerationResponse> => {
+  try {
+    const response = await apiClient.post(`/passes/${planId}`);
+    return ModelMappers.mapPassGeneration(response);
+  } catch (error) {
+    throw error as ApiError;
+  }
+};
+
+export const getAllPasses = async (): Promise<Pass[]> => {
+  try {
+    const response = await apiClient.get(`/passes`);
+    if (!Array.isArray(response)) return [];
+    return response?.map(pass => ModelMappers.mapPass(pass)) || [];
   } catch (error) {
     throw error as ApiError;
   }

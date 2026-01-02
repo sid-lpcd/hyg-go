@@ -33,15 +33,15 @@ const CalendarScheduleSection: React.FC<CalendarScheduleSectionProps> = ({ planI
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
-  function addNewEvent(newActivity: PlanActivityWithDetails): void {
+  function addNewEvent(event: CalendarEvent): void {
     const calendarApi: CalendarApi | undefined = calendarRef.current?.getApi();
 
-    if (newActivity && calendarApi) {
+    if (event && calendarApi) {
       calendarApi.addEvent({
         id: createEventId(),
-        title: newActivity.name,
-        start: newActivity.startDate,
-        end: newActivity.endDate,
+        title: event.title,
+        start: event.start,
+        end: event.end,
         allDay: false,
       });
     }
