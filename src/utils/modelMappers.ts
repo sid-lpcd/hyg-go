@@ -308,6 +308,7 @@ export class ModelMappers {
       userId: this.ensureNumber(apiPass.userId),
       plan: this.mapPlan(apiPass.plan),
       activities: this.mapActivities(apiPass.activities),
+      location: this.mapLocation(apiPass.location),
       status: apiPass.status as PlanPassStatus,
       version: this.ensureNumber(apiPass.version),
       issuedAt: this.parseDate(apiPass.issuedAt),

@@ -1,6 +1,6 @@
 import { Pass } from "@/types";
 import "./WalletCard.scss";
-import { formatDateDisplay, formatDateTripDisplay } from "../../../utils/dateFormat";
+import { formatDateDisplay } from "../../../utils/dateFormat";
 
 interface WalletCardProps {
   pass: Pass;
@@ -14,6 +14,7 @@ const WalletCard = ({pass}: WalletCardProps): JSX.Element => {
                 style={{ backgroundImage: `url(${pass.plan.mainImageUrl})` }}> 
                     <div className="wallet__card-overlay">
                         <span className="wallet__card-title">{pass.plan.title}</span>
+                        <span className="wallet__card-subtitle">{pass.location.name}, {pass.location.country}</span>
                     </div>
                 </div>
                 <div className="wallet__card-footer">

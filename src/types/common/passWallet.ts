@@ -1,6 +1,7 @@
 // PassWallet related types
 
 import { Prices } from "./activity";
+import { Location } from "./location";
 import { Plan, PlanActivityWithDetails, TicketCount } from "./plan";
 
 // Enums
@@ -64,6 +65,7 @@ export interface Pass {
   userId: number;
   plan: Plan;
   activities: PlanActivityWithDetails[];
+  location: Location;
   status: PlanPassStatus;
   version: number;
   issuedAt: Date;

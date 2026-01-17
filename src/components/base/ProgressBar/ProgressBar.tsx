@@ -11,6 +11,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ total, current }) => {
   const [displayedPercentage, setDisplayedPercentage] = useState<number>(0);
 
   const calcPercentage = (): number => {
+    if (!total || total === 0) {
+      setPercentage(0);
+      return 0;
+    }
     const percentageCalc = Math.floor((current / total) * 100);
     setPercentage(percentageCalc);
     return percentageCalc;
