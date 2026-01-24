@@ -465,3 +465,12 @@ export const getAllPasses = async (): Promise<Pass[]> => {
     throw error as ApiError;
   }
 };
+
+export const getPassQRCode = async (passId: string): Promise<PassGenerationResponse> => {
+  try {
+    const response = await apiClient.get(`/passes/${passId}/qr-code`);
+    return ModelMappers.mapPassGeneration(response);
+  } catch (error) {
+    throw error as ApiError;
+  }
+};

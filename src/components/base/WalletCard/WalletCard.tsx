@@ -4,12 +4,23 @@ import { formatDateDisplay } from "../../../utils/dateFormat";
 
 interface WalletCardProps {
   pass: Pass;
+  onClick?: () => void;
 }
 
-const WalletCard = ({pass}: WalletCardProps): JSX.Element => {
+const WalletCard = ({pass, onClick}: WalletCardProps): JSX.Element => {
+    const handleClick = () => {
+        if (onClick) {
+            onClick();
+        }
+    };
+
     return (
         <>
-            <section className="wallet__card" key={pass.passId}>
+            <section 
+                className={`wallet__card ${onClick ? 'wallet__card--clickable' : ''}`} 
+                key={pass.passId}
+                onClick={handleClick}
+            >
                 <div className="wallet__card-header"  
                 style={{ backgroundImage: `url(${pass.plan.mainImageUrl})` }}> 
                     <div className="wallet__card-overlay">
