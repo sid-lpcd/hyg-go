@@ -13,7 +13,6 @@ interface PassQRModalProps {
 const PassQRModal: React.FC<PassQRModalProps> = ({
   passId,
   passTitle,
-  onClose,
 }) => {
   const [qrData, setQrData] = useState<PassGenerationResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,12 +36,9 @@ const PassQRModal: React.FC<PassQRModalProps> = ({
   }, [passId]);
 
   return (
-    <div className="pass-qr-modal">
+    <>
       <div className="pass-qr-modal__header">
         <h2 className="pass-qr-modal__title">{passTitle}</h2>
-        <button className="pass-qr-modal__close" onClick={onClose}>
-          ×
-        </button>
       </div>
         
       <div className="pass-qr-modal__content">
@@ -75,13 +71,13 @@ const PassQRModal: React.FC<PassQRModalProps> = ({
                 )}
               </div>
               <div className="pass-qr-modal__info">
-                <p className="pass-qr-modal__pass-id">Pass ID: {qrData.pass.passId}</p>
                 <p className="pass-qr-modal__expiry">Expires: {new Date(qrData.pass.expiresAt).toLocaleDateString()}</p>
+                <p className="pass-qr-modal__pass-id">Pass ID: {qrData.pass.passId}</p>
               </div>
             </div>
           )}
       </div>
-    </div>
+    </>
   );
 };
 
