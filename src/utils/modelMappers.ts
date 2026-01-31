@@ -197,7 +197,6 @@ export class ModelMappers {
 
   // Plan mapping
   static mapPlan(apiPlan: any): Plan | PlanWithActivities {
-    console.log(apiPlan)
     if (!apiPlan) return apiPlan;
 
     if (apiPlan.activities != null){
@@ -287,7 +286,6 @@ export class ModelMappers {
 
   static mapPassGeneration(apiPassGeneration: any): PassGenerationResponse {
     if (!apiPassGeneration) return apiPassGeneration;
-    console.log("Mapping Pass Generation:", apiPassGeneration);
     return {
       pass: this.mapPass(apiPassGeneration.pass),
       entitlements: apiPassGeneration.entitlements.map((e: any) => this.mapEntitlement(e)),

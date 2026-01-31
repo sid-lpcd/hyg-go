@@ -14,10 +14,8 @@ const MainMap: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [tripActivities, setTripActivities] = useState<PlanActivityWithDetails[]>([]);
   const [tripLocation, setTripLocation] = useState<Location | null>(null);
-  const [loadingTripDetails, setLoadingTripDetails] = useState<boolean>(false);
 
   const fetchTripDetails = async (planId: number): Promise<void> => {
-    setLoadingTripDetails(true);
     try {
       const planWithActivities = await getPlanById(planId);
       if ('activities' in planWithActivities) {
@@ -30,9 +28,7 @@ const MainMap: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching trip details:", error);
-    } finally {
-      setLoadingTripDetails(false);
-    }
+    } 
   };
 
   const fetchFutureTrips = async (): Promise<void> => {

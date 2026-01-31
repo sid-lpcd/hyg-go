@@ -88,6 +88,7 @@ const SelectActivitiesPage: React.FC = () => {
 
   const compareBasket = (response: Plan): void => {
     if (!basketState?.planId || basketState.planId !== response.planId) {
+    
       const newBasket: BasketState = { 
         planId: response.planId, 
         activities: [], // Plan doesn't have activities, so we start with empty array
