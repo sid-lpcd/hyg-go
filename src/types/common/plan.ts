@@ -65,7 +65,7 @@ export interface Plan {
 }
 
 export interface PlanWithActivities extends Plan {
-  activities: PlanActivity[];
+  activities: PlanActivity[] | PlanActivityWithDetails[];
 }
 
 

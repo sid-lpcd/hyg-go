@@ -1,22 +1,28 @@
 import {
   render,
   fireEvent,
-  findByText,
   cleanup,
   screen,
 } from "@testing-library/react";
 import { PeopleDropdown } from "./PeopleDropdown";
 import { vi, describe, expect, beforeEach, test, afterEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import React from "react";
+import { TripData } from "../../../types/common/form";
 
 describe("PeopleDropdown Component", () => {
-  let tripData;
-  let setTripData;
-  let onClose;
+  let tripData: TripData;
+  let setTripData: ReturnType<typeof vi.fn>;
+  let onClose: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    tripData = { people: { adult: 2, children: 1, infant: 0 } };
+    tripData = { 
+      people: { adult: 2, child: 0, infant: 0 },
+      startDate: new Date(),
+      endDate: new Date(),
+      locationId: 1,
+      title: "Test Trip",
+      description: "Test Description"
+    };
     setTripData = vi.fn();
     onClose = vi.fn();
   });
@@ -41,12 +47,19 @@ describe("PeopleDropdown Component", () => {
     expect(screen.getByText(/Infant/i)).toBeInTheDocument();
 
     const adultElement = screen.getByText("2", { exact: true });
-    const childrenElement = screen.getByText("1", { exact: true });
-    const infantElement = screen.getByText("0", { exact: true });
+    
+    // Find children and infant elements by navigating through the DOM structure
+    const childrenLabel = screen.getByText(/Children/i);
+    const childrenControl = childrenLabel.closest(".people-dropdown__control");
+    const childrenElement = childrenControl?.querySelector(".people-dropdown__input");
+    
+    const infantLabel = screen.getByText(/Infant/i);
+    const infantControl = infantLabel.closest(".people-dropdown__control");
+    const infantElement = infantControl?.querySelector(".people-dropdown__input");
 
     expect(adultElement).toBeInTheDocument(); // Adults
-    expect(childrenElement).toBeInTheDocument(); // Children
-    expect(infantElement).toBeInTheDocument(); // Infants
+    expect(childrenElement).toHaveTextContent("0"); // Children
+    expect(infantElement).toHaveTextContent("0"); // Infants
   });
 
   test("increases adult count", () => {
@@ -60,14 +73,16 @@ describe("PeopleDropdown Component", () => {
 
     const adultLabel = screen.getByText(/Adults/i);
     const adultControl = adultLabel.closest(".people-dropdown__control");
-    const plusButton = adultControl.querySelector(
+    const plusButton = adultControl?.querySelector(
       ".people-dropdown__action:last-child"
     );
 
     expect(plusButton).toBeInTheDocument();
 
-    fireEvent.click(plusButton);
-    expect(screen.getByText(/3/i)).toBeInTheDocument(); // Adults should now be 3
+    if (plusButton) {
+      fireEvent.click(plusButton);
+      expect(screen.getByText(/3/i)).toBeInTheDocument(); // Adults should now be 3
+    }
   });
 
   test("decreases adult count but not below min", () => {
@@ -81,16 +96,18 @@ describe("PeopleDropdown Component", () => {
 
     const adultLabel = screen.getByText(/Adults/i);
     const adultControl = adultLabel.closest(".people-dropdown__control");
-    const minusButton = adultControl.querySelector(
+    const minusButton = adultControl?.querySelector(
       ".people-dropdown__action:nth-of-type(1)"
     );
 
     expect(minusButton).toBeInTheDocument();
 
-    fireEvent.click(minusButton);
+    if (minusButton && adultControl) {
+      fireEvent.click(minusButton);
 
-    const adultSpan = adultControl.querySelector(".people-dropdown__input");
-    expect(adultSpan).toHaveTextContent("1");
+      const adultSpan = adultControl.querySelector(".people-dropdown__input");
+      expect(adultSpan).toHaveTextContent("1");
+    }
   });
 
   test("handles done button click", () => {
@@ -107,7 +124,7 @@ describe("PeopleDropdown Component", () => {
 
     expect(setTripData).toHaveBeenCalledWith({
       ...tripData,
-      people: { adult: 2, children: 1, infant: 0 },
+      people: { adult: 2, child: 0, infant: 0 },
     });
     expect(onClose).toHaveBeenCalled();
   });

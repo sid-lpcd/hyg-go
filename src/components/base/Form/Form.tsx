@@ -7,9 +7,9 @@ import { FormLabel } from "../../../types/common";
 interface FormProps {
   title: string;
   labels?: FormLabel[];
-  formData: Record<string, any>;
-  errorData: Record<string, boolean>;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  formData?: Record<string, any>;
+  errorData?: Record<string, boolean>;
+  handleChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   handleCancel: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -27,7 +27,7 @@ const Form: React.FC<FormProps> = ({
     <form className="form" onSubmit={handleSubmit}>
       <h2 className="form__title">{title}</h2>
       <div className="form__section">
-        {labels?.map((label) => {
+        {formData && errorData &&  handleChange && labels?.map((label) => {
           let input: JSX.Element = <></>;
           switch (label.type) {
             case "input":

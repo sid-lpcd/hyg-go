@@ -28,7 +28,7 @@ import {
   BoundingBox,
   PassGenerationResponse,
 } from "../types/contract";
-import { AuthUser, Pass } from "../types/common";
+import { AuthUser, Pass, PlanWithActivities } from "../types/common";
 
 const API_BASE_URL =
   import.meta.env.VITE_ENV_TYPE === "DEV"
@@ -256,7 +256,7 @@ export const getAllPlansForLocation = async (locationId: number): Promise<Plan[]
   }
 };
 
-export const createAIPlan = async (planId: number): Promise<Plan> => {
+export const createAIPlan = async (planId: number): Promise<Plan | PlanWithActivities> => {
   try {
     const response: any = await apiClient.post(
       `${API_BASE_URL}/plans/${planId}/AI-plan`
