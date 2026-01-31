@@ -1,22 +1,46 @@
 @use "../../../styles/partials/mixins" as *;
 @use "../../../styles/partials/variables" as *;
 @use "../../../styles/partials/animations";
+
 .header {
-  @include flex(space-between);
+  @include flex(space-between, center);
   padding: $min-padding;
   height: 8vh;
+  position: relative;
 
   &__logo {
+    max-width: 6.25rem;
+    display: block;
     width: 100%;
-    &-link {
-      display: block;
-      max-width: 6.25rem;
-      margin: 0 auto;
+  }
+
+  &__logo-link {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  // Left / right “slots”
+  &__side {
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+
+    &--left {
+      justify-content: flex-start;
+    }
+
+    &--right {
+      justify-content: flex-end;
     }
   }
+
   &__icon {
     width: 30px;
     height: 30px;
+
     & * {
       fill: $primary-color;
       stroke: $primary-color;

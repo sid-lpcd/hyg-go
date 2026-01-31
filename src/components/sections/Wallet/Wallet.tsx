@@ -1,21 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
 import { Modal } from "react-responsive-modal";
 import { getAllPasses } from "../../../utils/apiHelper";
-import { useNavigate } from "react-router-dom";
 import { Pass } from "@/types";
-import { ToastContainer } from "react-toastify";
-import Header from "../Header/Header";
-import ProfileIcon from "../../assets/icons/full-profile-icon.svg?react";
-import "./WalletPage.scss";
+import "./Wallet.scss";
 import { InfinitySpin } from "react-loader-spinner";
 import WalletCard from "../../base/WalletCard/WalletCard";
-import { BasketProvider } from "../../../context/BasketContext";
-import Navigation from "../Navigation/Navigation";
 import PassQRModal from "../PassQRModal/PassQRModal";
 
 
-const WalletPage = (): JSX.Element => {
-    const navigate = useNavigate();
+const Wallet = (): JSX.Element => {
     const [passes, setPasses] = useState<Pass[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
@@ -97,59 +90,42 @@ const WalletPage = (): JSX.Element => {
 
     return (
         <>
-            <ToastContainer />
-            <Header
-                rightElement={
-                    <>
-                        <ProfileIcon
-                            className="header__profile-icon"
-                            onClick={() => navigate("/user")}
-                        />
-                    </>
-                }
-            />
-            <main className="main main-wallet">
-                <div className="wallet">
-                    <h2 className="wallet__title">My Passes</h2>
-                    {loading && <div className="wallet__loading">Loading...</div>}
-                    {error && <div className="wallet__error">{error}</div>}
-                    
-                    {futureTrips.length > 0 && (
-                        <div className="wallet__section">
-                            <h3 className="wallet__section-title">Upcoming Trips</h3>
-                            <div className="wallet__passes">
-                                {futureTrips.map((pass) => (
-                                    <WalletCard 
-                                        key={pass.passId} 
-                                        pass={pass} 
-                                        onClick={() => handlePassClick(pass)}
-                                    />
-                                ))}
-                            </div>
+            <section className="wallet">
+                <h2 className="wallet__title">My Passes</h2>
+                {loading && <div className="wallet__loading">Loading...</div>}
+                {error && <div className="wallet__error">{error}</div>}
+                
+                {futureTrips.length > 0 && (
+                    <div className="wallet__section">
+                        <h3 className="wallet__section-title">Upcoming Trips</h3>
+                        <div className="wallet__passes">
+                            {futureTrips.map((pass) => (
+                                <WalletCard 
+                                    key={pass.passId} 
+                                    pass={pass} 
+                                    onClick={() => handlePassClick(pass)}
+                                />
+                            ))}
                         </div>
-                    )}
-                    
-                    {pastTrips.length > 0 && (
-                        <div className="wallet__section">
-                            <h3 className="wallet__section-title">Past Trips</h3>
-                            <div className="wallet__passes wallet__passes--past">
-                                {pastTrips.map((pass) => (
-                                    <WalletCard 
-                                        key={pass.passId} 
-                                        pass={pass} 
-                                        onClick={() => handlePassClick(pass)}
-                                        isPast={true}
-                                    />
-                                ))}
-                            </div>
+                    </div>
+                )}
+                
+                {pastTrips.length > 0 && (
+                    <div className="wallet__section">
+                        <h3 className="wallet__section-title">Past Trips</h3>
+                        <div className="wallet__passes wallet__passes--past">
+                            {pastTrips.map((pass) => (
+                                <WalletCard 
+                                    key={pass.passId} 
+                                    pass={pass} 
+                                    onClick={() => handlePassClick(pass)}
+                                    isPast={true}
+                                />
+                            ))}
                         </div>
-                    )}
-                </div>
-            </main>
-            <BasketProvider>
-                <Navigation pageType="travel" />
-            </BasketProvider>
-            
+                    </div>
+                )}
+            </section>
             <Modal
                 open={openQRModal}
                 onClose={handleCloseModal}
@@ -172,4 +148,4 @@ const WalletPage = (): JSX.Element => {
     );
 };
 
-export default WalletPage;
+export default Wallet;

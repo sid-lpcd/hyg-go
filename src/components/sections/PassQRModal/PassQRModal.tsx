@@ -35,6 +35,10 @@ const PassQRModal: React.FC<PassQRModalProps> = ({
     fetchQRCode();
   }, [passId]);
 
+  var isExpired = (date: Date) => {
+    return date <= new Date()
+  }
+
   return (
     <>
       <div className="pass-qr-modal__header">
@@ -57,7 +61,7 @@ const PassQRModal: React.FC<PassQRModalProps> = ({
           
           {qrData && !loading && !error && (
             <div className="pass-qr-modal__qr-container">
-              <div className="pass-qr-modal__qr-code">
+              <div className={`pass-qr-modal__qr-code${isExpired(qrData.pass.expiresAt) ? ' pass-qr-modal__qr-code--expired' : ''}`}>
                 {qrData.qrCodeUrl ? (
                   <img 
                     src={qrData.qrCodeUrl} 
@@ -71,7 +75,10 @@ const PassQRModal: React.FC<PassQRModalProps> = ({
                 )}
               </div>
               <div className="pass-qr-modal__info">
-                <p className="pass-qr-modal__expiry">Expires: {new Date(qrData.pass.expiresAt).toLocaleDateString()}</p>
+                {isExpired(qrData.pass.expiresAt) ? 
+                    <p className="pass-qr-modal__expiry pass-qr-modal__expiry--expired">Expired: {new Date(qrData.pass.expiresAt).toLocaleDateString()}</p>
+                    : <p className="pass-qr-modal__expiry">Expires: {new Date(qrData.pass.expiresAt).toLocaleDateString()}</p>
+                }
                 <p className="pass-qr-modal__pass-id">Pass ID: {qrData.pass.passId}</p>
               </div>
             </div>

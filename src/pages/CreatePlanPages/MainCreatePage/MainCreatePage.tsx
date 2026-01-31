@@ -154,12 +154,10 @@ const MainCreatePage: React.FC = () => {
     const newErrorData = { ...errorData };
     const { update, ...newFormData } = formData;
 
-    Object.keys(newFormData).forEach((key) => {
-      if (!newFormData[key as keyof typeof newFormData]) {
-        newErrorData[key as keyof ErrorData] = true;
-        hasErrors = true;
-      }
-    });
+    if (!newFormData.title || newFormData.title.trim() === '') {
+      newErrorData.title = true;
+      hasErrors = true;
+    }
 
     setErrorData(newErrorData);
 

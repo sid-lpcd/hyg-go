@@ -8,14 +8,23 @@ interface HeaderProps {
   rightElement?: ReactNode;
 }
 
-const Header: React.FC<HeaderProps> = ({ leftElement = null, rightElement = null }) => {
+const Header: React.FC<HeaderProps> = ({
+  leftElement = null,
+  rightElement = null,
+}) => {
   return (
     <header className="header">
-      {leftElement}
+      <div className="header__side header__side--left">
+        {leftElement}
+      </div>
+
       <Link to="/" className="header__logo-link">
-        <img src={logo} alt="Hyg-go log" className="header__logo" />
+        <img src={logo} alt="Hyg-go logo" className="header__logo" />
       </Link>
-      {rightElement}
+
+      <div className="header__side header__side--right">
+        {rightElement}
+      </div>
     </header>
   );
 };

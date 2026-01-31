@@ -11,6 +11,7 @@
 
   &__title {
     margin: 0;
+    padding-bottom: 0;
     font-weight: bold;
     color: $primary-color;
     flex: 1;
@@ -60,6 +61,10 @@
     align-items: center;
     min-height: 200px;
     min-width: 200px;
+
+    &--expired{
+      opacity: 0.4;
+    }
   }
 
   &__qr-image {
@@ -93,6 +98,10 @@
     font-weight: 600;
     color: #333;
     padding-bottom: 0.5rem;
+
+    &--expired{
+      color: $color-error;
+    }
   }
 }
 

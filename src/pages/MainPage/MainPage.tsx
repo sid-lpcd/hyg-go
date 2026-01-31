@@ -8,6 +8,7 @@ import TripPlans from "../../components/sections/TripsPlans/TripPlans";
 import "./MainPage.scss";
 import { ToastContainer } from "react-toastify";
 import { BasketProvider } from "../../context/BasketContext";
+import Wallet from "../../components/sections/Wallet/Wallet";
 
 interface LocationState {
   showToast?: boolean;
@@ -43,8 +44,20 @@ export const MainPage: React.FC = () => {
             />
           </>
         }
-      />
-      <main className="main main-traveller">{!page && <TripPlans />}</main>
+            />
+      <>
+        {(() => {
+          console.log(page)
+          switch (page) {
+            case "wallet":
+              // Add wallet-specific component here in future
+              return <main className="main main-wallet"><Wallet /></main>;
+            default:
+              return <main className="main main-traveller"><TripPlans /></main>;
+          }
+        })()}
+      </>
+
 
       <BasketProvider>
         <Navigation pageType="travel" />

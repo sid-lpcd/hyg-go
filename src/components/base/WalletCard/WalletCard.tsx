@@ -5,9 +5,10 @@ import { formatDateDisplay } from "../../../utils/dateFormat";
 interface WalletCardProps {
   pass: Pass;
   onClick?: () => void;
+  isPast?: boolean;
 }
 
-const WalletCard = ({pass, onClick}: WalletCardProps): JSX.Element => {
+const WalletCard = ({pass, onClick, isPast = false}: WalletCardProps): JSX.Element => {
     const handleClick = () => {
         if (onClick) {
             onClick();
@@ -17,7 +18,7 @@ const WalletCard = ({pass, onClick}: WalletCardProps): JSX.Element => {
     return (
         <>
             <section 
-                className={`wallet__card ${onClick ? 'wallet__card--clickable' : ''}`} 
+                className={`wallet__card${isPast ? ' wallet__card--past' : ''}`} 
                 key={pass.passId}
                 onClick={handleClick}
             >
