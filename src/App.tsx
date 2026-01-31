@@ -29,6 +29,14 @@ function App(): JSX.Element {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/map" 
+          element={
+            <ProtectedRoute>
+              <MainPage />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/user" element={<UserPage />} />
         <Route
           path="/create-plan"

@@ -4,15 +4,14 @@ import DropdownIcon from "../../../assets/icons/dropdown-icon.svg?react";
 
 interface DropdownProps {
   options: string[];
+  selected: string;
   selectHandler: (option: string) => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ options, selectHandler }) => {
+const Dropdown: React.FC<DropdownProps> = ({ options, selected, selectHandler }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string>(options[0]);
 
   const handleSelect = (option: string): void => {
-    setSelected(option);
     setIsOpen(false);
     selectHandler(option);
   };
@@ -30,7 +29,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selectHandler }) => {
             <div
               key={index}
               onClick={() => handleSelect(option)}
-              className="dropdown__item"
+              className={`dropdown__item${option == selected ? " dropdown__item--selected" : ""}`}
             >
               {option}
             </div>

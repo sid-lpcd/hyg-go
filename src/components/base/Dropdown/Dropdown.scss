@@ -7,7 +7,19 @@
   &__selection {
     @include btn-styling;
     & {
+      width: 100%;
+      background-color: $secondary-background-color;
+      color: $secondary-color;
       @include flex(space-around);
+
+      svg{
+        width: 1.5rem;
+        height: 1.5rem;
+        path {
+          fill: $secondary-color;
+          stroke: $secondary-color;
+        }
+      } 
     }
   }
 
@@ -15,12 +27,13 @@
     position: absolute;
     overflow: hidden;
     top: 100%;
+    width: 100%;
     background-color: $secondary-background-color;
     color: $secondary-color;
     box-shadow: $primary-background-btn-color 0 15px 30px -5px;
     border-radius: 5px;
     min-width: 9rem;
-    z-index: 1;
+    z-index: 2;
     @include tablet {
       min-width: 12.5rem;
     }
@@ -30,6 +43,11 @@
 
     &:hover {
       background-color: #c3a3c7;
+    }
+
+    &--selected{
+      background-color: $primary-background-color;
+      color: $primary-color;
     }
   }
 }

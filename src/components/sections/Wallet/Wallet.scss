@@ -4,6 +4,24 @@
 
 .wallet{
 	width: 100%;
+	position: relative;
+	
+	&__title{
+		width: 100%;
+		padding: 0;
+		height: 6vh;
+	}
+
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+		height: 74vh;
+		width: 100%;
+		overflow: scroll;
+		padding-bottom: 2rem;
+	}
+	
 	&__section {	
 		width: 100%;
 		&-title {
@@ -13,12 +31,8 @@
 			margin-bottom: 1rem;
 			border-bottom: 2px solid $border-color;
 			padding-bottom: 0.5rem;
+			padding-top: 0;
 		}
-	}
-
-	&__title{
-		width: 100%;
-		padding: 0;
 	}
 
 	&__passes {
@@ -50,6 +64,17 @@
 		margin: 2rem 0;
 		color: $color-error;
 	}
+}
+
+@supports (height: 100dvh) {
+  .wallet {
+    &__title {
+      height: 6dvh;
+    }
+    &__list {
+      height: 74dvh;
+    }
+  }
 }
 
 // QR Code Modal styles

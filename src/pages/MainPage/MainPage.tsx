@@ -5,6 +5,7 @@ import ProfileIcon from "../../assets/icons/full-profile-icon.svg?react";
 import Header from "../../components/sections/Header/Header";
 import Navigation from "../../components/sections/Navigation/Navigation";
 import TripPlans from "../../components/sections/TripsPlans/TripPlans";
+import MainMap from "../../components/sections/MainMap/MainMap";
 import "./MainPage.scss";
 import { ToastContainer } from "react-toastify";
 import { BasketProvider } from "../../context/BasketContext";
@@ -50,8 +51,9 @@ export const MainPage: React.FC = () => {
           console.log(page)
           switch (page) {
             case "wallet":
-              // Add wallet-specific component here in future
               return <main className="main main-wallet"><Wallet /></main>;
+            case "map":
+              return <main className="main main-map"><MainMap /></main>;
             default:
               return <main className="main main-traveller"><TripPlans /></main>;
           }

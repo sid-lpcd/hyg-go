@@ -291,10 +291,10 @@ export const getAllPlans = async (): Promise<Plan[]> => {
   }
 };
 
-export const getAllPlansForUser = async (after?: string): Promise<Plan[]> => {
+export const getAllPlansForUser = async (after?: string, before?: string): Promise<Plan[]> => {
   try {
     const response: any = await apiClient.get(`${API_BASE_URL}/plans/user`, {
-      params: { after: after }
+      params: { after, before }
     });
     return ModelMappers.mapPlans(response);
   } catch (error) {

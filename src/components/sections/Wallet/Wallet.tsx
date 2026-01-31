@@ -92,39 +92,41 @@ const Wallet = (): JSX.Element => {
         <>
             <section className="wallet">
                 <h2 className="wallet__title">My Passes</h2>
-                {loading && <div className="wallet__loading">Loading...</div>}
-                {error && <div className="wallet__error">{error}</div>}
-                
-                {futureTrips.length > 0 && (
-                    <div className="wallet__section">
-                        <h3 className="wallet__section-title">Upcoming Trips</h3>
-                        <div className="wallet__passes">
-                            {futureTrips.map((pass) => (
-                                <WalletCard 
-                                    key={pass.passId} 
-                                    pass={pass} 
-                                    onClick={() => handlePassClick(pass)}
-                                />
-                            ))}
+                <div className="wallet__list">
+                    {loading && <div className="wallet__loading">Loading...</div>}
+                    {error && <div className="wallet__error">{error}</div>}
+                    
+                    {futureTrips.length > 0 && (
+                        <div className="wallet__section">
+                            <h3 className="wallet__section-title">Upcoming Trips</h3>
+                            <div className="wallet__passes">
+                                {futureTrips.map((pass) => (
+                                    <WalletCard 
+                                        key={pass.passId} 
+                                        pass={pass} 
+                                        onClick={() => handlePassClick(pass)}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
-                
-                {pastTrips.length > 0 && (
-                    <div className="wallet__section">
-                        <h3 className="wallet__section-title">Past Trips</h3>
-                        <div className="wallet__passes wallet__passes--past">
-                            {pastTrips.map((pass) => (
-                                <WalletCard 
-                                    key={pass.passId} 
-                                    pass={pass} 
-                                    onClick={() => handlePassClick(pass)}
-                                    isPast={true}
-                                />
-                            ))}
+                    )}
+                    
+                    {pastTrips.length > 0 && (
+                        <div className="wallet__section">
+                            <h3 className="wallet__section-title">Past Trips</h3>
+                            <div className="wallet__passes wallet__passes--past">
+                                {pastTrips.map((pass) => (
+                                    <WalletCard 
+                                        key={pass.passId} 
+                                        pass={pass} 
+                                        onClick={() => handlePassClick(pass)}
+                                        isPast={true}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </section>
             <Modal
                 open={openQRModal}

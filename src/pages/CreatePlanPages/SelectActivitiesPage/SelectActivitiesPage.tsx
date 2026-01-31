@@ -21,6 +21,7 @@ import "./SelectActivitiesPage.scss";
 import "react-toastify/dist/ReactToastify.css";
 import { useBasket } from "../../../context/BasketContext";
 import { Plan, BasketState, BasketActivity } from "../../../types";
+import Form from "../../../components/base/Form/Form";
 
 interface LocationState {
   planStatus?: string;
@@ -222,28 +223,14 @@ const SelectActivitiesPage: React.FC = () => {
         }}
         animationDuration={500}
       >
-        <div className="form">
-          <h2 className="form__title">Do you want to save this trip?</h2>
-          <div className="form__buttons">
-            <button
-              type="button"
-              className="form__button form__button--cancel"
-              onClick={() => {
+        <Form
+          title="Do you want to save this trip?"
+          handleCancel={() => {
                 clearBasket();
                 navigate("/");
               }}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="form__button form__button--submit"
-              onClick={handleSaveTrip}
-            >
-              Save Trip
-            </button>
-          </div>
-        </div>
+          handleSubmit={(e) => handleSaveTrip(e)}
+        />
       </Modal>
     </>
   );

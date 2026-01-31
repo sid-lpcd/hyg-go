@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./MapGL.scss";
-import { useBasket } from "../../../context/BasketContext";
 import { BoundingBox, Bounds } from "../../../types/common";
 import { MapMarker } from "../../../types/common";
 
 interface MapGLProps {
   initialLocation: [number, number];
+  targetCenter?: [number, number];
   initialZoom?: number;
+  targetZoom?: number;
   isResetVisible?: boolean;
   markersList: MapMarker[];
   labels?: string[];
@@ -16,11 +17,14 @@ interface MapGLProps {
   isMarkerClickable?: boolean;
   onMarkerClick?: (activity: MapMarker) => void;
   isMoveable?: boolean;
+  basketActivityIds?: number[]; 
 }
 
 const MapGL: React.FC<MapGLProps> = ({
   initialLocation,
+  targetCenter,
   initialZoom = 14,
+  targetZoom,
   isResetVisible,
   markersList,
   labels,
@@ -28,8 +32,8 @@ const MapGL: React.FC<MapGLProps> = ({
   isMarkerClickable = false,
   onMarkerClick,
   isMoveable = true,
+  basketActivityIds = [],
 }) => {
-  const { hasActivity, basketState } = useBasket();
   const [center, setCenter] = useState<[number, number]>(initialLocation);
   const [zoom, setZoom] = useState<number>(initialZoom);
   const [isCentered, setIsCentered] = useState<boolean>(true);
@@ -37,6 +41,7 @@ const MapGL: React.FC<MapGLProps> = ({
 
   const mapRef = useRef<mapboxgl.Map>();
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
 
   const handleButtonClick = (): void => {
     if (!mapRef.current) return;
@@ -87,11 +92,15 @@ const MapGL: React.FC<MapGLProps> = ({
   };
 
   const checkBasket = (marker: MapMarker): boolean => {
-    return hasActivity(marker.activityId);
+    return basketActivityIds.includes(marker.activityId);
   };
 
   const setMarkers = (): void => {
     if (!mapRef.current) return;
+
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+    
     markersList.forEach((marker) => {
       let colorMarker = getMarkerCategory(marker);
 
@@ -103,6 +112,8 @@ const MapGL: React.FC<MapGLProps> = ({
         .setLngLat([marker.longitude, marker.latitude])
         .addClassName(`marker-${marker.activityId}`)
         .addTo(mapRef.current!);
+      
+      markersRef.current.push(markerEl);
 
       if (isMarkerClickable && onMarkerClick) {
         markerEl.getElement().addEventListener("click", (e: Event) => {
@@ -195,6 +206,10 @@ const MapGL: React.FC<MapGLProps> = ({
     markersList.length && setMarkers();
 
     return () => {
+      // Clean up markers
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
+      
       if (mapRef.current) {
         mapRef.current.remove();
       }
@@ -205,12 +220,26 @@ const MapGL: React.FC<MapGLProps> = ({
     if (!mapRef?.current) return;
 
     setMarkers();
-  }, [markersList]);
+  }, [markersList, basketActivityIds]);
 
+  // Handle dynamic center and zoom updates
   useEffect(() => {
-    if (!mapRef) return;
-    setMarkers();
-  }, [basketState]);
+    if (!mapRef?.current || (!targetCenter && !targetZoom)) return;
+    
+    mapRef.current.flyTo({
+      center: targetCenter || center,
+      zoom: targetZoom || zoom,
+    });
+    
+    if (targetCenter) {
+      setCenter(targetCenter);
+      setIsCentered(false);
+    }
+    
+    if (targetZoom) {
+      setZoom(targetZoom);
+    }
+  }, [targetCenter, targetZoom]);
 
   return (
     <>

@@ -8,7 +8,7 @@ import {
   getLocationById,
 } from "../../../utils/apiHelper";
 import { useBasket } from "../../../context/BasketContext";
-import MapGL from "../../base/MapGL/MapGL";
+import MapGLWithBasket from "../../base/MapGL/MapGLWithBasket";
 import "./MapSection.scss";
 import { useSearchParams } from "react-router-dom";
 import { Activity, ActivitySelectedFilters, BasketActivity, BoundingBox, MapMarker } from "../../../types/common";
@@ -158,7 +158,7 @@ const MapSection: React.FC<MapSectionProps> = ({ locationId, setSelectedActivity
   return (
     <>
       <section className="map-section">
-        <MapGL
+        <MapGLWithBasket
           initialLocation={initialLocation}
           initialZoom={initialZoom}
           isResetVisible={true}
