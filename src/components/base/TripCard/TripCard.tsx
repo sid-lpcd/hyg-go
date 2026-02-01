@@ -10,12 +10,15 @@ interface TripCardProps {
 
 const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   const navigate = useNavigate();
+
+  const handleViewItinerary = () => {
+    navigate(`/trip-itinerary/${trip.planId}`);
+  };
+
   return (
     <div
       className="trip-card"
-      onClick={() => {
-        navigate(`/create-plan/${trip.planId}/activities`);
-      }}
+      onClick={handleViewItinerary}
     >
       <div
         className="trip-card__background"

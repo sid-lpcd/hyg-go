@@ -5,6 +5,7 @@ import MainCreatePage from "./pages/CreatePlanPages/MainCreatePage/MainCreatePag
 import SelectActivitiesPage from "./pages/CreatePlanPages/SelectActivitiesPage/SelectActivitiesPage";
 import { MainPage } from "./pages/MainPage/MainPage";
 import CalendarPlan from "./pages/CreatePlanPages/CalendarPlan/CalendarPlan";
+import TripItinerary from "./pages/CreatePlanPages/TripItinerary/TripItinerary";
 import UserPage from "./pages/UserPage/UserPage";
 import ProtectedRoute from "./context/ProtectedRoute";
 import { BasketProvider } from "./context/BasketContext";
@@ -53,6 +54,14 @@ function App(): JSX.Element {
               <BasketProvider>
                 <CalendarPlan />
               </BasketProvider>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trip-itinerary/:planId"
+          element={
+            <ProtectedRoute>
+              <TripItinerary />
             </ProtectedRoute>
           }
         />

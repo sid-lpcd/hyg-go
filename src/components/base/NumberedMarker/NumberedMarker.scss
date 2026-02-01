@@ -1,0 +1,46 @@
+@use "../../../styles/partials/variables" as *;
+
+.numbered-marker {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: $primary-color;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background-color: var(--marker-color, $secondary-color);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  font-family: $body-fonts;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    display: none;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background-color: inherit;
+    z-index: -1;
+  }
+}

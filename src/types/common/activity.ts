@@ -61,3 +61,11 @@ export interface MapMarker extends Pick<Activity, 'activityId' | 'latitude' | 'l
   latitude: number; 
   longitude: number;
 }
+
+export interface ActivityMarker extends MapMarker {
+  order: number;
+  day: number;
+  startTime: string;
+  endTime: string;
+  name: string;
+}

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { createRoot } from "react-dom/client";
+import NumberedMarker from "../NumberedMarker/NumberedMarker";
 import "./MapGL.scss";
 import { BoundingBox, Bounds } from "../../../types/common";
 import { MapMarker } from "../../../types/common";
@@ -17,7 +19,8 @@ interface MapGLProps {
   isMarkerClickable?: boolean;
   onMarkerClick?: (activity: MapMarker) => void;
   isMoveable?: boolean;
-  basketActivityIds?: number[]; 
+  basketActivityIds?: number[];
+  useNumberedMarkers?: boolean;
 }
 
 const MapGL: React.FC<MapGLProps> = ({
@@ -33,6 +36,7 @@ const MapGL: React.FC<MapGLProps> = ({
   onMarkerClick,
   isMoveable = true,
   basketActivityIds = [],
+  useNumberedMarkers = false,
 }) => {
   const [center, setCenter] = useState<[number, number]>(initialLocation);
   const [zoom, setZoom] = useState<number>(initialZoom);
@@ -42,6 +46,7 @@ const MapGL: React.FC<MapGLProps> = ({
   const mapRef = useRef<mapboxgl.Map>();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const rootsRef = useRef<any[]>([]);
 
   const handleButtonClick = (): void => {
     if (!mapRef.current) return;
@@ -101,17 +106,61 @@ const MapGL: React.FC<MapGLProps> = ({
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
     
-    markersList.forEach((marker) => {
-      let colorMarker = getMarkerCategory(marker);
-
-      if (checkBasket(marker)) {
-        colorMarker = "green";
+    // Schedule root cleanup for next tick to avoid race conditions
+    const oldRoots = [...rootsRef.current];
+    rootsRef.current = [];
+    setTimeout(() => {
+      oldRoots.forEach(root => root.unmount());
+    }, 0);
+    
+    markersList.forEach((marker: any) => {
+      let markerEl: mapboxgl.Marker;
+      
+      if (useNumberedMarkers && marker.order) {
+        // Create numbered marker using React component
+        const markerElement = document.createElement('div');
+        const root = createRoot(markerElement);
+        
+        root.render(
+          <NumberedMarker
+            order={marker.order}
+            color={marker.color || '#666'}
+            activityId={marker.activityId}
+            onClick={() => onMarkerClick?.(marker)}
+          />
+        );
+        
+        rootsRef.current.push(root);
+        
+        markerEl = new mapboxgl.Marker({ element: markerElement })
+          .setLngLat([marker.longitude, marker.latitude])
+          .addTo(mapRef.current!);
+      } else {
+        // Create standard marker
+        let colorMarker = getMarkerCategory(marker);
+        if (checkBasket(marker)) {
+          colorMarker = "green";
+        }
+        
+        markerEl = new mapboxgl.Marker({ color: colorMarker })
+          .setLngLat([marker.longitude, marker.latitude])
+          .addClassName(`marker-${marker.activityId}`)
+          .addTo(mapRef.current!);
+          
+        // Apply custom className and attributes if provided
+        const element = markerEl.getElement();
+        if (marker.className) {
+          element.classList.add(marker.className);
+        }
+        if (marker['data-order']) {
+          element.setAttribute('data-order', marker['data-order']);
+        }
+        if (marker.style) {
+          Object.entries(marker.style).forEach(([key, value]) => {
+            element.style.setProperty(key, value as string);
+          });
+        }
       }
-
-      const markerEl = new mapboxgl.Marker({ color: colorMarker })
-        .setLngLat([marker.longitude, marker.latitude])
-        .addClassName(`marker-${marker.activityId}`)
-        .addTo(mapRef.current!);
       
       markersRef.current.push(markerEl);
 
@@ -209,6 +258,13 @@ const MapGL: React.FC<MapGLProps> = ({
       // Clean up markers
       markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
+      
+      // Schedule root cleanup to avoid race conditions
+      const oldRoots = [...rootsRef.current];
+      rootsRef.current = [];
+      setTimeout(() => {
+        oldRoots.forEach(root => root.unmount());
+      }, 0);
       
       if (mapRef.current) {
         mapRef.current.remove();
