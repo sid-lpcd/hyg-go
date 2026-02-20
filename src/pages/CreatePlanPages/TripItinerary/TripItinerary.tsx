@@ -69,9 +69,8 @@ const TripItinerary: React.FC = () => {
     const groupedByDay: { [key: number]: PlanActivityWithDetails[] } = {};
     const markers: ActivityMarker[] = [];
 
-    activities.forEach((activity, index) => {
-      if (!activity.latitude || !activity.longitude) return;
-
+    // First pass: group activities by day
+    activities.forEach((activity) => {
       const activityDate = new Date(activity.startDate);
       const dayNumber = Math.floor((activityDate.getTime() - planStartDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
       
@@ -79,26 +78,36 @@ const TripItinerary: React.FC = () => {
         groupedByDay[dayNumber] = [];
       }
       groupedByDay[dayNumber].push(activity);
+    });
 
-      const startTime = new Date(activity.startDate).toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
-      const endTime = new Date(activity.endDate).toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
+    // Second pass: create markers with day-specific numbering
+    Object.keys(groupedByDay).forEach(dayKey => {
+      const dayNumber = parseInt(dayKey);
+      const dayActivities = groupedByDay[dayNumber];
+      
+      dayActivities.forEach((activity, dayIndex) => {
+        if (!activity.latitude || !activity.longitude) return;
 
-      markers.push({
-        activityId: activity.activityId,
-        latitude: activity.latitude,
-        longitude: activity.longitude,
-        category: activity.category,
-        order: index + 1,
-        day: dayNumber,
-        startTime,
-        endTime,
-        name: activity.name
+        const startTime = new Date(activity.startDate).toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+        const endTime = new Date(activity.endDate).toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+
+        markers.push({
+          activityId: activity.activityId,
+          latitude: activity.latitude,
+          longitude: activity.longitude,
+          category: activity.category,
+          order: dayIndex + 1, 
+          day: dayNumber,
+          startTime,
+          endTime,
+          name: activity.name
+        });
       });
     });
 
@@ -120,7 +129,6 @@ const TripItinerary: React.FC = () => {
 
   const totalDays = Object.keys(activitiesByDay).length;
   
-  // Memoized map section to prevent re-rendering
   const MapSection = useMemo(() => {
     return (
       <section className="trip-itinerary__map">
@@ -206,11 +214,8 @@ const TripItinerary: React.FC = () => {
             )}
         </div>
        
-
-        {/* Map */}
         {MapSection}
 
-        {/* Activity list for selected day */}
         <section className="trip-itinerary__activities">
           <h3 className="trip-itinerary__activities-title">
             Day {selectedDay} Schedule

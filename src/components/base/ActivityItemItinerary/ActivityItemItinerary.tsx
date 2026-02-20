@@ -41,12 +41,9 @@ const ActivityItemItinerary: React.FC<ActivityItemItineraryProps> = React.memo((
                 hour: '2-digit', 
                 minute: '2-digit' 
               })}
+              {" "}
+              ({((new Date(activity.endDate).getTime() - new Date(activity.startDate).getTime()) / (1000 * 60 * 60))}h)
             </span>
-            {activity.duration && (
-              <span className="activity-item__duration">
-                ({activity.duration}h)
-              </span>
-            )}
           </div>
         </div>
         
