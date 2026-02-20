@@ -14,12 +14,21 @@ export interface Tag {
   color?: string;
 }
 
-export interface RouteInfo {
-  distance?: number;
-  duration?: number;
-  transportMode?: 'walking' | 'driving' | 'public_transport' | 'cycling';
-  route?: any; // Define based on your routing service response
+export enum TravelMode {
+    DRIVING = "driving",
+    WALKING = "walking",
+    BICYCLING = "bicycling",
+    TRANSIT = "transit"
 }
+
+export interface TravelInfo {
+  mode: TravelMode; 
+  distanceValue: number;
+  durationValue: number;
+  error?: any;
+}
+
+export type RouteInfo = Record<number, TravelInfo[]>;
 
 export interface PlanActivity {
   planId: number;

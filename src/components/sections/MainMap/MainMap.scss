@@ -1,13 +1,11 @@
 @use "../../../styles/partials/variables" as *;
 @use "../../../styles/partials/mixins" as *;
 
-.main{
-    padding-bottom: 0;
-}
 .main-map {
     width: 100%;
     height: 100%;
     position: relative;
+    padding-bottom: 0;
 
   &__title {
     padding: 0;

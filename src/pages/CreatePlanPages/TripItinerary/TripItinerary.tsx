@@ -2,8 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getPlanById } from "../../../utils/apiHelper";
 import { getDayColors } from "../../../utils/themeColors";
-import { Plan, PlanActivityWithDetails, ActivityMarker } from "../../../types/common";
+import { Plan, PlanActivityWithDetails, ActivityMarker} from "../../../types/common";
 import MapGL from "../../../components/base/MapGL/MapGL";
+import ActivityItemItinerary from "../../../components/base/ActivityItemItinerary/ActivityItemItinerary";
+import RouteInfo from "../../../components/base/RouteInfo/RouteInfo";
 import { InfinitySpin } from "react-loader-spinner";
 import Header from "../../../components/sections/Header/Header";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
@@ -21,7 +23,7 @@ const TripItinerary: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState<number>(1);
 
   const handleBackClick = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
 
   const handleEditActivities = () => {
@@ -117,6 +119,31 @@ const TripItinerary: React.FC = () => {
   }, [visibleMarkers]);
 
   const totalDays = Object.keys(activitiesByDay).length;
+  
+  // Memoized map section to prevent re-rendering
+  const MapSection = useMemo(() => {
+    return (
+      <section className="trip-itinerary__map">
+        <MapGL
+          initialLocation={mapCenter}
+          targetCenter={mapCenter}
+          initialZoom={12}
+          targetZoom={13}
+          markersList={visibleMarkers.map(marker => ({
+            activityId: marker.activityId,
+            latitude: marker.latitude,
+            longitude: marker.longitude,
+            category: marker.category,
+            order: marker.order,
+            color: dayColors[selectedDay - 1]
+          } as any))}
+          isResetVisible={false}
+          isMarkerClickable={true}
+          useNumberedMarkers={true}
+        />
+      </section>
+    );
+  }, [mapCenter, visibleMarkers, dayColors, selectedDay]);
 
   if (loading) {
     return (
@@ -181,25 +208,7 @@ const TripItinerary: React.FC = () => {
        
 
         {/* Map */}
-        <section className="trip-itinerary__map">
-          <MapGL
-            initialLocation={mapCenter}
-            targetCenter={mapCenter}
-            initialZoom={12}
-            targetZoom={13}
-            markersList={visibleMarkers.map(marker => ({
-              activityId: marker.activityId,
-              latitude: marker.latitude,
-              longitude: marker.longitude,
-              category: marker.category,
-              order: marker.order,
-              color: dayColors[selectedDay - 1]
-            } as any))}
-            isResetVisible={false}
-            isMarkerClickable={true}
-            useNumberedMarkers={true}
-          />
-        </section>
+        {MapSection}
 
         {/* Activity list for selected day */}
         <section className="trip-itinerary__activities">
@@ -207,48 +216,31 @@ const TripItinerary: React.FC = () => {
             Day {selectedDay} Schedule
           </h3>
           
-          {activitiesByDay[selectedDay]?.map((activity, index) => (
-            <article 
-              key={activity.activityId}
-              className="trip-itinerary__activity"
-              style={{ borderLeftColor: dayColors[selectedDay - 1] }}
-            >
-              <div 
-                className="trip-itinerary__activity-number"
-                style={{ backgroundColor: dayColors[selectedDay - 1] }}
-              >
-                {visibleMarkers.find(m => m.activityId === activity.activityId)?.order || index + 1}
-              </div>
-              
-              <div className="trip-itinerary__activity-content">
-                <div className="trip-itinerary__activity-header">
-                    <h4 className="trip-itinerary__activity-name">{activity.name}</h4>
-                    <div className="trip-itinerary__activity-time">
-                    <span className="trip-itinerary__activity-time-slot">
-                        {new Date(activity.startDate).toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                        })} - {new Date(activity.endDate).toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                        })}
-                    </span>
-                    {activity.duration && (
-                        <span className="trip-itinerary__activity-duration">
-                        ({activity.duration}h)
-                        </span>
-                    )}
-                    </div>
-                </div>
-                
-                {activity.description && (
-                  <p className="trip-itinerary__activity-description">
-                    {activity.description}
-                  </p>
+          {activitiesByDay[selectedDay]?.map((activity, index) => {
+            const dayActivities = activitiesByDay[selectedDay];
+            const nextActivity = dayActivities && index < dayActivities.length - 1 ? dayActivities[index + 1] : null;
+            console.log(activity)
+            
+            return (
+              <React.Fragment key={activity.activityId}>
+                <ActivityItemItinerary
+                  activity={activity}
+                  index={index}
+                  selectedDay={selectedDay}
+                  dayColors={dayColors}
+                  visibleMarkers={visibleMarkers}
+                />
+
+                {/* Route info to next activity */}
+                {nextActivity && (
+                  <RouteInfo
+                    currentActivity={activity}
+                    nextActivity={nextActivity}
+                  />
                 )}
-              </div>
-            </article>
-          )) || (
+              </React.Fragment>
+            );
+          }) || (
             <article className="trip-itinerary__no-activities">
               No activities scheduled for Day {selectedDay}
             </article>
