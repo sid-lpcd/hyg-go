@@ -143,9 +143,18 @@ const SelectActivitiesPage: React.FC = () => {
       <Header
         leftElement={
           <BackArrowIcon
-            onClick={() =>
-              navigate("/create-plan", { state: { planInfo: planInfo } })
-            }
+            onClick={() => {
+              // Use location state instead of document.referrer
+              const previousPath = location.state?.previousPath;
+              console.log(previousPath)
+              if (previousPath) {
+                navigate(previousPath, { 
+                  state: { planInfo: planInfo } 
+                });
+              } else {
+                navigate(-1);
+              }
+            }}
             className="header__icon"
           />
         }

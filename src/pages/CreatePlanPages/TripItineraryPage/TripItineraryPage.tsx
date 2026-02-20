@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getPlanById } from "../../../utils/apiHelper";
 import { getDayColors } from "../../../utils/themeColors";
 import { Plan, PlanActivityWithDetails, ActivityMarker} from "../../../types/common";
@@ -10,12 +10,13 @@ import { InfinitySpin } from "react-loader-spinner";
 import Header from "../../../components/sections/Header/Header";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
 import EditIcon from "../../../assets/icons/edit-icon.svg?react";
-import "./TripItinerary.scss";
+import "./TripItineraryPage.scss";
 
 
-const TripItinerary: React.FC = () => {
+const TripItineraryPage: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [plan, setPlan] = useState<Plan | null>(null);
   const [activities, setActivities] = useState<PlanActivityWithDetails[]>([]);
@@ -28,7 +29,12 @@ const TripItinerary: React.FC = () => {
 
   const handleEditActivities = () => {
     if (planId) {
-      navigate(`/create-plan/${planId}/activities`);
+      navigate(`/create-plan/${planId}/activities`, {
+        state: { 
+          planInfo: plan,
+          previousPath: location.pathname
+        }
+      });
     }
   };
 
@@ -256,4 +262,4 @@ const TripItinerary: React.FC = () => {
   );
 };
 
-export default TripItinerary;
+export default TripItineraryPage;
