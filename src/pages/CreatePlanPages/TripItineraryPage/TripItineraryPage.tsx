@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getPlanById } from "../../../utils/apiHelper";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getLocationById, getPlanById } from "../../../utils/apiHelper";
 import { getDayColors } from "../../../utils/themeColors";
 import { Plan, PlanActivityWithDetails, ActivityMarker} from "../../../types/common";
 import MapGL from "../../../components/base/MapGL/MapGL";
@@ -10,6 +10,7 @@ import { InfinitySpin } from "react-loader-spinner";
 import Header from "../../../components/sections/Header/Header";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
 import EditIcon from "../../../assets/icons/edit-icon.svg?react";
+import ShareIcon from "../../../assets/icons/share-icon.svg?react";
 import "./TripItineraryPage.scss";
 
 
@@ -22,6 +23,7 @@ const TripItineraryPage: React.FC = () => {
   const [activities, setActivities] = useState<PlanActivityWithDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedDay, setSelectedDay] = useState<number>(1);
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
 
   const handleBackClick = () => {
     navigate(-1);
@@ -32,11 +34,17 @@ const TripItineraryPage: React.FC = () => {
       navigate(`/create-plan/${planId}/activities`, {
         state: { 
           planInfo: plan,
-          previousPath: location.pathname
+          fromPath: location.pathname
         }
       });
     }
   };
+
+  const handleShareTrip = () => {
+    if (planId) {
+      navigate(`/plan/${planId}/share`)
+    }
+  }
 
   // Get theme-consistent day colors from utils
   const dayColors = getDayColors();
@@ -125,17 +133,35 @@ const TripItineraryPage: React.FC = () => {
     return activityMarkers.filter(marker => marker.day === selectedDay);
   }, [activityMarkers, selectedDay]);
 
-  // Get center location for the map
-  const mapCenter = useMemo(() => {    
-    const avgLat = visibleMarkers.reduce((sum, marker) => sum + marker.latitude, 0) / visibleMarkers.length;
-    const avgLng = visibleMarkers.reduce((sum, marker) => sum + marker.longitude, 0) / visibleMarkers.length;
-    
-    return [avgLng, avgLat] as [number, number];
-  }, [visibleMarkers]);
+  // Update map center when visible markers or plan changes
+  useEffect(() => {
+    const updateMapCenter = async () => {
+      if (visibleMarkers.length === 0 && plan) {
+        try {
+          const response = await getLocationById(plan.locationId);
+          setMapCenter([response.longitude!, response.latitude!]);
+        } catch (error) {
+          console.error("Error fetching location:", error);
+          // Fallback to a default center if needed
+          setMapCenter([0, 0]);
+        }
+      } else if (visibleMarkers.length > 0) {
+        const avgLat = visibleMarkers.reduce((sum, marker) => sum + marker.latitude, 0) / visibleMarkers.length;
+        const avgLng = visibleMarkers.reduce((sum, marker) => sum + marker.longitude, 0) / visibleMarkers.length;
+        setMapCenter([avgLng, avgLat]);
+      }
+    };
+
+    updateMapCenter();
+  }, [visibleMarkers, plan]);
 
   const totalDays = Object.keys(activitiesByDay).length;
   
+  const isPastTrip = plan ? plan.endDate < new Date() : false;
+  
   const MapSection = useMemo(() => {
+    if (!mapCenter || !dayColors || !selectedDay) return null;
+    
     return (
       <section className="trip-itinerary__map">
         <MapGL
@@ -195,10 +221,17 @@ const TripItineraryPage: React.FC = () => {
           />
         }
         rightElement={
-          <EditIcon
-            onClick={handleEditActivities}
-            className="header__icon header__icon--edit"
-          />
+          isPastTrip ? (
+            <ShareIcon
+              onClick={handleShareTrip}
+              className="header__icon header__icon--share"
+            />
+          ) : (
+            <EditIcon
+              onClick={handleEditActivities}
+              className="header__icon header__icon--edit"
+            />
+          )
         }
       />
       
@@ -230,7 +263,6 @@ const TripItineraryPage: React.FC = () => {
           {activitiesByDay[selectedDay]?.map((activity, index) => {
             const dayActivities = activitiesByDay[selectedDay];
             const nextActivity = dayActivities && index < dayActivities.length - 1 ? dayActivities[index + 1] : null;
-            console.log(activity)
             
             return (
               <React.Fragment key={activity.activityId}>

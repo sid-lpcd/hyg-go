@@ -28,13 +28,10 @@ import {
   LocationAutocompleteOption,
   PersonType,
   TripData,
-  CreatePlanFormData
+  CreatePlanFormData,
+  LocationState
 } from "../../../types";
 import { CreatePlanRequest, UpdatePlanRequest } from "../../../types/contract/requests/plan";
-
-interface LocationState {
-  planInfo?: Plan;
-}
 
 interface ErrorData extends Record<string, boolean> {
   title: boolean;
@@ -57,8 +54,8 @@ const MainCreatePage: React.FC = () => {
     title: "",
     description: "",
     locationId: null,
-    startDate: undefined,
-    endDate: undefined,
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
     people: { [PersonType.ADULT]: 1, [PersonType.CHILD]: 0, [PersonType.INFANT]: 0 },
   });
   const [formData, setFormData] = useState<CreatePlanFormData>({
@@ -200,6 +197,7 @@ const MainCreatePage: React.FC = () => {
         navigate(`/${locationUrl ? `create-plan/${response.planId}/activities` : ""}`, {
           state: {
             planStatus: planStatus,
+            fromPath: locationState?.pathname,
           },
         });
       }

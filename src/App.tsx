@@ -3,6 +3,7 @@ import "react-responsive-modal/styles.css";
 import "./App.scss";
 import MainCreatePage from "./pages/CreatePlanPages/MainCreatePage/MainCreatePage";
 import SelectActivitiesPage from "./pages/CreatePlanPages/SelectActivitiesPage/SelectActivitiesPage";
+import SharePlanPage from "./pages/SharePlanPage/SharePlanPage";
 import { MainPage } from "./pages/MainPage/MainPage";
 import TripItineraryPage from "./pages/CreatePlanPages/TripItineraryPage/TripItineraryPage";
 import UserPage from "./pages/UserPage/UserPage";
@@ -47,7 +48,7 @@ function App(): JSX.Element {
           }
         />
         <Route
-          path="/create-plan/:planId/plan"
+          path="/plan/:planId/itinerary"
           element={
             <ProtectedRoute>
               <TripItineraryPage />
@@ -55,10 +56,10 @@ function App(): JSX.Element {
           }
         />
         <Route
-          path="/trip-itinerary/:planId"
+          path="/plan/:planId/share"
           element={
             <ProtectedRoute>
-              <TripItineraryPage />
+              <SharePlanPage />
             </ProtectedRoute>
           }
         />

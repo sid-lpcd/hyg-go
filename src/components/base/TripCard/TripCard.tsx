@@ -12,7 +12,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   const navigate = useNavigate();
 
   const handleViewItinerary = () => {
-    navigate(`/trip-itinerary/${trip.planId}`);
+    navigate(`/plan/${trip.planId}/itinerary`);
   };
 
   return (

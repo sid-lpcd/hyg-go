@@ -48,7 +48,6 @@ export const MainPage: React.FC = () => {
             />
       <>
         {(() => {
-          console.log(page)
           switch (page) {
             case "wallet":
               return <main className="main main-wallet"><Wallet /></main>;

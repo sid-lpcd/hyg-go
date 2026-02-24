@@ -20,12 +20,8 @@ import CheckoutSection from "../../../components/sections/CheckoutSection/Checko
 import "./SelectActivitiesPage.scss";
 import "react-toastify/dist/ReactToastify.css";
 import { useBasket } from "../../../context/BasketContext";
-import { Plan, BasketState, BasketActivity } from "../../../types";
+import { Plan, BasketState, BasketActivity, LocationState } from "../../../types";
 import Form from "../../../components/base/Form/Form";
-
-interface LocationState {
-  planStatus?: string;
-}
 
 const SelectActivitiesPage: React.FC = () => {
   const location = useLocation();
@@ -132,11 +128,6 @@ const SelectActivitiesPage: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!location.state) return;
-    navigate("./activities", { replace: true }); // <-- redirect to current path w/o state
-  }, [navigate]);
-
   return (
     <>
       <ToastContainer />
@@ -144,11 +135,13 @@ const SelectActivitiesPage: React.FC = () => {
         leftElement={
           <BackArrowIcon
             onClick={() => {
-              // Use location state instead of document.referrer
-              const previousPath = location.state?.previousPath;
-              console.log(previousPath)
-              if (previousPath) {
-                navigate(previousPath, { 
+              console.log('Back button clicked. Current location state:', location);
+              const fromPath = (location.state as LocationState)?.fromPath;
+              const isFromCreatePage = fromPath && fromPath.includes('/create');
+              console.log('Back button clicked. fromPath:', fromPath, 'isFromCreatePage:', isFromCreatePage);
+              
+              if (isFromCreatePage && planInfo) {
+                navigate(fromPath, { 
                   state: { planInfo: planInfo } 
                 });
               } else {

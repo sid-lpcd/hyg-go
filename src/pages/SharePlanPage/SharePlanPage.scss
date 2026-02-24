@@ -1,0 +1,278 @@
+@use "../../styles/partials/mixins" as *;
+@use "../../styles/partials/variables" as *;
+
+.share-plan {
+  &__container {
+    padding: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $border-color;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  &__subtitle {
+    color: $nav-color;
+    text-align: center;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  &__form {
+    @include flex(flex-start);
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  &__form-group {
+    @include flex(flex-start);
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  &__label {
+    font-weight: 600;
+    color: $border-color;
+    font-size: 0.9rem;
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid $border-color;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: $primary-color;
+    color: $border-color;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $light-color;
+    }
+
+    &::placeholder {
+      color: $nav-color;
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  &__image-upload {
+    position: relative;
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__file-label {
+    @include flex(center);
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 2rem;
+    border: 2px dashed $border-color;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: $secondary-background-color;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $light-color;
+      background-color: rgba($light-color, 0.05);
+    }
+
+    span {
+      font-weight: 600;
+      color: $secondary-color;
+      font-size: 1.1rem;
+    }
+
+    small {
+      color: $nav-color;
+      font-size: 0.85rem;
+    }
+  }
+
+  &__image-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  &__image-preview {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: $secondary-background-color;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__remove-image {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: rgba($color-error, 0.9);
+    color: white;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    @include flex(center);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: $color-error;
+    }
+  }
+
+  &__public-info {
+    @include flex(space-between, center);
+    padding: 1rem;
+    background-color: $secondary-background-color;
+    border-radius: 8px;
+    border: 1px solid $border-color;
+  }
+
+  &__public-text {
+    flex: 1;
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $border-color;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      color: $nav-color;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  }
+
+  &__switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + & {
+      background-color: $secondary-color;
+    }
+
+    input:checked + &:before {
+      transform: translateX(26px);
+    }
+  }
+
+  &__actions {
+    @include flex(space-between);
+    gap: 1rem;
+    margin-top: 2rem;
+
+    .share-plan__btn {
+      flex: 1;
+      padding: 0.875rem 1.5rem;
+      border: 2px solid $border-color;
+      border-radius: 8px;
+      background-color: transparent;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      @include flex(center);
+
+      &:hover {
+        background-color: $secondary-background-color;
+      }
+    }
+
+    .share-plan--primary .share-plan__btn {
+      background-color: $secondary-color;
+      border-color: $secondary-color;
+      color: white;
+
+      &:hover {
+        background-color: $primary-background-color;
+        border-color: $primary-background-color;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &__error {
+    @include flex(center);
+    padding: 2rem;
+    text-align: center;
+    color: $color-error;
+  }
+}
+
+// Loading overlay
+.loader-overlay {
+  @include flex(center);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($primary-color, 0.9);
+  z-index: 1000;
+}

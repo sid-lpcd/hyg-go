@@ -49,7 +49,7 @@ const CheckoutSection: React.FC = () => {
         basketState.planId,
         basketState.activities
       );
-      navigate(`/create-plan/${basketState?.planId}/plan`);
+      navigate(`/plan/${basketState?.planId}/itinerary`);
     } catch (error) {
       console.error(error);
     }
