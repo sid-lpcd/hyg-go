@@ -1,0 +1,74 @@
+@use "../../../styles/partials/mixins" as *;
+@use "../../../styles/partials/variables" as *;
+
+.slider {
+  width: 100%;
+  position: relative;
+
+  &--draggable {
+    .slider__slides {
+      cursor: grab;
+      
+      &--dragging {
+        cursor: grabbing;
+        transition: none;
+      }
+    }
+  }
+
+  &__container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: white;
+  }
+
+  &__slides {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+    user-select: none;
+
+    &--auto-height {
+      align-items: flex-start;
+    }
+  }
+
+  &__slide {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+
+    .slider__slides--auto-height & {
+      align-items: flex-start;
+      min-height: auto;
+    }
+  }
+
+  &__indicators {
+    @include flex(center);
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0 1rem;
+  }
+
+  &__indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &--active {
+      background: $primary-color;
+      transform: scale(1.2);
+    }
+
+    &:hover:not(&--active) {
+      background: #94a3b8;
+    }
+  }
+}

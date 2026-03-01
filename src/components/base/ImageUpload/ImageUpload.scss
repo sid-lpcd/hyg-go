@@ -1,95 +1,27 @@
 @use "../../../styles/partials/mixins" as *;
 @use "../../../styles/partials/variables" as *;
-@use "../../../styles/partials/animations";
 
-.form {
-  width: 100%;
-  max-width: 600px;
-  margin: auto;
-
-  &__title {
-    text-align: center;
-  }
-
-  &__section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  &__row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  &__label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: $border-color;
-  }
-
-  &__input,
-  &__textarea,
-  &__select {
-    padding: 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    outline: none;
-
-    &:focus {
-      border-color: $light-color;
-    }
-  }
-
-  &__input--error,
-  &__textarea--error,
-  &__select--error {
-    border-color: $color-error;
-  }
-
-  &__error {
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-    background-color: $color-background-error;
-    color: $color-error;
-    border: 1px solid $color-border-error;
-    padding: 0.5rem;
-    border-radius: 5px;
-    z-index: 1;
-
-    svg {
-      width: 16px;
-      height: 16px;
-      margin-right: 0.5rem;
-    }
-  }
-
-  &__btn-container {
-    margin-top: 2rem;
-    @include flex(space-between);
-    & > button.form__btn {
-      width: 45%;
-      &--inactive {
-        background-color: $secondary-background-color;
-        color: $secondary-color;
-      }
-      &:hover {
-        background-color: #c4a7c9;
-      }
-    }
-  }
-
-  // Image upload styles
-  &__image-upload {
+.image-upload {
+  &__container {
     @include flex(flex-start);
     flex-direction: column;
     gap: 0.75rem;
     width: 100%;
+    margin-bottom: 1rem;
   }
 
-  &__file-input {
+  &__label {
+    font-weight: 600;
+    color: $border-color;
+    font-size: 0.9rem;
+  }
+
+  &__upload-area {
+    position: relative;
+    width: 100%;
+  }
+
+  &__input {
     position: absolute;
     width: 0;
     height: 0;
@@ -97,7 +29,7 @@
     overflow: hidden;
   }
 
-  &__file-label {
+  &__button {
     @include flex(center);
     width: 100%;
     min-height: 120px;
@@ -119,39 +51,39 @@
     }
   }
 
-  &__upload-content {
+  &__button-content {
     @include flex(center);
     flex-direction: column;
     gap: 0.5rem;
     text-align: center;
   }
 
-  &__upload-plus {
+  &__plus {
     font-size: 2rem;
     font-weight: 300;
     color: $secondary-color;
     line-height: 1;
   }
 
-  &__upload-text {
+  &__text {
     font-size: 1rem;
     font-weight: 500;
     color: $secondary-color;
   }
 
-  &__upload-subtext {
+  &__subtext {
     font-size: 0.875rem;
     color: #666;
   }
 
-  &__image-previews {
+  &__previews {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
     margin-top: 0.5rem;
   }
 
-  &__image-preview {
+  &__preview {
     position: relative;
     aspect-ratio: 1;
     border-radius: 8px;
@@ -166,7 +98,7 @@
     display: block;
   }
 
-  &__remove-image {
+  &__remove-button {
     position: absolute;
     top: 4px;
     right: 4px;

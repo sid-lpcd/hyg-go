@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPlanById, updatePlan } from "../../utils/apiHelper";
 import { Plan, UpdatePlanRequest } from "../../types/contract";
+import { FormLabel } from "../../types/common";
 import Header from "../../components/sections/Header/Header";
-import Button from "../../components/base/Button/Button";
+import Form from "../../components/base/Form/Form";
+import TripPreview from "../../components/sections/TripPreview/TripPreview";
 import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
-import ShareIcon from "../../assets/icons/share-icon.svg?react";
 import { InfinitySpin } from "react-loader-spinner";
 import { toast, ToastContainer } from "react-toastify";
 import "./SharePlanPage.scss";
@@ -24,8 +25,34 @@ const SharePlanPage: React.FC = () => {
     mainImageUrl: "",
     isPublic: false
   });
+  const [errorData, setErrorData] = useState({
+    title: false,
+    description: false
+  });
   const [selectedImages, setSelectedImages] = useState<FileList | null>(null);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+
+  const formLabels: FormLabel[] = [
+    {
+      name: "title",
+      text: "Trip Title",
+      type: "input",
+      placeholder: "Enter a catchy title for your trip"
+    },
+    {
+      name: "description", 
+      text: "Description",
+      type: "textarea",
+      placeholder: "Describe what makes this trip special..."
+    },
+    {
+      name: "images",
+      text: "Trip Images",
+      type: "image",
+      placeholder: "Upload photos to showcase your trip",
+      multipleImages: true
+    }
+  ];
 
   const handleBackClick = () => {
     navigate(-1);
@@ -55,28 +82,85 @@ const SharePlanPage: React.FC = () => {
     fetchPlanDetails();
   }, [planId]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: value
     }));
+    
+    // Clear error when user starts typing
+    if (errorData[name as keyof typeof errorData]) {
+      setErrorData(prev => ({
+        ...prev,
+        [name]: false
+      }));
+    }
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    validateAndSubmit();
+  };
+
+  const handleFormCancel = () => {
+    navigate(-1);
+  };
+
+  const validateAndSubmit = () => {
+    // Validate required fields
+    const newErrorData = {
+      title: !formData.title.trim(),
+      description: !formData.description.trim()
+    };
+    
+    setErrorData(newErrorData);
+    
+    // Check if there are any errors
+    if (Object.values(newErrorData).some(error => error)) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    
+    handleSaveAndShare();
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      setSelectedImages(files);
+      // Limit to 9 images maximum
+      const maxImages = 9;
+      const currentImageCount = previewImages.length;
+      const availableSlots = maxImages - currentImageCount;
       
-      // Create preview URLs
-      const previews: string[] = [];
-      Array.from(files).forEach(file => {
+      if (currentImageCount >= maxImages) {
+        toast.error(`Maximum ${maxImages} images allowed`);
+        return;
+      }
+      
+      const filesToProcess = Array.from(files).slice(0, availableSlots);
+      
+      if (files.length > availableSlots) {
+        toast.warning(`Only ${availableSlots} more image(s) can be added (max ${maxImages} total)`);
+      }
+      
+      // Combine existing files with new files
+      const dt = new DataTransfer();
+      if (selectedImages) {
+        Array.from(selectedImages).forEach(file => dt.items.add(file));
+      }
+      filesToProcess.forEach(file => dt.items.add(file));
+      setSelectedImages(dt.files);
+      
+      // Create preview URLs for new files
+      const newPreviews: string[] = [];
+      filesToProcess.forEach(file => {
         const reader = new FileReader();
         reader.onload = (event) => {
           if (event.target?.result) {
-            previews.push(event.target.result as string);
-            if (previews.length === files.length) {
-              setPreviewImages([...previews]);
+            newPreviews.push(event.target.result as string);
+            if (newPreviews.length === filesToProcess.length) {
+              setPreviewImages(prev => [...prev, ...newPreviews]);
             }
           }
         };
@@ -170,121 +254,37 @@ const SharePlanPage: React.FC = () => {
             className="header__icon"
           />
         }
-        rightElement={
-          <ShareIcon
-            className="header__icon header__icon--share"
-          />
-        }
       />
       
-      <main className="main share-plan">
-        <div className="share-plan__container">
+      <main className="main main--share-plan">
+        <section className="share-plan__header-container">
           <h1 className="share-plan__title">Share Your Trip</h1>
           <p className="share-plan__subtitle">
             Make your trip public so others can discover and book similar experiences
           </p>
+        </section>
 
-          <form className="share-plan__form">
-            <div className="share-plan__form-group">
-              <label htmlFor="title" className="share-plan__label">
-                Trip Title
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="share-plan__input"
-                placeholder="Enter a catchy title for your trip"
-                required
-              />
-            </div>
+        <section className="share-plan__form-container">
+          <Form
+            labels={formLabels}
+            formData={formData}
+            errorData={errorData}
+            handleChange={handleInputChange}
+            handleImageUpload={handleImageUpload}
+            handleRemoveImage={removeImage}
+            previewImages={previewImages}
+            cancelButtonText="Cancel"
+            submitButtonText={saving ? "Sharing..." : "Share Trip"}
+            handleCancel={handleFormCancel}
+            handleSubmit={handleFormSubmit}
+          />
+        </section>
 
-            <div className="share-plan__form-group">
-              <label htmlFor="description" className="share-plan__label">
-                Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="share-plan__textarea"
-                placeholder="Describe what makes this trip special..."
-                rows={4}
-              />
-            </div>
-
-            <div className="share-plan__form-group">
-              <label htmlFor="images" className="share-plan__label">
-                Trip Images
-              </label>
-              <div className="share-plan__image-upload">
-                <input
-                  type="file"
-                  id="images"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="share-plan__file-input"
-                />
-                <label htmlFor="images" className="share-plan__file-label">
-                  <span>+ Add Photos</span>
-                  <small>Upload photos to showcase your trip</small>
-                </label>
-              </div>
-
-              {previewImages.length > 0 && (
-                <div className="share-plan__image-previews">
-                  {previewImages.map((preview, index) => (
-                    <div key={index} className="share-plan__image-preview">
-                      <img src={preview} alt={`Preview ${index + 1}`} />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="share-plan__remove-image"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="share-plan__form-group">
-              <div className="share-plan__public-info">
-                <div className="share-plan__public-text">
-                  <h3>Make Trip Public</h3>
-                  <p>Your trip will be visible to other travelers and can be booked by them</p>
-                </div>
-                <label className="share-plan__switch">
-                  <input
-                    type="checkbox"
-                    name="isPublic"
-                    checked={formData.isPublic}
-                    onChange={handleInputChange}
-                  />
-                  <span className="share-plan__slider"></span>
-                </label>
-              </div>
-            </div>
-          </form>
-
-          <div className="share-plan__actions">
-            <Button
-              classProp="share-plan"
-              btnText="Cancel"
-              clickHandler={handleBackClick}
-            />
-            <Button
-              classProp="share-plan share-plan--primary"
-              btnText={saving ? "Sharing..." : "Share Trip"}
-              clickHandler={handleSaveAndShare}
-            />
-          </div>
-        </div>
+        <TripPreview
+          title={formData.title}
+          description={formData.description}
+          previewImages={previewImages}
+        />
       </main>
     </>
   );

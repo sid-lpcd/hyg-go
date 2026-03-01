@@ -5,11 +5,16 @@ import { v4 as uuidv4 } from "uuid";
 import { FormLabel } from "../../../types/common";
 
 interface FormProps {
-  title: string;
+  title?: string;
   labels?: FormLabel[];
   formData?: Record<string, any>;
   errorData?: Record<string, boolean>;
   handleChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleRemoveImage?: (index: number) => void;
+  previewImages?: string[];
+  cancelButtonText?: string;
+  submitButtonText?: string;
   handleCancel: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -20,12 +25,17 @@ const Form: React.FC<FormProps> = ({
   formData,
   errorData,
   handleChange,
+  handleImageUpload,
+  handleRemoveImage,
+  previewImages = [],
+  cancelButtonText = "No",
+  submitButtonText = "Yes",
   handleCancel,
   handleSubmit,
 }) => {
   return (
     <form className="form" onSubmit={handleSubmit}>
-      <h2 className="form__title">{title}</h2>
+      {title && <h2 className="form__title">{title}</h2>}
       <div className="form__section">
         {formData && errorData &&  handleChange && labels?.map((label) => {
           let input: JSX.Element = <></>;
@@ -93,6 +103,45 @@ const Form: React.FC<FormProps> = ({
                 </select>
               );
               break;
+            case "image":
+              input = (
+                <div className="form__image-upload">
+                  <input
+                    type="file"
+                    id={`image-${label.name}`}
+                    name={label.name}
+                    multiple={label.multipleImages || false}
+                    accept={label.acceptInputTypes || "image/*"}
+                    onChange={handleImageUpload}
+                    className="form__file-input"
+                  />
+                  <label htmlFor={`image-${label.name}`} className="form__file-label">
+                    <div className="form__upload-content">
+                      <span className="form__upload-plus">+</span>
+                      <span className="form__upload-text">Add Photos</span>
+                      <small className="form__upload-subtext">{label.placeholder || "Upload images"}</small>
+                    </div>
+                  </label>
+                  {previewImages.length > 0 && (
+                    <div className="form__image-previews">
+                      {previewImages.map((preview, index) => (
+                        <div key={index} className="form__image-preview">
+                          <img src={preview} alt={`Preview ${index + 1}`} className="form__preview-image" />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage?.(index)}
+                            className="form__remove-image"
+                            aria-label={`Remove image ${index + 1}`}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+              break;
             default:
               break;
           }
@@ -114,10 +163,10 @@ const Form: React.FC<FormProps> = ({
           className="form__btn form__btn--inactive"
           onClick={handleCancel}
         >
-          No
+          {cancelButtonText}
         </button>
         <button type="submit" className="form__btn">
-          Yes
+          {submitButtonText}
         </button>
       </div>
     </form>
