@@ -20,7 +20,7 @@ import CheckoutSection from "../../../components/sections/CheckoutSection/Checko
 import "./SelectActivitiesPage.scss";
 import "react-toastify/dist/ReactToastify.css";
 import { useBasket } from "../../../context/BasketContext";
-import { Plan, BasketState, BasketActivity, LocationState } from "../../../types";
+import { Plan, BasketState, BasketActivity, LocationState, PlanWithActivities } from "../../../types";
 import Form from "../../../components/base/Form/Form";
 
 const SelectActivitiesPage: React.FC = () => {
@@ -37,7 +37,7 @@ const SelectActivitiesPage: React.FC = () => {
 
   const [page, setPage] = useState<string | undefined>(location.pathname.split("/").pop());
   const [openTripModal, setOpenTripModal] = useState<boolean>(false);
-  const [planInfo, setPlanInfo] = useState<Plan | undefined>(undefined);
+  const [planInfo, setPlanInfo] = useState<Plan | PlanWithActivities | undefined>(undefined);
   const [progress, setProgress] = useState<number>(0);
   const [totalTripLength, setTotalTripLength] = useState<number>(0);
   const [planStatus] = useState<string | null>(
@@ -82,17 +82,32 @@ const SelectActivitiesPage: React.FC = () => {
     setProgress(activityTime);
   };
 
-  const compareBasket = (response: Plan): void => {
+  const compareBasket = (response: Plan | PlanWithActivities): void => {
     if (!basketState?.planId || basketState.planId !== response.planId) {
     
       const newBasket: BasketState = { 
         planId: response.planId, 
-        activities: [], // Plan doesn't have activities, so we start with empty array
+        activities: [],
         gratuity: 0 
       };
+      console.log('Comparing basket with plan activities. Plan has activities:', 'activities' in response && response.activities ? response.activities : 'No activities found');
+      if ('activities' in response && response.activities) {
+        response.activities.forEach(activity => {
+          console.log('Processing activity:', activity);
+          if (isBasketActivity(activity)) {
+            newBasket.activities.push(activity);
+          } else {
+            console.warn('Activity missing required details for basket:', activity);
+          }
+        });
+      }
       setBasketState(newBasket);
       updatedProgress(newBasket); 
     }
+  };
+
+  const isBasketActivity = (activity: any): activity is BasketActivity => {
+    return 'name' in activity && 'locationId' in activity && 'planId' in activity;
   };
 
   const getPlanInfo = async (): Promise<void> => {
@@ -135,10 +150,8 @@ const SelectActivitiesPage: React.FC = () => {
         leftElement={
           <BackArrowIcon
             onClick={() => {
-              console.log('Back button clicked. Current location state:', location);
               const fromPath = (location.state as LocationState)?.fromPath;
               const isFromCreatePage = fromPath && fromPath.includes('/create');
-              console.log('Back button clicked. fromPath:', fromPath, 'isFromCreatePage:', isFromCreatePage);
               
               if (isFromCreatePage && planInfo) {
                 navigate(fromPath, { 

@@ -50,7 +50,7 @@ const BasketSection: React.FC<BasketSectionProps> = ({
               <ActivityCard
                 key={activity.activityId ? activity.activityId : uuidv4()}
                 activity={activity}
-                openActivity={() => setSelectedActivity(activity)}
+                addActivityToBasket={() => setSelectedActivity(activity)}
                 cartPage={true}
                 openDeleteModal={() => setSelectedActivityDelete(activity)}
               />

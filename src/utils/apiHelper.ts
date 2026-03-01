@@ -316,7 +316,7 @@ export const addPlan = async (plan: CreatePlanRequest): Promise<Plan> => {
   }
 };
 
-export const getPlanById = async (id: number): Promise<Plan> => {
+export const getPlanById = async (id: number): Promise<Plan | PlanWithActivities> => {
   try {
     const response: any = await apiClient.get(`${API_BASE_URL}/plans/${id}`);
     return ModelMappers.mapPlan(response);

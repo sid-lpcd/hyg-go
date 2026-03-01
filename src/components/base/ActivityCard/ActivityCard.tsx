@@ -13,14 +13,14 @@ import { BasketActivity } from "@/types";
 
 interface ActivityCardProps {
   activity: Activity | BasketActivity;
-  openActivity: (activity?: Activity | BasketActivity) => void;
+  addActivityToBasket: (activity?: Activity | BasketActivity) => void;
   cartPage?: boolean;
   openDeleteModal?: (activity: Activity | BasketActivity) => void;
 }
 
 const ActivityCard = ({
   activity,
-  openActivity,
+  addActivityToBasket: openActivity,
   cartPage = false,
   openDeleteModal,
 }: ActivityCardProps): JSX.Element | null => {

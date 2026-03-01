@@ -183,7 +183,7 @@ const ListActivitiesSection = ({
             <ActivityCard
               key={activity.activityId || uuidv4()}
               activity={activity}
-              openActivity={(activity) => activity && setSelectedActivity(activity as BasketActivity)}
+              addActivityToBasket={(activity) => activity && setSelectedActivity(activity as BasketActivity)}
             />
           ))}
         </div>

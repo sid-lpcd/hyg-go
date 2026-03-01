@@ -8,7 +8,7 @@ export interface BasketState {
   gratuity: number;
 }
 
-export interface BasketActivity extends Activity{
+export interface BasketActivity extends Pick<Activity, 'activityId' | 'name' | 'locationId'> {
   planId: number;
   ticketCount: TicketCount;
   ticketTotalPrice: number;
