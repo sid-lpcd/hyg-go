@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getLocationById, getPlanById, updatePlan } from "../../utils/apiHelper";
-import { UpdatePlanRequest } from "../../types/contract";
+import {
+  completePlanMediaUpload,
+  createPlanMediaUploadIntent,
+  getLocationById,
+  getPlanById,
+  updatePlan,
+} from "../../utils/apiHelper";
+import { PlanMediaDTO, UpdatePlanRequest } from "../../types/contract";
 import { FormLabel, Location, MapMarker, PlanWithDetailedActivities } from "../../types/common";
 import Header from "../../components/sections/Header/Header";
 import Form from "../../components/base/Form/Form";
@@ -9,6 +15,7 @@ import TripPreview from "../../components/sections/TripPreview/TripPreview";
 import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import { InfinitySpin } from "react-loader-spinner";
 import { toast, ToastContainer } from "react-toastify";
+import { getToken } from "../../utils/tokenHelper";
 import "./SharePlanPage.scss";
 
 const SharePlanPage: React.FC = () => {
@@ -238,27 +245,67 @@ const SharePlanPage: React.FC = () => {
     }
   };
 
+  const uploadImagesForPlan = async (planIdToUpload: number, files: FileList): Promise<PlanMediaDTO[]> => {
+    const uploadedMedia: PlanMediaDTO[] = [];
+    const authToken = getToken()?.token;
+
+    for (const file of Array.from(files)) {
+      const intent = await createPlanMediaUploadIntent(planIdToUpload, {
+        originalName: file.name,
+        mimeType: file.type,
+        sizeBytes: file.size,
+      });
+
+      const uploadHeaders: Record<string, string> = { ...intent.upload.headers };
+      if (intent.upload.url.includes("/local-upload") && authToken) {
+        uploadHeaders.Authorization = `Bearer ${authToken}`;
+      }
+
+      const uploadRes = await fetch(intent.upload.url, {
+        method: intent.upload.method,
+        headers: uploadHeaders,
+        body: file,
+      });
+
+      if (!uploadRes.ok) {
+        if (uploadRes.status === 401 || uploadRes.status === 403) {
+          throw new Error(`Upload URL expired while uploading "${file.name}". Please try again.`);
+        }
+        throw new Error(`Failed to upload "${file.name}".`);
+      }
+
+      const media = await completePlanMediaUpload(planIdToUpload, intent.media.id);
+      uploadedMedia.push(media);
+    }
+
+    return uploadedMedia;
+  };
+
   const handleSaveAndShare = async () => {
     if (!planId || !plan) return;
 
     setSaving(true);
     try {
+      const parsedPlanId = parseInt(planId, 10);
       const updateData: UpdatePlanRequest = {
         title: formData.title,
         description: formData.description,
-        isPublic: true, // Always set to public when sharing
+        isPublic: true,
         mainImageUrl: formData.mainImageUrl
       };
 
-      // TODO: Handle image upload to server here
-      // For now, we're just updating the text fields
       if (selectedImages && selectedImages.length > 0) {
-        // In a real implementation, you'd upload the images to a server
-        // and get back URLs to store in mainImageUrl and userImagesTrip
-        console.log("Images to upload:", selectedImages);
+        const uploadedMedia = await uploadImagesForPlan(parsedPlanId, selectedImages);
+        const uploadedImageUrls = uploadedMedia
+          .map((media) => media.url)
+          .filter((url): url is string => Boolean(url));
+
+        if (uploadedImageUrls.length > 0) {
+          updateData.mainImageUrl = uploadedImageUrls[0];
+        }
       }
 
-      await updatePlan(parseInt(planId), updateData);
+      await updatePlan(parsedPlanId, updateData);
       toast.success("Plan shared successfully!");
       
       // Navigate back to itinerary page

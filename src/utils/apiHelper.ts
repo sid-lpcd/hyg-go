@@ -10,6 +10,9 @@ import {
   UpdateLocationRequest,
   CreatePlanRequest,
   UpdatePlanRequest,
+  CreateUploadIntentBody,
+  UploadIntentDTO,
+  PlanMediaDTO,
   RegisterEarlyUserRequest,
   LoginUserRequest,
   RegisterUserRequest,
@@ -360,6 +363,30 @@ export const updatePlanWithActivities = async (id: number, activities: UpdatePla
       activities
     );
     return ModelMappers.mapPlan(response);
+  } catch (error) {
+    throw error as ApiError;
+  }
+};
+
+export const createPlanMediaUploadIntent = async (
+  planId: number,
+  body: CreateUploadIntentBody
+): Promise<UploadIntentDTO> => {
+  try {
+    const response: UploadIntentDTO = await apiClient.post(`/plans/${planId}/media/upload-intent`, body);
+    return response;
+  } catch (error) {
+    throw error as ApiError;
+  }
+};
+
+export const completePlanMediaUpload = async (
+  planId: number,
+  mediaId: string
+): Promise<PlanMediaDTO> => {
+  try {
+    const response: PlanMediaDTO = await apiClient.post(`/plans/${planId}/media/${mediaId}/complete`);
+    return response;
   } catch (error) {
     throw error as ApiError;
   }
