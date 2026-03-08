@@ -4,6 +4,7 @@ import {
   Plan, 
   User, 
   PersonType,
+  PlanActivity,
   PlanWithActivities,
   PlanActivityWithDetails,
   PassGenerationResponse
@@ -110,11 +111,11 @@ export class ModelMappers {
   }
 
   // Activity mapping
-  static mapActivity(apiActivity: any): Activity | PlanActivityWithDetails {
+  static mapActivity(apiActivity: any): Activity | PlanActivity | PlanActivityWithDetails {
     if (!apiActivity) return apiActivity;
 
     if (apiActivity.planId != null) {
-      return {
+      const basePlanActivity: PlanActivity = {
         planId: this.ensureNumber(apiActivity.planId) || 0,
         activityId: this.ensureNumber(apiActivity.activityId) || 0,
         startDate: this.parseDate(apiActivity.startDate) || new Date(),
@@ -124,12 +125,21 @@ export class ModelMappers {
         routeInfo: apiActivity.routeInfo,
         createdAt: this.parseDate(apiActivity.createdAt) || new Date(),
         updatedAt: this.parseDate(apiActivity.updatedAt) || new Date(),
+      };
+
+      const hasDetails = apiActivity.name != null || apiActivity.locationId != null;
+      if (!hasDetails) {
+        return basePlanActivity;
+      }
+
+      return {
+        ...basePlanActivity,
         name: this.ensureString(apiActivity.name) || '',
         description: this.ensureString(apiActivity.description),
         locationId: this.ensureNumber(apiActivity.locationId) || 0,
         category: apiActivity.category,
         prices: this.mapPrices(apiActivity.prices),
-        duration: this.ensureString(apiActivity.duration),
+        duration: this.ensureNumber(apiActivity.duration),
         imageUrl: this.ensureString(apiActivity.imageUrl),
         externalUrl: this.ensureString(apiActivity.externalUrl),
         latitude: this.ensureNumber(apiActivity.latitude),
@@ -145,7 +155,7 @@ export class ModelMappers {
       category: apiActivity.category,
       description: this.ensureString(apiActivity.description),
       prices: this.mapPrices(apiActivity.prices),
-      duration: this.ensureString(apiActivity.duration),
+      duration: this.ensureNumber(apiActivity.duration),
       imageUrl: this.ensureString(apiActivity.imageUrl),
       openingHours: this.ensureString(apiActivity.openingHours),
       latitude: this.ensureNumber(apiActivity.latitude),
@@ -160,7 +170,7 @@ export class ModelMappers {
     } as Activity;
   }
 
-  static mapActivities(apiActivities: any[]): (Activity | PlanActivityWithDetails)[] {
+  static mapActivities(apiActivities: any[]): (Activity | PlanActivity | PlanActivityWithDetails)[] {
     if (!Array.isArray(apiActivities)) return [];
     return apiActivities.map(activity => this.mapActivity(activity));
   }
@@ -203,7 +213,7 @@ export class ModelMappers {
       return {
         planId: this.ensureNumber(apiPlan.planId) || 0,
         userId: this.ensureNumber(apiPlan.userId) || 0,
-        activities: this.mapActivities(apiPlan.activities) as PlanActivityWithDetails[] || [],
+        activities: this.mapActivities(apiPlan.activities) || [],
         title: this.ensureString(apiPlan.title) || '',
         description: this.ensureString(apiPlan.description),
         locationId: this.ensureNumber(apiPlan.locationId) || 0,

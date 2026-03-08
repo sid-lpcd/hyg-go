@@ -20,7 +20,7 @@ import CheckoutSection from "../../../components/sections/CheckoutSection/Checko
 import "./SelectActivitiesPage.scss";
 import "react-toastify/dist/ReactToastify.css";
 import { useBasket } from "../../../context/BasketContext";
-import { Plan, BasketState, BasketActivity, LocationState, PlanWithActivities } from "../../../types";
+import { BasketState, BasketActivity, LocationState, PlanWithActivities } from "../../../types";
 import Form from "../../../components/base/Form/Form";
 
 const SelectActivitiesPage: React.FC = () => {
@@ -37,7 +37,7 @@ const SelectActivitiesPage: React.FC = () => {
 
   const [page, setPage] = useState<string | undefined>(location.pathname.split("/").pop());
   const [openTripModal, setOpenTripModal] = useState<boolean>(false);
-  const [planInfo, setPlanInfo] = useState<Plan | PlanWithActivities | undefined>(undefined);
+  const [planInfo, setPlanInfo] = useState<PlanWithActivities | undefined>(undefined);
   const [progress, setProgress] = useState<number>(0);
   const [totalTripLength, setTotalTripLength] = useState<number>(0);
   const [planStatus] = useState<string | null>(
@@ -82,7 +82,7 @@ const SelectActivitiesPage: React.FC = () => {
     setProgress(activityTime);
   };
 
-  const compareBasket = (response: Plan | PlanWithActivities): void => {
+  const compareBasket = (response: PlanWithActivities): void => {
     if (!basketState?.planId || basketState.planId !== response.planId) {
     
       const newBasket: BasketState = { 
@@ -90,17 +90,15 @@ const SelectActivitiesPage: React.FC = () => {
         activities: [],
         gratuity: 0 
       };
-      console.log('Comparing basket with plan activities. Plan has activities:', 'activities' in response && response.activities ? response.activities : 'No activities found');
-      if ('activities' in response && response.activities) {
-        response.activities.forEach(activity => {
-          console.log('Processing activity:', activity);
-          if (isBasketActivity(activity)) {
-            newBasket.activities.push(activity);
-          } else {
-            console.warn('Activity missing required details for basket:', activity);
-          }
-        });
-      }
+      console.log("Comparing basket with plan activities:", response.activities);
+      response.activities.forEach(activity => {
+        console.log("Processing activity:", activity);
+        if (isBasketActivity(activity)) {
+          newBasket.activities.push(activity);
+        } else {
+          console.warn("Activity missing required details for basket:", activity);
+        }
+      });
       setBasketState(newBasket);
       updatedProgress(newBasket); 
     }
@@ -112,7 +110,7 @@ const SelectActivitiesPage: React.FC = () => {
 
   const getPlanInfo = async (): Promise<void> => {
     try {
-      const response = await getPlanById(parseInt(locationId));
+      const response = await getPlanById(parseInt(locationId), "detail");
       setPlanInfo(response);
       setTotalTripLength(computeAvailableHoursWithinDates(response.startDate, response.endDate));
     } catch (error) {

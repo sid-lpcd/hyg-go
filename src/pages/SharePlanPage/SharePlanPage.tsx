@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getPlanById, updatePlan } from "../../utils/apiHelper";
-import { Plan, UpdatePlanRequest } from "../../types/contract";
-import { FormLabel } from "../../types/common";
+import { getLocationById, getPlanById, updatePlan } from "../../utils/apiHelper";
+import { UpdatePlanRequest } from "../../types/contract";
+import { FormLabel, Location, MapMarker, PlanWithDetailedActivities } from "../../types/common";
 import Header from "../../components/sections/Header/Header";
 import Form from "../../components/base/Form/Form";
 import TripPreview from "../../components/sections/TripPreview/TripPreview";
@@ -15,9 +15,11 @@ const SharePlanPage: React.FC = () => {
   const navigate = useNavigate();
   
   const { planId } = useParams<{ planId: string }>();
-  
-  const [plan, setPlan] = useState<Plan | null>(null);
+
+  const [plan, setPlan] = useState<PlanWithDetailedActivities | null>(null);
+  const [location, setLocation] = useState<Location | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [isMapLoading, setIsMapLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -62,7 +64,7 @@ const SharePlanPage: React.FC = () => {
     if (!planId) return;
     
     try {
-      const planData = await getPlanById(parseInt(planId));
+      const planData = await getPlanById(parseInt(planId), "detail");
       setPlan(planData);
       setFormData({
         title: planData.title || "",
@@ -70,17 +72,71 @@ const SharePlanPage: React.FC = () => {
         mainImageUrl: planData.mainImageUrl || "",
         isPublic: planData.isPublic || false
       });
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching plan details:", error);
-      setLoading(false);
       toast.error("Failed to load plan details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchLocationDetails = async (): Promise<void> => {
+    if (!plan) return;
+    
+    setIsMapLoading(true);
+    try {
+      const locationData = await getLocationById(plan.locationId);
+      setLocation(locationData);
+      console.log(locationData);
+    } catch (error) {
+      console.error("Error fetching location details:", error);
+      toast.error("Failed to load trip location");
+    } finally {
+      setIsMapLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPlanDetails();
   }, [planId]);
+
+  useEffect(() => {
+    fetchLocationDetails();
+  }, [plan]);
+
+  const mapMarkers = useMemo<MapMarker[]>(() => {
+    if (!plan) return [];
+
+    return plan.activities
+      .map((activity) => ({
+        activityId: activity.activityId,
+        latitude: activity.latitude!,
+        longitude: activity.longitude!,
+        category: activity.category,
+      }));
+  }, [plan]);
+
+  const mapCenter = useMemo<[number, number] | null>(() => {
+    const coordinates: Array<{ latitude: number; longitude: number }> = [...mapMarkers];
+
+    if (typeof location?.latitude === "number" && typeof location?.longitude === "number") {
+      coordinates.push({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+    }
+
+    if (!coordinates.length) return null;
+
+    const avgLat =
+      coordinates.reduce((sum, point) => sum + point.latitude, 0) /
+      coordinates.length;
+    const avgLng =
+      coordinates.reduce((sum, point) => sum + point.longitude, 0) /
+      coordinates.length;
+
+    return [avgLng, avgLat];
+  }, [mapMarkers, location]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -273,6 +329,7 @@ const SharePlanPage: React.FC = () => {
             handleImageUpload={handleImageUpload}
             handleRemoveImage={removeImage}
             previewImages={previewImages}
+            showPreviewImages={false}
             cancelButtonText="Cancel"
             submitButtonText={saving ? "Sharing..." : "Share Trip"}
             handleCancel={handleFormCancel}
@@ -284,6 +341,10 @@ const SharePlanPage: React.FC = () => {
           title={formData.title}
           description={formData.description}
           previewImages={previewImages}
+          location={location?.name}
+          mapMarkers={mapMarkers}
+          mapCenter={mapCenter}
+          isMapLoading={isMapLoading}
         />
       </main>
     </>

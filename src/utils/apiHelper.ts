@@ -28,7 +28,14 @@ import {
   BoundingBox,
   PassGenerationResponse,
 } from "../types/contract";
-import { AuthUser, Pass, PlanWithActivities } from "../types/common";
+import {
+  AuthUser,
+  Pass,
+  PlanView,
+  PlanWithActivities,
+  PlanWithDetailedActivities,
+  PlanWithSummaryActivities,
+} from "../types/common";
 
 const API_BASE_URL =
   import.meta.env.VITE_ENV_TYPE === "DEV"
@@ -316,14 +323,21 @@ export const addPlan = async (plan: CreatePlanRequest): Promise<Plan> => {
   }
 };
 
-export const getPlanById = async (id: number): Promise<Plan | PlanWithActivities> => {
+export async function getPlanById(id: number, view: "detail"): Promise<PlanWithDetailedActivities>;
+export async function getPlanById(id: number, view?: "summary"): Promise<PlanWithSummaryActivities>;
+export async function getPlanById(
+  id: number,
+  view: PlanView = "summary"
+): Promise<PlanWithActivities> {
   try {
-    const response: any = await apiClient.get(`${API_BASE_URL}/plans/${id}`);
-    return ModelMappers.mapPlan(response);
+    const response: any = await apiClient.get(`${API_BASE_URL}/plans/${id}`, {
+      params: { view },
+    });
+    return ModelMappers.mapPlan(response) as PlanWithActivities;
   } catch (error) {
     throw error as ApiError;
   }
-};
+}
 
 export const updatePlan = async (id: number, updatedPlan: UpdatePlanRequest): Promise<Plan> => {
   try {

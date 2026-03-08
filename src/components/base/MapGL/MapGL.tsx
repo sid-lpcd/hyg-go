@@ -12,6 +12,9 @@ interface MapGLProps {
   targetCenter?: [number, number];
   initialZoom?: number;
   targetZoom?: number;
+  fitToMarkers?: boolean;
+  fitPadding?: number;
+  fitMaxZoom?: number;
   isResetVisible?: boolean;
   markersList: MapMarker[];
   labels?: string[];
@@ -28,6 +31,9 @@ const MapGL: React.FC<MapGLProps> = ({
   targetCenter,
   initialZoom = 14,
   targetZoom,
+  fitToMarkers = false,
+  fitPadding = 40,
+  fitMaxZoom = 15,
   isResetVisible,
   markersList,
   labels,
@@ -93,7 +99,10 @@ const MapGL: React.FC<MapGLProps> = ({
     : { default: "red" };
 
   const getMarkerCategory = (marker: MapMarker): string => {
-    return labelsWithColors[marker.category || ''] || labelsWithColors.default;
+    const categoryKey = Array.isArray(marker.category)
+      ? marker.category[0]
+      : marker.category;
+    return labelsWithColors[categoryKey || ''] || labelsWithColors.default;
   };
 
   const checkBasket = (marker: MapMarker): boolean => {
@@ -186,6 +195,30 @@ const MapGL: React.FC<MapGLProps> = ({
     });
   };
 
+  const fitMapToMarkers = (): void => {
+    if (!mapRef.current || !fitToMarkers || markersList.length === 0) return;
+
+    if (markersList.length === 1) {
+      const marker = markersList[0];
+      mapRef.current.flyTo({
+        center: [marker.longitude, marker.latitude],
+        zoom: fitMaxZoom,
+      });
+      return;
+    }
+
+    const bounds = new mapboxgl.LngLatBounds();
+    markersList.forEach((marker) => {
+      bounds.extend([marker.longitude, marker.latitude]);
+    });
+
+    mapRef.current.fitBounds(bounds, {
+      padding: fitPadding,
+      maxZoom: fitMaxZoom,
+      duration: 0,
+    });
+  };
+
   const isSignificantChange = (old: [number, number], current: [number, number], distanceThreshold: number): boolean =>
     Math.abs(old[0] - current[0]) > distanceThreshold ||
     Math.abs(old[1] - current[1]) > distanceThreshold;
@@ -207,6 +240,7 @@ const MapGL: React.FC<MapGLProps> = ({
       container: mapContainerRef.current!,
       center: center,
       zoom: zoom,
+      interactive: isMoveable,
     });
 
     if (!mapRef.current) return;
@@ -214,8 +248,11 @@ const MapGL: React.FC<MapGLProps> = ({
     if (!isMoveable) {
       mapRef.current.dragPan.disable();
       mapRef.current.dragRotate.disable();
-      mapRef.current.touchZoomRotate.disableRotation();
+      mapRef.current.touchZoomRotate.disable();
       mapRef.current.scrollZoom.disable();
+      mapRef.current.boxZoom.disable();
+      mapRef.current.doubleClickZoom.disable();
+      mapRef.current.keyboard.disable();
     } else {
       mapRef.current.on("move", () => {
         const mapCenter = mapRef.current!.getCenter();
@@ -253,6 +290,7 @@ const MapGL: React.FC<MapGLProps> = ({
     }
 
     markersList.length && setMarkers();
+    fitMapToMarkers();
 
     return () => {
       // Clean up markers
@@ -276,6 +314,7 @@ const MapGL: React.FC<MapGLProps> = ({
     if (!mapRef?.current) return;
 
     setMarkers();
+    fitMapToMarkers();
   }, [markersList, basketActivityIds]);
 
   // Handle dynamic center and zoom updates

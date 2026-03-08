@@ -17,10 +17,8 @@ const MainMap: React.FC = () => {
 
   const fetchTripDetails = async (planId: number): Promise<void> => {
     try {
-      const planWithActivities = await getPlanById(planId);
-      if ('activities' in planWithActivities) {
-        setTripActivities(planWithActivities.activities as PlanActivityWithDetails[]);
-      }
+      const planWithActivities = await getPlanById(planId, "detail");
+      setTripActivities(planWithActivities.activities);
       
       if (selectedTrip?.locationId) {
         const locationDetails = await getLocationById(selectedTrip.locationId);

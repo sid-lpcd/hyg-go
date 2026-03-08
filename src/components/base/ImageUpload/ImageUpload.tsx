@@ -6,6 +6,7 @@ interface ImageUploadProps {
   previewImages: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveImage: (index: number) => void;
+  showPreviewImages?: boolean;
   multiple?: boolean;
   accept?: string;
   className?: string;
@@ -16,6 +17,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   previewImages,
   onChange,
   onRemoveImage,
+  showPreviewImages = true,
   multiple = true,
   accept = "image/*",
   className = "",
@@ -46,7 +48,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         </label>
       </div>
 
-      {previewImages.length > 0 && (
+      {showPreviewImages && previewImages.length > 0 && (
         <div className="image-upload__previews">
           {previewImages.map((preview, index) => (
             <div key={index} className="image-upload__preview">
@@ -62,6 +64,24 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
           ))}
         </div>
+      )}
+
+      {!showPreviewImages && previewImages.length > 0 && (
+        <ul className="image-upload__list">
+          {previewImages.map((_, index) => (
+            <li key={index} className="image-upload__list-item">
+              <span className="image-upload__list-text">Image {index + 1}</span>
+              <button
+                type="button"
+                onClick={() => onRemoveImage(index)}
+                className="image-upload__list-remove"
+                aria-label={`Remove image ${index + 1}`}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

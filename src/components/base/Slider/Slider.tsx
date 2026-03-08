@@ -109,19 +109,21 @@ const Slider: React.FC<SliderProps> = ({
 
   // Touch events
   const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     handleDragStart(e.touches[0].clientX);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (isDragging) {
+    if (isDragging && e.cancelable) {
       e.preventDefault();
     }
     handleDragMove(e.touches[0].clientX);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (isDragging) {
+    if (isDragging && e.cancelable) {
       e.preventDefault();
     }
     handleDragEnd();

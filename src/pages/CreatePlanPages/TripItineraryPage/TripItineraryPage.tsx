@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getLocationById, getPlanById } from "../../../utils/apiHelper";
 import { getDayColors } from "../../../utils/themeColors";
-import { Plan, PlanActivityWithDetails, ActivityMarker} from "../../../types/common";
+import { PlanWithActivities, PlanActivityWithDetails, ActivityMarker} from "../../../types/common";
 import MapGL from "../../../components/base/MapGL/MapGL";
 import ActivityItemItinerary from "../../../components/base/ActivityItemItinerary/ActivityItemItinerary";
 import RouteInfo from "../../../components/base/RouteInfo/RouteInfo";
@@ -19,7 +19,7 @@ const TripItineraryPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [plan, setPlan] = useState<Plan | null>(null);
+  const [plan, setPlan] = useState<PlanWithActivities | null>(null);
   const [activities, setActivities] = useState<PlanActivityWithDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedDay, setSelectedDay] = useState<number>(1);
@@ -53,14 +53,12 @@ const TripItineraryPage: React.FC = () => {
     if (!planId) return;
     
     try {
-      const planData = await getPlanById(parseInt(planId));
+      const planData = await getPlanById(parseInt(planId), "detail");
       setPlan(planData);
-      
-      if ('activities' in planData && planData.activities) {
-        const sortedActivities = (planData.activities as PlanActivityWithDetails[])
-          .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-        setActivities(sortedActivities);
-      }
+
+      const sortedActivities = (planData.activities as PlanActivityWithDetails[])
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      setActivities(sortedActivities);
       
       setLoading(false);
     } catch (error) {

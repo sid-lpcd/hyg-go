@@ -30,7 +30,7 @@ export interface TravelInfo {
 
 export type RouteInfo = Record<number, TravelInfo[]>;
 
-export interface PlanActivity {
+export interface PlanActivityProps {
   planId: number;
   activityId: number;
   startDate: Date;
@@ -42,11 +42,13 @@ export interface PlanActivity {
   updatedAt?: Date;
 }
 
-export interface PlanActivityWithDetails extends PlanActivity {
+export type PlanActivity = PlanActivityProps;
+
+export interface PlanActivityWithDetails extends PlanActivityProps {
   name: string;
   description?: string;
   locationId: number;
-  category?: ActivityCategory;
+  category?: ActivityCategory[];
   prices?: Prices;
   duration?: number;
   imageUrl?: string;
@@ -73,8 +75,14 @@ export interface Plan {
   updatedAt: Date;
 }
 
-export interface PlanWithActivities extends Plan {
-  activities: PlanActivity[] | PlanActivityWithDetails[];
+export type PlanView = 'summary' | 'detail';
+
+export interface PlanWithSummaryActivities extends Plan {
+  activities: PlanActivity[];
+}
+
+export interface PlanWithDetailedActivities extends Plan {
+  activities: PlanActivityWithDetails[];
 }
 
 
