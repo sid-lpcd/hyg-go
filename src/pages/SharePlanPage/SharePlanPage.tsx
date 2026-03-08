@@ -290,8 +290,7 @@ const SharePlanPage: React.FC = () => {
       const updateData: UpdatePlanRequest = {
         title: formData.title,
         description: formData.description,
-        isPublic: true,
-        mainImageUrl: formData.mainImageUrl
+        isPublic: true
       };
 
       if (selectedImages && selectedImages.length > 0) {
@@ -308,10 +307,7 @@ const SharePlanPage: React.FC = () => {
       await updatePlan(parsedPlanId, updateData);
       toast.success("Plan shared successfully!");
       
-      // Navigate back to itinerary page
-      if (planId) {
-        navigate(`/plan/${planId}/share`)
-      }
+      navigate("/");
       
     } catch (error) {
       console.error("Error updating plan:", error);
