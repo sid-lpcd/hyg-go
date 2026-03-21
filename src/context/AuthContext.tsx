@@ -75,8 +75,13 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const update = async (formData: Partial<UpdateUserRequest>): Promise<AuthStateResponse> => {
     try {
+      const currentUserId = authState.user?.userId;
+      if (!currentUserId) {
+        return { success: false, error: "No authenticated user found for profile update" };
+      }
+
       const updateData: UpdateUserRequest = {
-        userId: authState.user!.userId,
+        userId: currentUserId,
         ...formData,
       };
       const response = await updateUser(updateData);
