@@ -86,7 +86,7 @@ apiClient.interceptors.request.use(
   (config) => {
     const tokenObj = getToken();
     if (tokenObj) {
-      config.headers.authorisation = `Bearer ${tokenObj.token}`;
+      config.headers.Authorization = `Bearer ${tokenObj.token}`;
     }
     return config;
   },
@@ -177,7 +177,7 @@ export const getLocationById = async (id: number): Promise<Location> => {
 };
 
 export const getLocationByCoordinates = async (lat: number, lng: number): Promise<Location | null> => {
-  if (!lat || !lng) return null;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   try {
     const response: any = await apiClient.get(
       `/locations/coordinates?lat=${lat}&lng=${lng}`
