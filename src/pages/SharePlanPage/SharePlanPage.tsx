@@ -16,6 +16,7 @@ import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import { InfinitySpin } from "react-loader-spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { getToken } from "../../utils/tokenHelper";
+import { getMapCenter, getValidMapMarkers } from "./sharePlanMapHelpers";
 import "./SharePlanPage.scss";
 
 const SharePlanPage: React.FC = () => {
@@ -112,37 +113,11 @@ const SharePlanPage: React.FC = () => {
   }, [plan]);
 
   const mapMarkers = useMemo<MapMarker[]>(() => {
-    if (!plan) return [];
-
-    return plan.activities
-      .map((activity) => ({
-        activityId: activity.activityId,
-        latitude: activity.latitude!,
-        longitude: activity.longitude!,
-        category: activity.category,
-      }));
+    return getValidMapMarkers(plan);
   }, [plan]);
 
   const mapCenter = useMemo<[number, number] | null>(() => {
-    const coordinates: Array<{ latitude: number; longitude: number }> = [...mapMarkers];
-
-    if (typeof location?.latitude === "number" && typeof location?.longitude === "number") {
-      coordinates.push({
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
-    }
-
-    if (!coordinates.length) return null;
-
-    const avgLat =
-      coordinates.reduce((sum, point) => sum + point.latitude, 0) /
-      coordinates.length;
-    const avgLng =
-      coordinates.reduce((sum, point) => sum + point.longitude, 0) /
-      coordinates.length;
-
-    return [avgLng, avgLat];
+    return getMapCenter(mapMarkers, location);
   }, [mapMarkers, location]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
