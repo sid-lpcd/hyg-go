@@ -1,94 +1,97 @@
-# Hyg-Go
+# Hyg-Go Frontend
 
-Hyg-Go is a streamlined travel planning application designed to simplify city travel by consolidating ticket purchases, event access, and personalised itineraries. With a focus on enhancing user experience, Hyg-Go offers features tailored to travelers, event creators, and businesses alike.
+Hyg-Go is a travel planning frontend focused on helping users discover activities, build itineraries, and manage trip-related details from one interface.
 
-## Live Web App : [Hyg-go](https://hyg-go-one.vercel.app/)
+## Live App
 
-PS: This is underdevelopment, if you want to keep track of updates register [here](https://hyg-go-one.vercel.app/register)
+[hyg-go-one.vercel.app](https://hyg-go-one.vercel.app/)
 
-## Features
+## Current Scope
 
-- **Centralized Travel Planning**: Purchase tickets, organize event access, and build personalized schedules in one place.
-- **Track Plans**: Keep a secure log of all previous trips planned.
-- **Streamline Flow Activities Scheduling**: Search for location, checkout activities list or map, add to basket and get optimized plan for your trip.
-- **Track Time Occupied**: Progress bar indicating how full your trip is expected to be with activities selected.
+- React + TypeScript single-page application (Vite).
+- Authenticated user experience (protected routes).
+- Plan creation flow with map/list activity selection.
+- Itinerary and plan sharing pages.
+- Wallet and user profile related views.
 
-## Technology Stack (Full project)
+## Tech Stack
 
-- **Frontend**: React.js
-- **Backend**: Node.js with Express.js
-- **Database**: MySQL
-- **Hosting**: Deployed on Digital Ocean VM
+- React 18
+- TypeScript
+- Vite
+- Sass
+- Axios
+- Mapbox GL
+- Vitest + Testing Library
 
-## Folder Structure (Front-End)
-```arduino
+## Project Structure
+
+```text
 hyg-go/
-├── public/
 ├── src/
+│   ├── assets/
 │   ├── components/
-│   │   ├── base/ # **Reusable components** (E.g button, form) 
-│   │   ├── sections/ # **Segregated sections used in pages** (E.g Header, Activity Modal)
+│   │   ├── base/
+│   │   └── sections/
+│   ├── context/
+│   ├── hooks/
 │   ├── pages/
-│   │   ├── CreatePlanPages/ # **Creating Plan Pages** (E.g Search Location, Activities Selection, Calendar)
-│   │   ├── MainPage/ # **Travellers Main Pages** (E.g Planned Trips, Live Map, Wallet)
-│   │   └── RegisterPage/ # **Early Access Page**
-│   ├── styles/ # **Sass Globals** (E.g variables, animations, resets)
-│   ├── utils/ # **Helper Functions** (E.g date formatting, api calls, localStorage)
-│   ├── App.jsx # **App Routing**
-│   └── main.jsx
-├── .gitignore
+│   │   ├── CreatePlanPages/
+│   │   ├── MainPage/
+│   │   ├── SharePlanPage/
+│   │   ├── UserPage/
+│   │   └── WalletPage/
+│   ├── styles/
+│   ├── types/
+│   └── utils/
+├── public/
+├── documentation/
 ├── package.json
-├── README.md
-└── package-lock.json
+└── README.md
 ```
 
-## Setup and Installation
+## Getting Started
 
-### Steps
-
-1. **Clone the Repository**:
+1. Clone and enter the repository:
    ```bash
    git clone https://github.com/sid-lpcd/hyg-go.git
    cd hyg-go
    ```
-
-2. **Install Dependencies**:
-     ```bash
-     npm install
-     ```
-
-3. **Configure Environment Variables**:
-   Create a `.env` file in the `server` directory with the following:
-   ```env
-   VITE_HYGGO_API_URL=<backend_local_url>
-   VITE_HYGGO_API_URL_PRODUCTION=<backend_production_url>
-   VITE_HYGGO_API_URL_WS=<websocket_local_url>
-   VITE_HYGGO_API_URL_WSS_PRODUCTION=<websocket_production_url>
-   VITE_MAPGL_API_KEY=<mapgl_api_key>
-   VITE_ENV_TYPE=<production_or_devevelopment>
+2. Install dependencies:
+   ```bash
+   npm install
    ```
+3. Create a `.env` file in the project root (same level as `package.json`):
+   ```env
+   VITE_HYGGO_API_URL=
+   VITE_HYGGO_API_URL_PRODUCTION=
+   VITE_HYGGO_API_URL_WS=
+   VITE_HYGGO_API_URL_WSS_PRODUCTION=
+   VITE_MAPGL_API_KEY=
+   VITE_ENV_TYPE=DEV
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+5. Open the local app URL printed by Vite (default: `http://localhost:5173`).
 
-4. **Run the Application**:
-     ```bash
-     npm start
-     ```
+## Scripts
 
-5. **Access the Application**:
-   Navigate to `http://localhost:3000` in your browser.
+- `npm run dev` - Run local development server.
+- `npm run build` - Create production build in `dist/`.
+- `npm run preview` - Preview production build locally.
+- `npm run lint` - Run ESLint.
+- `npm run test` - Run test suite with Vitest.
 
-## Contributions
+## Documentation
 
-We welcome contributions! Please follow these steps:
+More detailed docs are available in the [`documentation/`](./documentation) folder:
 
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes and push to your branch.
-4. Submit a pull request with a detailed description of your changes.
-
-## License
-
-Hyg-Go is licensed under the MIT License. See the LICENSE file for details.
+- [`documentation/SETUP.md`](./documentation/SETUP.md)
+- [`documentation/ARCHITECTURE.md`](./documentation/ARCHITECTURE.md)
+- [`documentation/FEATURES.md`](./documentation/FEATURES.md)
 
 ## Contact
 
-For questions or feedback, reach out to [Sidonio Silva](https://github.com/sid-lpcd) or submit an issue on GitHub.
+For questions or feedback, contact [Sidonio Silva](https://github.com/sid-lpcd) or open an issue on GitHub.
