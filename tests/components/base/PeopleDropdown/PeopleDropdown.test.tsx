@@ -4,10 +4,10 @@ import {
   cleanup,
   screen,
 } from "@testing-library/react";
-import { PeopleDropdown } from "./PeopleDropdown";
+import { PeopleDropdown } from "../../../../src/components/base/PeopleDropdown/PeopleDropdown";
 import { vi, describe, expect, beforeEach, test, afterEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import { TripData } from "../../../types/common/form";
+import { TripData } from "../../../../src/types/common/form";
 
 describe("PeopleDropdown Component", () => {
   let tripData: TripData;

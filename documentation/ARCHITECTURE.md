@@ -17,8 +17,8 @@ Main route definitions live in `src/App.tsx`.
 Key routes:
 
 - `/` -> `MainPage` (protected)
-- `/wallet` -> `MainPage` (protected)
-- `/map` -> `MainPage` (protected)
+- `/wallet` -> `MainPage` wallet section (protected)
+- `/map` -> `MainPage` map section (protected)
 - `/user` -> user auth/profile entry point
 - `/create-plan` -> create plan flow (protected)
 - `/create-plan/:id/*` -> activity selection flow (protected + basket provider)
@@ -35,12 +35,23 @@ Key routes:
 - auth/user profile
 - media upload intent and completion
 - pass generation and QR retrieval
+- plan media upload intent, upload execution, and completion
 
 The Axios client is configured with:
 
 - Environment-aware base URL selection
 - Authorization header injection
 - Unified API/network error mapping
+
+### Auth Idempotency
+
+To keep auth behavior stable in local development (including React StrictMode):
+
+- `refreshTokenUser` in `src/utils/apiHelper.ts` dedupes in-flight refresh requests.
+- `AuthContext` dedupes in-flight `login`, `register`, `update`, and `refreshToken` calls.
+- Concurrent callers receive the same promise until the in-flight call settles.
+
+This prevents multiple overlapping auth calls from causing inconsistent request outcomes during app bootstrap.
 
 ## WebSocket Layer
 

@@ -46,17 +46,17 @@ vi.mock("axios", () => ({
   })),
 }));
 
-vi.mock("./tokenHelper", () => ({
+vi.mock("../../src/utils/tokenHelper", () => ({
   getToken: getTokenMock,
 }));
 
-vi.mock("./modelMappers", () => ({
+vi.mock("../../src/utils/modelMappers", () => ({
   ModelMappers: {
     mapLocation: mapLocationMock,
   },
 }));
 
-import { getLocationByCoordinates } from "./apiHelper";
+import { getLocationByCoordinates } from "../../src/utils/apiHelper";
 
 describe("apiHelper", () => {
   beforeEach(() => {

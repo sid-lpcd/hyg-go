@@ -49,6 +49,8 @@ const apiClient: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
 });
 
+let refreshTokenInFlight: Promise<AuthToken> | null = null;
+
 // Add error handling interceptor
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
@@ -380,6 +382,31 @@ export const createPlanMediaUploadIntent = async (
   }
 };
 
+export const uploadPlanMediaFile = async (
+  intent: UploadIntentDTO,
+  file: File
+): Promise<void> => {
+  const authToken = getToken()?.token;
+  const uploadHeaders: Record<string, string> = { ...intent.upload.headers };
+
+  if (intent.upload.url.includes("/local-upload") && authToken) {
+    uploadHeaders.Authorization = `Bearer ${authToken}`;
+  }
+
+  const uploadRes = await fetch(intent.upload.url, {
+    method: intent.upload.method,
+    headers: uploadHeaders,
+    body: file,
+  });
+
+  if (!uploadRes.ok) {
+    if (uploadRes.status === 401 || uploadRes.status === 403) {
+      throw new Error(`Upload URL expired while uploading "${file.name}". Please try again.`);
+    }
+    throw new Error(`Failed to upload "${file.name}".`);
+  }
+};
+
 export const completePlanMediaUpload = async (
   planId: number,
   mediaId: string
@@ -455,12 +482,22 @@ export const registerUser = async (user: RegisterUserRequest): Promise<AuthUser>
 };
 
 export const refreshTokenUser = async (): Promise<AuthToken> => {
-  try {
-    const response: any = await apiClient.get(`/users/refresh`);
-    return ModelMappers.mapAuthResponse(response);
-  } catch (error) {
-    throw error as ApiError;
+  if (refreshTokenInFlight) {
+    return refreshTokenInFlight;
   }
+
+  refreshTokenInFlight = (async () => {
+    try {
+      const response: any = await apiClient.get(`/users/refresh`);
+      return ModelMappers.mapAuthResponse(response);
+    } catch (error) {
+      throw error as ApiError;
+    } finally {
+      refreshTokenInFlight = null;
+    }
+  })();
+
+  return refreshTokenInFlight;
 };
 
 export const updateUser = async (user: UpdateUserRequest): Promise<User> => {
@@ -479,7 +516,7 @@ export const getUserProfile = async (authToken: string): Promise<User> => {
   try {
     const response: any = await apiClient.get(`/users/profile`, {
       headers: {
-        authorisation: `Bearer ${authToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
     return ModelMappers.mapUser(response);

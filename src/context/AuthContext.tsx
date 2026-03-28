@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { setToken, deleteToken, isTokenExpired, getTokenIfValid } from "../utils/tokenHelper";
 import {
   loginUser,
@@ -41,59 +41,97 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     expiresAt: undefined,
   });
 
+  const loginInFlightRef = useRef<Promise<AuthStateResponse> | null>(null);
+  const registerInFlightRef = useRef<Promise<AuthStateResponse> | null>(null);
+  const updateInFlightRef = useRef<Promise<AuthStateResponse> | null>(null);
+  const refreshInFlightRef = useRef<Promise<void> | null>(null);
+
   const login = async (formData: LoginUserRequest): Promise<AuthStateResponse> => {
-    try {
-      const response = await loginUser(formData);
-      setToken(response.token, response.expiresAt);
-      setAuthState({
-        isLoggedIn: true,
-        user: response.user || undefined,
-        token: response.token,
-        expiresAt: response.expiresAt || undefined,
-      });
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: (err as Error).message };
+    if (loginInFlightRef.current) {
+      return loginInFlightRef.current;
     }
+
+    const promise = (async () => {
+      try {
+        const response = await loginUser(formData);
+        setToken(response.token, response.expiresAt);
+        setAuthState({
+          isLoggedIn: true,
+          user: response.user || undefined,
+          token: response.token,
+          expiresAt: response.expiresAt || undefined,
+        });
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: (err as Error).message };
+      } finally {
+        loginInFlightRef.current = null;
+      }
+    })();
+
+    loginInFlightRef.current = promise;
+    return promise;
   };
 
   const register = async (formData: RegisterUserRequest): Promise<AuthStateResponse> => {
-    try {
-      const response = await registerUser(formData);
-      setToken(response.token, response.expiresAt);
-      setAuthState({
-        isLoggedIn: true,
-        user: response.user || undefined,
-        token: response.token,
-        expiresAt: response.expiresAt || undefined,
-      });
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: (err as Error).message };
+    if (registerInFlightRef.current) {
+      return registerInFlightRef.current;
     }
+
+    const promise = (async () => {
+      try {
+        const response = await registerUser(formData);
+        setToken(response.token, response.expiresAt);
+        setAuthState({
+          isLoggedIn: true,
+          user: response.user || undefined,
+          token: response.token,
+          expiresAt: response.expiresAt || undefined,
+        });
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: (err as Error).message };
+      } finally {
+        registerInFlightRef.current = null;
+      }
+    })();
+
+    registerInFlightRef.current = promise;
+    return promise;
   };
 
   const update = async (formData: Partial<UpdateUserRequest>): Promise<AuthStateResponse> => {
-    try {
-      const currentUserId = authState.user?.userId;
-      if (!currentUserId) {
-        return { success: false, error: "No authenticated user found for profile update" };
-      }
-
-      const updateData: UpdateUserRequest = {
-        userId: currentUserId,
-        ...formData,
-      };
-      const response = await updateUser(updateData);
-      setAuthState(prevState => ({
-        ...prevState,
-        isLoggedIn: true,
-        user: { userId: response.userId, email: response.email },
-      }));
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: (err as Error).message };
+    if (updateInFlightRef.current) {
+      return updateInFlightRef.current;
     }
+
+    const promise = (async () => {
+      try {
+        const currentUserId = authState.user?.userId;
+        if (!currentUserId) {
+          return { success: false, error: "No authenticated user found for profile update" };
+        }
+
+        const updateData: UpdateUserRequest = {
+          userId: currentUserId,
+          ...formData,
+        };
+        const response = await updateUser(updateData);
+        setAuthState(prevState => ({
+          ...prevState,
+          isLoggedIn: true,
+          user: { userId: response.userId, email: response.email },
+        }));
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: (err as Error).message };
+      } finally {
+        updateInFlightRef.current = null;
+      }
+    })();
+
+    updateInFlightRef.current = promise;
+    return promise;
   };
 
   const logout = (): void => {
@@ -107,20 +145,31 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   };
 
   const refreshToken = async (): Promise<void> => {
-    try {
-      const response = await refreshTokenUser();
-      setToken(response.token, response.expiresAt);
-      setAuthState({
-        token: response.token,
-        expiresAt: response.expiresAt,
-        isLoggedIn: true,
-        user: authState.user, // Preserve user data
-      });
-      setLoading(false);
-    } catch (err) {
-      logout();
-      navigate("/user");
+    if (refreshInFlightRef.current) {
+      return refreshInFlightRef.current;
     }
+
+    const promise = (async () => {
+      try {
+        const response = await refreshTokenUser();
+        setToken(response.token, response.expiresAt);
+        setAuthState(prevState => ({
+          token: response.token,
+          expiresAt: response.expiresAt,
+          isLoggedIn: true,
+          user: prevState.user, // Preserve user data
+        }));
+        setLoading(false);
+      } catch (err) {
+        logout();
+        navigate("/user");
+      } finally {
+        refreshInFlightRef.current = null;
+      }
+    })();
+
+    refreshInFlightRef.current = promise;
+    return promise;
   };
 
   useEffect(() => {

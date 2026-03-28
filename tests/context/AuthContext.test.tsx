@@ -2,20 +2,20 @@ import React from "react";
 import { act, render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
-import { AuthProvider, useAuth } from "./AuthContext";
+import { AuthProvider, useAuth } from "../../src/context/AuthContext";
 
 const { updateUserMock } = vi.hoisted(() => ({
   updateUserMock: vi.fn(),
 }));
 
-vi.mock("../utils/apiHelper", () => ({
+vi.mock("../../src/utils/apiHelper", () => ({
   loginUser: vi.fn(),
   refreshTokenUser: vi.fn(),
   registerUser: vi.fn(),
   updateUser: updateUserMock,
 }));
 
-vi.mock("../utils/tokenHelper", () => ({
+vi.mock("../../src/utils/tokenHelper", () => ({
   setToken: vi.fn(),
   deleteToken: vi.fn(),
   isTokenExpired: vi.fn(() => false),

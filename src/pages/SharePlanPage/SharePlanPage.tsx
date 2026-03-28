@@ -5,6 +5,7 @@ import {
   createPlanMediaUploadIntent,
   getLocationById,
   getPlanById,
+  uploadPlanMediaFile,
   updatePlan,
 } from "../../utils/apiHelper";
 import { PlanMediaDTO, UpdatePlanRequest } from "../../types/contract";
@@ -15,7 +16,6 @@ import TripPreview from "../../components/sections/TripPreview/TripPreview";
 import BackArrowIcon from "../../assets/icons/back-arrow-icon.svg?react";
 import { InfinitySpin } from "react-loader-spinner";
 import { toast, ToastContainer } from "react-toastify";
-import { getToken } from "../../utils/tokenHelper";
 import { getMapCenter, getValidMapMarkers } from "./sharePlanMapHelpers";
 import "./SharePlanPage.scss";
 
@@ -222,7 +222,6 @@ const SharePlanPage: React.FC = () => {
 
   const uploadImagesForPlan = async (planIdToUpload: number, files: FileList): Promise<PlanMediaDTO[]> => {
     const uploadedMedia: PlanMediaDTO[] = [];
-    const authToken = getToken()?.token;
 
     for (const file of Array.from(files)) {
       const intent = await createPlanMediaUploadIntent(planIdToUpload, {
@@ -231,23 +230,7 @@ const SharePlanPage: React.FC = () => {
         sizeBytes: file.size,
       });
 
-      const uploadHeaders: Record<string, string> = { ...intent.upload.headers };
-      if (intent.upload.url.includes("/local-upload") && authToken) {
-        uploadHeaders.Authorization = `Bearer ${authToken}`;
-      }
-
-      const uploadRes = await fetch(intent.upload.url, {
-        method: intent.upload.method,
-        headers: uploadHeaders,
-        body: file,
-      });
-
-      if (!uploadRes.ok) {
-        if (uploadRes.status === 401 || uploadRes.status === 403) {
-          throw new Error(`Upload URL expired while uploading "${file.name}". Please try again.`);
-        }
-        throw new Error(`Failed to upload "${file.name}".`);
-      }
+      await uploadPlanMediaFile(intent, file);
 
       const media = await completePlanMediaUpload(planIdToUpload, intent.media.id);
       uploadedMedia.push(media);
