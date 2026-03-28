@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getMapCenter, getValidMapMarkers } from "./sharePlanMapHelpers";
-import { PlanWithDetailedActivities } from "../../types/common";
+import { getMapCenter, getValidMapMarkers } from "../../../src/pages/SharePlanPage/sharePlanMapHelpers";
+import { PlanWithDetailedActivities } from "../../../src/types/common";
 
 describe("sharePlanMapHelpers", () => {
   it("filters out activities with invalid coordinates", () => {

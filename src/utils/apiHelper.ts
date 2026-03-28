@@ -49,6 +49,8 @@ const apiClient: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
 });
 
+let refreshTokenInFlight: Promise<AuthToken> | null = null;
+
 // Add error handling interceptor
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
@@ -455,12 +457,22 @@ export const registerUser = async (user: RegisterUserRequest): Promise<AuthUser>
 };
 
 export const refreshTokenUser = async (): Promise<AuthToken> => {
-  try {
-    const response: any = await apiClient.get(`/users/refresh`);
-    return ModelMappers.mapAuthResponse(response);
-  } catch (error) {
-    throw error as ApiError;
+  if (refreshTokenInFlight) {
+    return refreshTokenInFlight;
   }
+
+  refreshTokenInFlight = (async () => {
+    try {
+      const response: any = await apiClient.get(`/users/refresh`);
+      return ModelMappers.mapAuthResponse(response);
+    } catch (error) {
+      throw error as ApiError;
+    } finally {
+      refreshTokenInFlight = null;
+    }
+  })();
+
+  return refreshTokenInFlight;
 };
 
 export const updateUser = async (user: UpdateUserRequest): Promise<User> => {
@@ -479,7 +491,7 @@ export const getUserProfile = async (authToken: string): Promise<User> => {
   try {
     const response: any = await apiClient.get(`/users/profile`, {
       headers: {
-        authorisation: `Bearer ${authToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
     return ModelMappers.mapUser(response);
