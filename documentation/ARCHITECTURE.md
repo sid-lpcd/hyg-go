@@ -42,6 +42,16 @@ The Axios client is configured with:
 - Authorization header injection
 - Unified API/network error mapping
 
+### Auth Idempotency
+
+To keep auth behavior stable in local development (including React StrictMode):
+
+- `refreshTokenUser` in `src/utils/apiHelper.ts` dedupes in-flight refresh requests.
+- `AuthContext` dedupes in-flight `login`, `register`, `update`, and `refreshToken` calls.
+- Concurrent callers receive the same promise until the in-flight call settles.
+
+This prevents multiple overlapping auth calls from causing inconsistent request outcomes during app bootstrap.
+
 ## WebSocket Layer
 
 `WebSocketManager` supports:

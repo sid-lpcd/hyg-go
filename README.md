@@ -84,6 +84,13 @@ hyg-go/
 - `npm run lint` - Run ESLint.
 - `npm run test` - Run test suite with Vitest.
 
+## Auth Notes (Local Development)
+
+- Protected API calls use `Authorization: Bearer <token>` from `localStorage` (`authToken`).
+- Auth operations (`login`, `register`, `update`, `refresh`) are idempotent while in flight to prevent duplicate network calls.
+- In React StrictMode, effects can run more than once in development. The auth layer dedupes in-flight auth calls to reduce duplicate `401`/`200` patterns during app boot.
+- If `VITE_ENV_TYPE` is not `DEV`, the app uses production API variables and local requests may be authorized differently than expected.
+
 ## Documentation
 
 More detailed docs are available in the [`documentation/`](./documentation) folder:
