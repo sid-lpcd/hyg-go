@@ -17,8 +17,8 @@ Main route definitions live in `src/App.tsx`.
 Key routes:
 
 - `/` -> `MainPage` (protected)
-- `/wallet` -> `MainPage` (protected)
-- `/map` -> `MainPage` (protected)
+- `/wallet` -> `MainPage` wallet section (protected)
+- `/map` -> `MainPage` map section (protected)
 - `/user` -> user auth/profile entry point
 - `/create-plan` -> create plan flow (protected)
 - `/create-plan/:id/*` -> activity selection flow (protected + basket provider)
@@ -35,6 +35,7 @@ Key routes:
 - auth/user profile
 - media upload intent and completion
 - pass generation and QR retrieval
+- plan media upload intent, upload execution, and completion
 
 The Axios client is configured with:
 

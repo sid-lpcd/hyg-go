@@ -382,6 +382,31 @@ export const createPlanMediaUploadIntent = async (
   }
 };
 
+export const uploadPlanMediaFile = async (
+  intent: UploadIntentDTO,
+  file: File
+): Promise<void> => {
+  const authToken = getToken()?.token;
+  const uploadHeaders: Record<string, string> = { ...intent.upload.headers };
+
+  if (intent.upload.url.includes("/local-upload") && authToken) {
+    uploadHeaders.Authorization = `Bearer ${authToken}`;
+  }
+
+  const uploadRes = await fetch(intent.upload.url, {
+    method: intent.upload.method,
+    headers: uploadHeaders,
+    body: file,
+  });
+
+  if (!uploadRes.ok) {
+    if (uploadRes.status === 401 || uploadRes.status === 403) {
+      throw new Error(`Upload URL expired while uploading "${file.name}". Please try again.`);
+    }
+    throw new Error(`Failed to upload "${file.name}".`);
+  }
+};
+
 export const completePlanMediaUpload = async (
   planId: number,
   mediaId: string

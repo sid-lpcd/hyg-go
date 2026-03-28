@@ -39,8 +39,7 @@ hyg-go/
 │   │   ├── CreatePlanPages/
 │   │   ├── MainPage/
 │   │   ├── SharePlanPage/
-│   │   ├── UserPage/
-│   │   └── WalletPage/
+│   │   └── UserPage/
 │   ├── styles/
 │   ├── types/
 │   └── utils/
