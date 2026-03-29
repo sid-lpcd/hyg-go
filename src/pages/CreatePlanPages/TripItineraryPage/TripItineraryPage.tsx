@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getLocationById, getPlanById } from "../../../utils/apiHelper";
+import { getDayColors } from "../../../utils/themeColors";
 import { PlanActivityWithDetails, ActivityMarker, PlanWithDetailedActivities} from "../../../types/common";
 import MapGL from "../../../components/base/MapGL/MapGL";
 import ActivityItemItinerary from "../../../components/base/ActivityItemItinerary/ActivityItemItinerary";
@@ -12,8 +13,6 @@ import DoneIcon from "../../../assets/icons/done-icon.svg?react";
 import EditIcon from "../../../assets/icons/edit-icon.svg?react";
 import ShareIcon from "../../../assets/icons/share-icon.svg?react";
 import "./TripItineraryPage.scss";
-
-const ITINERARY_MARKER_COLOR = "#6F3E7F";
 
 const TripItineraryPage: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
@@ -155,10 +154,14 @@ const TripItineraryPage: React.FC = () => {
     updateMapCenter();
   }, [visibleMarkers, plan]);
 
+  const itineraryMarkerColor = useMemo(() => {
+    return getDayColors()[0];
+  }, []);
+
   const totalDays = Object.keys(activitiesByDay).length;
   const itineraryDayColors = useMemo(
-    () => Array.from({ length: Math.max(totalDays, 1) }, () => ITINERARY_MARKER_COLOR),
-    [totalDays]
+    () => Array.from({ length: Math.max(totalDays, 1) }, () => itineraryMarkerColor),
+    [totalDays, itineraryMarkerColor]
   );
   
   const isPastTrip = plan ? plan.endDate < new Date() : false;
@@ -181,7 +184,7 @@ const TripItineraryPage: React.FC = () => {
             longitude: marker.longitude,
             category: marker.category,
             order: marker.order,
-            color: ITINERARY_MARKER_COLOR
+            color: itineraryMarkerColor
           } as any))}
           isResetVisible={false}
           isMarkerClickable={true}
