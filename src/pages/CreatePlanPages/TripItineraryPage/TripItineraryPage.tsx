@@ -156,6 +156,10 @@ const TripItineraryPage: React.FC = () => {
   }, [visibleMarkers, plan]);
 
   const totalDays = Object.keys(activitiesByDay).length;
+  const itineraryDayColors = useMemo(
+    () => Array.from({ length: Math.max(totalDays, 1) }, () => ITINERARY_MARKER_COLOR),
+    [totalDays]
+  );
   
   const isPastTrip = plan ? plan.endDate < new Date() : false;
   
@@ -278,7 +282,7 @@ const TripItineraryPage: React.FC = () => {
                   activity={activity}
                   index={index}
                   selectedDay={selectedDay}
-                  dayColors={dayColors}
+                  dayColors={itineraryDayColors}
                   visibleMarkers={visibleMarkers}
                 />
 
