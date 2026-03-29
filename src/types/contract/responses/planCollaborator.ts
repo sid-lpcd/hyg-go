@@ -1,5 +1,6 @@
 // Plan Collaborator related API response types
 import { PlanCollaborator, PlanCollaboratorWithUser } from '../../common/planCollaborator';
+import { EntityId } from '../../common/identifier';
 
 export interface GetPlanCollaboratorsResponse {
   collaborators: PlanCollaboratorWithUser[];
@@ -37,11 +38,11 @@ export interface InviteCollaboratorResponse {
 export interface GetUserCollaborationsResponse {
   collaborations: Array<{
     plan: {
-      planId: number;
+      planId: EntityId;
       title: string;
       description?: string;
       mainImageUrl?: string;
-      locationId: number;
+      locationId: EntityId;
       isPublic: boolean;
     };
     role: string;

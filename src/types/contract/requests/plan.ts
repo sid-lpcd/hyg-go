@@ -1,11 +1,12 @@
 // Plan-related API request types
 import { People, RouteInfo, Tag, TicketCount } from '../../common/plan';
+import { EntityId } from '../../common';
 
 export interface CreatePlanRequest {
-  userId: number;
+  userId: EntityId;
   title: string;
   description?: string;
-  locationId: number;
+  locationId: EntityId;
   startDate: string;
   endDate: string;
   people: People;
@@ -18,7 +19,7 @@ export interface CreatePlanRequest {
 export interface UpdatePlanRequest {
   title?: string;
   description?: string;
-  locationId?: number;
+  locationId?: EntityId;
   startDate?: string;
   endDate?: string;
   people?: People;
@@ -30,8 +31,8 @@ export interface UpdatePlanRequest {
 }
 
 export interface UpdatePlanActivityRequest {
-	planId?: number;
-	activityId?: number;
+	planId?: EntityId;
+	activityId?: EntityId;
 	startDate?: string;
 	endDate?: string;
 	ticketCount?: TicketCount;
@@ -51,8 +52,8 @@ export interface CreateUploadIntentBody {
 
 export interface PlanMediaDTO {
   id: string;
-  planId: number;
-  uploaderUserId: number;
+  planId: EntityId;
+  uploaderUserId: EntityId;
   storageProvider: 's3' | 'local';
   storageKey: string;
   bucket?: string | null;

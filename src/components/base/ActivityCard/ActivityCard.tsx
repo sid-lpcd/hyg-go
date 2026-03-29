@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useBasket } from "../../../context/BasketContext";
 import { Activity, Price } from "../../../types/common/activity";
+import { EntityId } from "../../../types/common/identifier";
 import CloseIcon from "../../../assets/icons/close-icon.svg?react";
 import CheckIcon from "../../../assets/icons/check-icon.svg?react";
 import StarIcon from "../../../assets/icons/star-icon.svg?react";
@@ -68,7 +69,7 @@ const ActivityCard = ({
     }
   };
 
-  const checkBasket = (activityId: number): void => {
+  const checkBasket = (activityId: EntityId): void => {
     setInBasket(hasActivity(activityId));
   };
 

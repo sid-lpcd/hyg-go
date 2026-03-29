@@ -19,7 +19,7 @@ describe("PeopleDropdown Component", () => {
       people: { adult: 2, child: 0, infant: 0 },
       startDate: new Date(),
       endDate: new Date(),
-      locationId: 1,
+      locationId: "1",
       title: "Test Trip",
       description: "Test Description"
     };

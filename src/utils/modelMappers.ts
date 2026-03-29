@@ -36,6 +36,13 @@ export class ModelMappers {
     return undefined;
   }
 
+  private static ensureEntityId(value: any): string | undefined {
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+    if (value !== null && value !== undefined) return String(value);
+    return undefined;
+  }
+
   // Parse price string like "5-10 EUR" into structured price object
   private static parsePriceString(priceString: string): Price | null {
     if (!priceString || typeof priceString !== 'string') return null;
@@ -116,8 +123,8 @@ export class ModelMappers {
 
     if (apiActivity.planId != null) {
       const basePlanActivity: PlanActivity = {
-        planId: this.ensureNumber(apiActivity.planId) || 0,
-        activityId: this.ensureNumber(apiActivity.activityId) || 0,
+        planId: this.ensureEntityId(apiActivity.planId) || '',
+        activityId: this.ensureEntityId(apiActivity.activityId) || '',
         startDate: this.parseDate(apiActivity.startDate) || new Date(),
         endDate: this.parseDate(apiActivity.endDate) || new Date(),
         ticketCount: this.mapTicketCount(apiActivity.ticketCount) || { [PersonType.ADULT]: 1 },
@@ -136,7 +143,7 @@ export class ModelMappers {
         ...basePlanActivity,
         name: this.ensureString(apiActivity.name) || '',
         description: this.ensureString(apiActivity.description),
-        locationId: this.ensureNumber(apiActivity.locationId) || 0,
+        locationId: this.ensureEntityId(apiActivity.locationId) || '',
         category: apiActivity.category,
         prices: this.mapPrices(apiActivity.prices),
         duration: this.ensureNumber(apiActivity.duration),
@@ -148,9 +155,9 @@ export class ModelMappers {
     }
     
     return {
-      activityId: this.ensureNumber(apiActivity.activityId) || 0,
+      activityId: this.ensureEntityId(apiActivity.activityId) || '',
       name: this.ensureString(apiActivity.name) || '',
-      locationId: this.ensureNumber(apiActivity.locationId) || 0,
+      locationId: this.ensureEntityId(apiActivity.locationId) || '',
       tags: apiActivity.tags,
       category: apiActivity.category,
       description: this.ensureString(apiActivity.description),
@@ -180,10 +187,10 @@ export class ModelMappers {
     if (!apiLocation) return apiLocation;
     
     return {
-      locationId: this.ensureNumber(apiLocation.locationId) || 0,
+      locationId: this.ensureEntityId(apiLocation.locationId) || '',
       name: this.ensureString(apiLocation.name) || '',
       type: this.ensureString(apiLocation.type) || '',
-      parentLocationId: this.ensureNumber(apiLocation.parentLocationId),
+      parentLocationId: this.ensureEntityId(apiLocation.parentLocationId),
       lookupId: this.ensureString(apiLocation.lookupId),
       destinationUrl: this.ensureString(apiLocation.destinationUrl),
       defaultCurrencyCode: this.ensureString(apiLocation.defaultCurrencyCode),
@@ -211,12 +218,12 @@ export class ModelMappers {
 
     if (apiPlan.activities != null){
       return {
-        planId: this.ensureNumber(apiPlan.planId) || 0,
-        userId: this.ensureNumber(apiPlan.userId) || 0,
+        planId: this.ensureEntityId(apiPlan.planId) || '',
+        userId: this.ensureEntityId(apiPlan.userId) || '',
         activities: this.mapActivities(apiPlan.activities) || [],
         title: this.ensureString(apiPlan.title) || '',
         description: this.ensureString(apiPlan.description),
-        locationId: this.ensureNumber(apiPlan.locationId) || 0,
+        locationId: this.ensureEntityId(apiPlan.locationId) || '',
         startDate: this.parseDate(apiPlan.startDate) || new Date().toISOString(),
         endDate: this.parseDate(apiPlan.endDate) || new Date().toISOString(),
         people: apiPlan.people || { [PersonType.ADULT]: 1 },
@@ -231,11 +238,11 @@ export class ModelMappers {
     }
     
     return {
-      planId: this.ensureNumber(apiPlan.planId) || 0,
-      userId: this.ensureNumber(apiPlan.userId) || 0,
+      planId: this.ensureEntityId(apiPlan.planId) || '',
+      userId: this.ensureEntityId(apiPlan.userId) || '',
       title: this.ensureString(apiPlan.title) || '',
       description: this.ensureString(apiPlan.description),
-      locationId: this.ensureNumber(apiPlan.locationId) || 0,
+      locationId: this.ensureEntityId(apiPlan.locationId) || '',
       startDate: this.parseDate(apiPlan.startDate) || new Date().toISOString(),
       endDate: this.parseDate(apiPlan.endDate) || new Date().toISOString(),
       people: apiPlan.people || { [PersonType.ADULT]: 1 },
@@ -259,7 +266,7 @@ export class ModelMappers {
     if (!apiUser) return apiUser;
     
     return {
-      userId: this.ensureNumber(apiUser.userId) || 0,
+      userId: this.ensureEntityId(apiUser.userId) || '',
       username: this.ensureString(apiUser.username) || '',
       email: this.ensureString(apiUser.email) || '',
       emailVerified: Boolean(apiUser.emailVerified),
@@ -286,7 +293,7 @@ export class ModelMappers {
     }
     return {
       user: apiResponse.user ? {
-          userId: this.ensureNumber(apiResponse.user.userId) || 0,
+          userId: this.ensureEntityId(apiResponse.user.userId) || '',
           email: this.ensureString(apiResponse.user.email) || '',
         } : undefined,
       token: this.ensureString(apiResponse.token) || '',
@@ -311,9 +318,9 @@ export class ModelMappers {
     
     return {
       id: this.ensureString(apiPass.id),
-      planId: this.ensureNumber(apiPass.planId),
+      planId: this.ensureEntityId(apiPass.planId),
       passId: this.ensureString(apiPass.passId),
-      userId: this.ensureNumber(apiPass.userId),
+      userId: this.ensureEntityId(apiPass.userId),
       plan: this.mapPlan(apiPass.plan),
       activities: this.mapActivities(apiPass.activities),
       location: this.mapLocation(apiPass.location),

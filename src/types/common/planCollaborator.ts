@@ -1,3 +1,5 @@
+import { EntityId } from "./identifier";
+
 // Plan Collaborator related types
 
 export enum CollaboratorRole {
@@ -7,8 +9,8 @@ export enum CollaboratorRole {
 }
 
 export interface PlanCollaborator {
-  planId: number;
-  userId: number;
+  planId: EntityId;
+  userId: EntityId;
   role: CollaboratorRole;
   createdAt: string;
   updatedAt: string;
@@ -16,7 +18,7 @@ export interface PlanCollaborator {
 
 export interface PlanCollaboratorWithUser extends PlanCollaborator {
   user: {
-    userId: number;
+    userId: EntityId;
     username: string;
     firstName: string;
     lastName: string;

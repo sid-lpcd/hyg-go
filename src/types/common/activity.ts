@@ -1,4 +1,5 @@
 import { PersonType } from './index';
+import { EntityId } from './identifier';
 
 export interface Price {
   minPrice: number;
@@ -11,9 +12,9 @@ export type Prices = Partial<Record<PersonType, Price>> & {
 };
 
 export interface Activity {
-  activityId: number;
+  activityId: EntityId;
   name: string;
-  locationId: number;
+  locationId: EntityId;
   tags?: string | string[];
   category?: ActivityCategory | ActivityCategory[];
   description?: string;

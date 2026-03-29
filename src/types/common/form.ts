@@ -1,4 +1,5 @@
 import { Plan } from './plan';
+import { EntityId } from './identifier';
 
 export interface FormLabel {
   name: string;
@@ -14,10 +15,10 @@ export interface FormLabel {
 
 // TripData interface for form handling - based on Plan but with form-specific types
 export interface TripData extends Pick<Plan, 'title' | 'description' | 'people'> {
-  planId?: number;
+  planId?: EntityId;
   startDate: Date | undefined;
   endDate: Date | undefined;
-  locationId: number | null; 
+  locationId: EntityId | null;
 }
 
 export interface CreatePlanFormData extends Pick<Plan, 'title' | 'description'> {

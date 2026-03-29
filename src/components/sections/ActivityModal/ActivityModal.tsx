@@ -10,14 +10,14 @@ import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import MapGL from "../../base/MapGL/MapGL";
 import { useBasket } from "../../../context/BasketContext";
-import { PersonType, Activity, Plan, TicketCount, BasketActivity } from "../../../types/common";
+import { PersonType, Activity, Plan, TicketCount, BasketActivity, EntityId } from "../../../types/common";
 import "swiper/css";
 import "swiper/css/pagination";
 import "./ActivityModal.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface ActivityModalProps {
-  activityId?: number;
+  activityId?: EntityId;
   planInfo: Plan | undefined;
   onClose: () => void;
   showMap: boolean;

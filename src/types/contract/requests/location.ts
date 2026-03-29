@@ -1,4 +1,5 @@
 // Location-related API request types
+import { EntityId } from '../../common';
 
 export interface GetLocationsRequest {
   search?: string;
@@ -7,7 +8,7 @@ export interface GetLocationsRequest {
 export interface CreateLocationRequest {
   name: string;
   type: string;
-  parentLocationId?: number;
+  parentLocationId?: EntityId;
   lookupId?: string;
   destinationUrl?: string;
   defaultCurrencyCode?: string;
@@ -24,7 +25,7 @@ export interface CreateLocationRequest {
 export interface UpdateLocationRequest {
   name?: string;
   type?: string;
-  parentLocationId?: number;
+  parentLocationId?: EntityId;
   lookupId?: string;
   destinationUrl?: string;
   defaultCurrencyCode?: string;

@@ -1,5 +1,5 @@
 // User-related API request types
-import { UserRole } from '../../common';
+import { EntityId, UserRole } from '../../common';
 
 export interface RegisterEarlyUserRequest {
   email: string;
@@ -27,7 +27,7 @@ export interface RegisterUserRequest {
 }
 
 export interface UpdateUserRequest {
-  userId: number;
+  userId: EntityId;
   username?: string;
   email?: string;
   password?: string;

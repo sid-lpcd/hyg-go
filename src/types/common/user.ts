@@ -1,5 +1,7 @@
+import { EntityId } from "./identifier";
+
 export interface User {
-  userId: number;
+  userId: EntityId;
   username: string;
   email: string;
   emailVerified: boolean;

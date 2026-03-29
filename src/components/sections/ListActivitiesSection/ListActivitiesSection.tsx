@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Activity, ActivitySelectedFilters } from "../../../types/common/activity";
+import { EntityId } from "../../../types/common/identifier";
 import { InfinitySpin } from "react-loader-spinner";
 import { v4 as uuidv4 } from "uuid";
 import Error from "../../../assets/icons/error-icon.svg?react";
@@ -11,7 +12,7 @@ import { ActivitiesMessage } from "../../../types/contract/webSocket/webSocketCo
 import { BasketActivity } from "@/types";
 
 interface ListActivitiesSectionProps {
-  locationId: number;
+  locationId: EntityId;
   setSelectedActivity: (activity: BasketActivity) => void;
 }
 
@@ -75,7 +76,7 @@ const ListActivitiesSection = ({
   }, [handleActivitiesReceived, handleWebSocketError, handleLoadingChange]);
 
   // Fetch activities through WebSocket
-  const fetchActivities = useCallback(async (offset: number = 0, limit: number = 10, currentLocationId: number) => {
+  const fetchActivities = useCallback(async (offset: number = 0, limit: number = 10, currentLocationId: EntityId) => {
     console.log('Fetching activities with offset:', offset, 'limit:', limit, 'for locationId:', currentLocationId);
     if (!wsRef.current || !wsRef.current.isConnected()) {
       console.warn('WebSocket not connected. Attempting to reconnect...');
@@ -93,7 +94,7 @@ const ListActivitiesSection = ({
     fetchActivitiesRequest(offset, limit, currentLocationId);
   }, [initializeWebSocket]);
 
-  const fetchActivitiesRequest = (offset: number, limit: number, currentLocationId: number) => {
+  const fetchActivitiesRequest = (offset: number, limit: number, currentLocationId: EntityId) => {
     const requestData: ActivitiesMessage = {
       action: "getActivities",
       locationId: currentLocationId,
@@ -112,7 +113,7 @@ const ListActivitiesSection = ({
   };
 
   // Load more activities
-  const handleLoadMore = useCallback((currentLocationId: number) => {
+  const handleLoadMore = useCallback((currentLocationId: EntityId) => {
     if (loadingMore || !hasMoreActivities) return;
     
     setLoadingMore(true);

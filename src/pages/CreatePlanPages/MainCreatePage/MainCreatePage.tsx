@@ -23,6 +23,7 @@ import {
   updatePlan,
 } from "../../../utils/apiHelper";
 import { 
+  EntityId,
   Plan, 
   FormLabel, 
   LocationAutocompleteOption,
@@ -181,7 +182,7 @@ const MainCreatePage: React.FC = () => {
         
         const createData: CreatePlanRequest = {
           ...newFormData,
-          userId: 1, // This should come from auth context
+          userId: "1", // This should come from auth context
           locationId: tripData.locationId,
           startDate: formatDateDisplay(tripData.startDate),
           endDate: formatDateDisplay(tripData.endDate),
@@ -257,7 +258,7 @@ const MainCreatePage: React.FC = () => {
     setOpenTripModal(true);
   };
 
-  const getLocationInfo = async (locationId: number): Promise<void> => {
+  const getLocationInfo = async (locationId: EntityId): Promise<void> => {
     try {
       const response = await getLocationById(locationId);
       handleSelectLocation(response);

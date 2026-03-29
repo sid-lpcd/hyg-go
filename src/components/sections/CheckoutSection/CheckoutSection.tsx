@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { updatePlanWithActivities } from "../../../utils/apiHelper";
+import { createAIPlan, updatePlanWithActivities } from "../../../utils/apiHelper";
 import { useBasket } from "../../../context/BasketContext";
 import "./CheckoutSection.scss";
 
@@ -49,6 +49,7 @@ const CheckoutSection: React.FC = () => {
         basketState.planId,
         basketState.activities
       );
+      await createAIPlan(basketState.planId);
       navigate(`/plan/${basketState?.planId}/itinerary`);
     } catch (error) {
       console.error(error);

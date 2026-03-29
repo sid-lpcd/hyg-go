@@ -1,9 +1,10 @@
 import { Activity } from "../../common/activity";
+import { EntityId } from "../../common/identifier";
 
 // Incoming message from client
 export interface ActivitiesMessage {
   action: string;
-  locationId: number;
+  locationId: EntityId;
   offset?: number;
   limit?: number;
   filter?: any;
@@ -17,14 +18,14 @@ export interface WebSocketMessage<T = any> {
 }
 
 export interface BatchCompleteData {
-  locationId: number;
+  locationId: EntityId;
   batchNumber: number;
   totalProcessed: number;
   hasMoreBatches: boolean;
 }
 
 export interface ActivitiesBatchData {
-  locationId: number;
+  locationId: EntityId;
   activities: Activity[];
   count: number;
 }

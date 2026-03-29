@@ -1,4 +1,5 @@
 import { ActivityCategory, PersonType, Prices } from './index';
+import { EntityId } from './identifier';
 
 export type TicketCount = Partial<Record<PersonType, number>> & {
   [PersonType.ADULT]: number; // Adult is required, others are optional
@@ -9,7 +10,7 @@ export type People = Partial<Record<PersonType, number>> & {
 };
 
 export interface Tag {
-  id: number;
+  id: EntityId;
   name: string;
   color?: string;
 }
@@ -28,11 +29,11 @@ export interface TravelInfo {
   error?: any;
 }
 
-export type RouteInfo = Record<number, TravelInfo[]>;
+export type RouteInfo = Record<string, TravelInfo[]>;
 
 export interface PlanActivityProps {
-  planId: number;
-  activityId: number;
+  planId: EntityId;
+  activityId: EntityId;
   startDate: Date;
   endDate: Date;
   ticketCount: TicketCount;
@@ -47,7 +48,7 @@ export type PlanActivity = PlanActivityProps;
 export interface PlanActivityWithDetails extends PlanActivityProps {
   name: string;
   description?: string;
-  locationId: number;
+  locationId: EntityId;
   category?: ActivityCategory[];
   prices?: Prices;
   duration?: number;
@@ -58,11 +59,11 @@ export interface PlanActivityWithDetails extends PlanActivityProps {
 }
 
 export interface Plan {
-  planId: number;
-  userId: number;
+  planId: EntityId;
+  userId: EntityId;
   title: string;
   description?: string;
-  locationId: number;
+  locationId: EntityId;
   startDate: Date;
   endDate: Date;
   people: People;
