@@ -1,25 +1,26 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getLocationById, getPlanById } from "../../../utils/apiHelper";
-import { getDayColors } from "../../../utils/themeColors";
-import { PlanWithActivities, PlanActivityWithDetails, ActivityMarker} from "../../../types/common";
+import { PlanActivityWithDetails, ActivityMarker, PlanWithDetailedActivities} from "../../../types/common";
 import MapGL from "../../../components/base/MapGL/MapGL";
 import ActivityItemItinerary from "../../../components/base/ActivityItemItinerary/ActivityItemItinerary";
 import RouteInfo from "../../../components/base/RouteInfo/RouteInfo";
 import { InfinitySpin } from "react-loader-spinner";
 import Header from "../../../components/sections/Header/Header";
 import BackArrowIcon from "../../../assets/icons/back-arrow-icon.svg?react";
+import DoneIcon from "../../../assets/icons/done-icon.svg?react";
 import EditIcon from "../../../assets/icons/edit-icon.svg?react";
 import ShareIcon from "../../../assets/icons/share-icon.svg?react";
 import "./TripItineraryPage.scss";
 
+const ITINERARY_MARKER_COLOR = "#6F3E7F";
 
 const TripItineraryPage: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [plan, setPlan] = useState<PlanWithActivities | null>(null);
+  const [plan, setPlan] = useState<PlanWithDetailedActivities | null>(null);
   const [activities, setActivities] = useState<PlanActivityWithDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedDay, setSelectedDay] = useState<number>(1);
@@ -46,14 +47,15 @@ const TripItineraryPage: React.FC = () => {
     }
   }
 
-  // Get theme-consistent day colors from utils
-  const dayColors = getDayColors();
+  const handleDone = () => {
+    navigate("/");
+  };
 
   const fetchPlanDetails = async (): Promise<void> => {
     if (!planId) return;
     
     try {
-      const planData = await getPlanById(parseInt(planId), "detail");
+      const planData = await getPlanById(planId, "detail");
       setPlan(planData);
 
       const sortedActivities = (planData.activities as PlanActivityWithDetails[])
@@ -158,22 +160,24 @@ const TripItineraryPage: React.FC = () => {
   const isPastTrip = plan ? plan.endDate < new Date() : false;
   
   const MapSection = useMemo(() => {
-    if (!mapCenter || !dayColors || !selectedDay) return null;
+    if (!mapCenter) return null;
     
     return (
       <section className="trip-itinerary__map">
         <MapGL
           initialLocation={mapCenter}
-          targetCenter={mapCenter}
           initialZoom={12}
-          targetZoom={13}
+          fitToMarkers={visibleMarkers.length > 0}
+          fitPadding={50}
+          fitMaxZoom={14}
+          fitDuration={1800}
           markersList={visibleMarkers.map(marker => ({
             activityId: marker.activityId,
             latitude: marker.latitude,
             longitude: marker.longitude,
             category: marker.category,
             order: marker.order,
-            color: dayColors[selectedDay - 1]
+            color: ITINERARY_MARKER_COLOR
           } as any))}
           isResetVisible={false}
           isMarkerClickable={true}
@@ -181,7 +185,7 @@ const TripItineraryPage: React.FC = () => {
         />
       </section>
     );
-  }, [mapCenter, visibleMarkers, dayColors, selectedDay]);
+  }, [mapCenter, visibleMarkers]);
 
   if (loading) {
     return (
@@ -219,17 +223,23 @@ const TripItineraryPage: React.FC = () => {
           />
         }
         rightElement={
-          isPastTrip ? (
-            <ShareIcon
-              onClick={handleShareTrip}
-              className="header__icon header__icon--share"
+          <div className="trip-itinerary__header-actions">
+            <DoneIcon
+              onClick={handleDone}
+              className="header__icon header__icon--done"
             />
-          ) : (
-            <EditIcon
-              onClick={handleEditActivities}
-              className="header__icon header__icon--edit"
-            />
-          )
+            {isPastTrip ? (
+              <ShareIcon
+                onClick={handleShareTrip}
+                className="header__icon header__icon--share"
+              />
+            ) : (
+              <EditIcon
+                onClick={handleEditActivities}
+                className="header__icon header__icon--edit"
+              />
+            )}
+          </div>
         }
       />
       

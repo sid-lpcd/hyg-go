@@ -7,6 +7,8 @@ import "./MapGL.scss";
 import { BoundingBox, Bounds } from "../../../types/common";
 import { MapMarker } from "../../../types/common";
 
+const EMPTY_BASKET_ACTIVITY_IDS: number[] = [];
+
 interface MapGLProps {
   initialLocation: [number, number];
   targetCenter?: [number, number];
@@ -15,6 +17,7 @@ interface MapGLProps {
   fitToMarkers?: boolean;
   fitPadding?: number;
   fitMaxZoom?: number;
+  fitDuration?: number;
   isResetVisible?: boolean;
   markersList: MapMarker[];
   labels?: string[];
@@ -34,6 +37,7 @@ const MapGL: React.FC<MapGLProps> = ({
   fitToMarkers = false,
   fitPadding = 40,
   fitMaxZoom = 15,
+  fitDuration = 800,
   isResetVisible,
   markersList,
   labels,
@@ -41,7 +45,7 @@ const MapGL: React.FC<MapGLProps> = ({
   isMarkerClickable = false,
   onMarkerClick,
   isMoveable = true,
-  basketActivityIds = [],
+  basketActivityIds,
   useNumberedMarkers = false,
 }) => {
   const [center, setCenter] = useState<[number, number]>(initialLocation);
@@ -53,6 +57,8 @@ const MapGL: React.FC<MapGLProps> = ({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const rootsRef = useRef<any[]>([]);
+  const effectiveBasketActivityIds = basketActivityIds ?? EMPTY_BASKET_ACTIVITY_IDS;
+  const basketActivityIdsKey = effectiveBasketActivityIds.join(",");
 
   const handleButtonClick = (): void => {
     if (!mapRef.current) return;
@@ -106,7 +112,7 @@ const MapGL: React.FC<MapGLProps> = ({
   };
 
   const checkBasket = (marker: MapMarker): boolean => {
-    return basketActivityIds.includes(marker.activityId);
+    return effectiveBasketActivityIds.includes(marker.activityId);
   };
 
   const setMarkers = (): void => {
@@ -180,10 +186,13 @@ const MapGL: React.FC<MapGLProps> = ({
 
           if (markerTarget) {
             const classNames = markerTarget.className.split(" ");
-            const activityId = classNames[classNames.length - 1].split("-")[1];
+            const markerClass = classNames.find((className) => className.startsWith("marker-"));
+            const activityId = markerClass?.replace(/^marker-/, "");
+
+            if (!activityId) return;
 
             const activity = markersList.find(
-              (item) => item.activityId === parseInt(activityId)
+              (item) => String(item.activityId) === activityId
             );
 
             if (activity) {
@@ -203,6 +212,7 @@ const MapGL: React.FC<MapGLProps> = ({
       mapRef.current.flyTo({
         center: [marker.longitude, marker.latitude],
         zoom: fitMaxZoom,
+        duration: fitDuration,
       });
       return;
     }
@@ -215,7 +225,7 @@ const MapGL: React.FC<MapGLProps> = ({
     mapRef.current.fitBounds(bounds, {
       padding: fitPadding,
       maxZoom: fitMaxZoom,
-      duration: 0,
+      duration: fitDuration,
     });
   };
 
@@ -315,7 +325,7 @@ const MapGL: React.FC<MapGLProps> = ({
 
     setMarkers();
     fitMapToMarkers();
-  }, [markersList, basketActivityIds]);
+  }, [markersList, basketActivityIdsKey]);
 
   // Handle dynamic center and zoom updates
   useEffect(() => {
