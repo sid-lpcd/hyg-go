@@ -198,15 +198,15 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
     return undefined;
   };
 
-  const formatOpeningHours = (value: unknown): string | undefined => {
+  const formatOpeningHours = (value: unknown): string[] | undefined => {
     if (!value) return undefined;
-    if (typeof value === "string") return value;
+    if (typeof value === "string") return [value];
     if (typeof value === "object") {
       const openingHours = value as { weekdayDescriptions?: string[]; rawText?: string };
       if (openingHours.weekdayDescriptions?.length) {
-        return openingHours.weekdayDescriptions.join(" | ");
+        return openingHours.weekdayDescriptions;
       }
-      if (openingHours.rawText) return openingHours.rawText;
+      if (openingHours.rawText) return [openingHours.rawText];
     }
     return undefined;
   };
@@ -271,7 +271,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
       <article className="activity__content">
         <h2 className="activity__subtitle">Overview</h2>
         <p>{activity.description}</p>
-        <p className="activity__info">Reviews</p>
+        <p className="activity__section-label activity__section-label--center">Reviews</p>
         <div className="activity__reviews">
           <div className="activity-card__stars">
             {renderStars(activity?.reviewsAverageRating)}
@@ -281,17 +281,26 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
           </p>
         </div>
         {activity.duration != null && (
-          <p className="activity__info">
-            <strong>Expected Duration:</strong> {activity.duration} hrs
-          </p>
+          <>
+            <p className="activity__section-label activity__section-label--center">Expected Duration</p>
+            <p className="activity__text activity__text--center">{activity.duration} hrs</p>
+          </>
         )}
         {(() => {
-          const openingHoursText = formatOpeningHours(activity.openingHours);
-          if (!openingHoursText) return null;
+          const openingHoursLines = formatOpeningHours(activity.openingHours);
+          if (!openingHoursLines?.length) return null;
           return (
-            <p className="activity__info">
-              <strong>Opening Hours:</strong> {openingHoursText}
-            </p>
+            <div className="activity__opening-hours">
+              <p className="activity__section-label activity__section-label--center">Opening Hours</p>
+              <p className="activity__text activity__text--left">
+                {openingHoursLines.map((line, index) => (
+                  <React.Fragment key={`${line}-${index}`}>
+                    {line}
+                    {index < openingHoursLines.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </p>
+            </div>
           );
         })()}
       </article>

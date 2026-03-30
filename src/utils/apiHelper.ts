@@ -35,7 +35,6 @@ import {
   AuthUser,
   Pass,
   PlanView,
-  PlanWithActivities,
   PlanWithDetailedActivities,
   PlanWithSummaryActivities,
 } from "../types/common";
@@ -268,7 +267,7 @@ export const getAllPlansForLocation = async (locationId: string): Promise<Plan[]
   }
 };
 
-export const createAIPlan = async (planId: string): Promise<Plan | PlanWithActivities> => {
+export const createAIPlan = async (planId: string): Promise<Plan | PlanWithDetailedActivities> => {
   try {
     const response: any = await apiClient.post(
       `${API_BASE_URL}/plans/${planId}/AI-plan`
@@ -333,12 +332,12 @@ export async function getPlanById(id: string, view?: "summary"): Promise<PlanWit
 export async function getPlanById(
   id: string,
   view: PlanView = "summary"
-): Promise<PlanWithActivities> {
+): Promise<PlanWithDetailedActivities> {
   try {
     const response: any = await apiClient.get(`${API_BASE_URL}/plans/${id}`, {
       params: { view },
     });
-    return ModelMappers.mapPlan(response) as PlanWithActivities;
+    return ModelMappers.mapPlan(response) as PlanWithDetailedActivities;
   } catch (error) {
     throw error as ApiError;
   }
