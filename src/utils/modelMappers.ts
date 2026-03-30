@@ -10,7 +10,7 @@ import {
   PassGenerationResponse
 } from '../types/contract';
 import { AuthUser, EntitlementStatus, EntitlementType, Pass, PassEntitlement, PlanPassStatus } from '../types/common';
-import { Price, Prices } from '../types/common/activity';
+import { OpeningHours, Price, Prices } from '../types/common/activity';
 
 export class ModelMappers {
   
@@ -40,6 +40,25 @@ export class ModelMappers {
     if (typeof value === 'string') return value;
     if (typeof value === 'number' && Number.isFinite(value)) return String(value);
     if (value !== null && value !== undefined) return String(value);
+    return undefined;
+  }
+
+  private static mapOpeningHours(value: any): OpeningHours | undefined {
+    if (!value) return undefined;
+    if (typeof value === 'string') {
+      const descriptions = value
+        .split(' | ')
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      return {
+        rawText: value,
+        weekdayDescriptions: descriptions.length > 0 ? descriptions : undefined,
+      };
+    }
+    if (typeof value === 'object') {
+      return value as OpeningHours;
+    }
     return undefined;
   }
 
@@ -164,7 +183,7 @@ export class ModelMappers {
       prices: this.mapPrices(apiActivity.prices),
       duration: this.ensureNumber(apiActivity.duration),
       imageUrl: this.ensureString(apiActivity.imageUrl),
-      openingHours: this.ensureString(apiActivity.openingHours),
+      openingHours: this.mapOpeningHours(apiActivity.openingHours),
       latitude: this.ensureNumber(apiActivity.latitude),
       longitude: this.ensureNumber(apiActivity.longitude),
       reviewsAverageRating: this.ensureNumber(apiActivity.reviewsAverageRating),

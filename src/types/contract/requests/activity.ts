@@ -1,5 +1,5 @@
 // Activity-related API request types
-import { ActivityCategory, EntityId } from '../../common';
+import { ActivityCategory, EntityId, OpeningHours } from '../../common';
 
 export interface GetActivitiesRequest {
   bounds?: {
@@ -19,7 +19,7 @@ export interface CreateActivityRequest {
   prices?: any;
   duration?: string;
   imageUrl?: string;
-  openingHours?: string;
+  openingHours?: OpeningHours;
   latitude?: number;
   longitude?: number;
   reviewsAverageRating?: number;
@@ -38,7 +38,7 @@ export interface UpdateActivityRequest {
   prices?: any;
   duration?: string;
   imageUrl?: string;
-  openingHours?: string;
+  openingHours?: OpeningHours;
   latitude?: number;
   longitude?: number;
   reviewsAverageRating?: number;

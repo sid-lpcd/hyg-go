@@ -11,6 +11,40 @@ export type Prices = Partial<Record<PersonType, Price>> & {
   [PersonType.ADULT]: Price; // Adult is required, others are optional
 };
 
+export type WeekdayKey =
+  | 'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday'
+  | 'sunday';
+
+export interface OpeningHoursTimePoint {
+  day?: number;
+  hour?: number;
+  minute?: number;
+  date?: {
+    year: number;
+    month: number;
+    day: number;
+  };
+}
+
+export interface OpeningHoursPeriod {
+  open?: OpeningHoursTimePoint;
+  close?: OpeningHoursTimePoint;
+}
+
+export interface OpeningHours {
+  openNow?: boolean;
+  weekdayDescriptions?: string[];
+  weekdayText?: Partial<Record<WeekdayKey, string>>;
+  periods?: OpeningHoursPeriod[];
+  rawText?: string;
+  source?: 'google_places' | 'viator' | 'internal';
+}
+
 export interface Activity {
   activityId: EntityId;
   name: string;
@@ -21,7 +55,7 @@ export interface Activity {
   prices?: Prices;
   duration?: number;
   imageUrl?: string;
-  openingHours?: string;
+  openingHours?: OpeningHours;
   latitude?: number;
   longitude?: number;
   reviewsAverageRating?: number;
