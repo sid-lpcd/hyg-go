@@ -1,5 +1,5 @@
 // Activity-related API request types
-import { ActivityCategory } from '../../common';
+import { ActivityCategory, EntityId, OpeningHours } from '../../common';
 
 export interface GetActivitiesRequest {
   bounds?: {
@@ -12,14 +12,14 @@ export interface GetActivitiesRequest {
 
 export interface CreateActivityRequest {
   name: string;
-  locationId: number;
+  locationId: EntityId;
   tags?: string | string[];
   category?: ActivityCategory;
   description?: string;
   prices?: any;
   duration?: string;
   imageUrl?: string;
-  openingHours?: string;
+  openingHours?: OpeningHours;
   latitude?: number;
   longitude?: number;
   reviewsAverageRating?: number;
@@ -31,14 +31,14 @@ export interface CreateActivityRequest {
 
 export interface UpdateActivityRequest {
   name?: string;
-  locationId?: number;
+  locationId?: EntityId;
   tags?: string | string[];
   category?: ActivityCategory;
   description?: string;
   prices?: any;
   duration?: string;
   imageUrl?: string;
-  openingHours?: string;
+  openingHours?: OpeningHours;
   latitude?: number;
   longitude?: number;
   reviewsAverageRating?: number;
@@ -49,13 +49,13 @@ export interface UpdateActivityRequest {
 }
 
 export interface GetActivitiesForLocationRequest {
-  locationId: number;
+  locationId: EntityId;
   offset?: number;
   limit?: number;
 }
 
 export interface GetActivitiesForBoundsRequest {
-  locationId: number;
+  locationId: EntityId;
   bounds: {
     swLat: number;
     neLat: number;

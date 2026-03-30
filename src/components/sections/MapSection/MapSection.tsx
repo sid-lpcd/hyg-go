@@ -11,10 +11,10 @@ import { useBasket } from "../../../context/BasketContext";
 import MapGLWithBasket from "../../base/MapGL/MapGLWithBasket";
 import "./MapSection.scss";
 import { useSearchParams } from "react-router-dom";
-import { Activity, ActivitySelectedFilters, BasketActivity, BoundingBox, MapMarker } from "../../../types/common";
+import { Activity, ActivitySelectedFilters, BasketActivity, BoundingBox, EntityId, MapMarker } from "../../../types/common";
 
 interface MapSectionProps {
-  locationId?: number;
+  locationId?: EntityId;
   setSelectedActivity: (activity: BasketActivity) => void;
 }
 
@@ -37,7 +37,7 @@ const MapSection: React.FC<MapSectionProps> = ({ locationId, setSelectedActivity
       if (searchParams.get("activity")) {
         const activityId = searchParams.get("activity");
         if (activityId) {
-          const response = await getActivityById(parseInt(activityId));
+          const response = await getActivityById(activityId);
           if (response.longitude && response.latitude) {
             setInitialLocation([response.longitude, response.latitude]);
             setInitialZoom(15);

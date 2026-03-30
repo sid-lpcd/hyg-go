@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { getAllPlansForUser, getPlanById, getLocationById } from "../../../utils/apiHelper";
 import { useAuth } from "../../../context/AuthContext";
-import { Plan, PlanActivityWithDetails, Location } from "../../../types/common";
+import { EntityId, Plan, PlanActivityWithDetails, Location } from "../../../types/common";
 import Dropdown from "../../base/Dropdown/Dropdown";
 import MapGL from "../../base/MapGL/MapGL";
 import { InfinitySpin } from "react-loader-spinner";
@@ -15,7 +15,7 @@ const MainMap: React.FC = () => {
   const [tripActivities, setTripActivities] = useState<PlanActivityWithDetails[]>([]);
   const [tripLocation, setTripLocation] = useState<Location | null>(null);
 
-  const fetchTripDetails = async (planId: number): Promise<void> => {
+  const fetchTripDetails = async (planId: EntityId): Promise<void> => {
     try {
       const planWithActivities = await getPlanById(planId, "detail");
       setTripActivities(planWithActivities.activities);

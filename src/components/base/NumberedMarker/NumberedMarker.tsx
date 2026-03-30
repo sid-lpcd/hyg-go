@@ -1,4 +1,5 @@
 import React from "react";
+import { EntityId } from "../../../types/common";
 import "./NumberedMarker.scss";
 
 interface NumberedMarkerProps {
@@ -6,7 +7,7 @@ interface NumberedMarkerProps {
   color: string;
   onClick?: () => void;
   className?: string;
-  activityId: number;
+  activityId: EntityId;
 }
 
 const NumberedMarker: React.FC<NumberedMarkerProps> = ({ 

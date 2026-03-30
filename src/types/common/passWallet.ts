@@ -1,6 +1,7 @@
 // PassWallet related types
 
 import { Prices } from "./activity";
+import { EntityId } from "./identifier";
 import { Location } from "./location";
 import { Plan, PlanActivityWithDetails, TicketCount } from "./plan";
 
@@ -60,9 +61,9 @@ export interface PassMetadata {
 
 export interface Pass {
   id: string;
-  planId: number;
+  planId: EntityId;
   passId: string;
-  userId: number;
+  userId: EntityId;
   plan: Plan;
   activities: PlanActivityWithDetails[];
   location: Location;
@@ -128,7 +129,7 @@ export interface PassWithEntitlements extends Pass {
 
 // Wallet container
 export interface PassWallet {
-  userId: number;
+  userId: EntityId;
   passes: Pass[];
   totalPasses: number;
   activePasses: number;

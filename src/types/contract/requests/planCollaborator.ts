@@ -1,9 +1,10 @@
 // Plan Collaborator related API request types
+import { EntityId } from '../../common';
 import { CollaboratorRole } from '../../common/planCollaborator';
 
 export interface CreatePlanCollaboratorRequest {
-  planId: number;
-  userId: number;
+  planId: EntityId;
+  userId: EntityId;
   role: CollaboratorRole;
 }
 
@@ -12,16 +13,16 @@ export interface UpdatePlanCollaboratorRequest {
 }
 
 export interface GetPlanCollaboratorsRequest {
-  planId: number;
+  planId: EntityId;
 }
 
 export interface RemovePlanCollaboratorRequest {
-  planId: number;
-  userId: number;
+  planId: EntityId;
+  userId: EntityId;
 }
 
 export interface InviteCollaboratorRequest {
-  planId: number;
+  planId: EntityId;
   email: string;
   role: CollaboratorRole;
   message?: string;

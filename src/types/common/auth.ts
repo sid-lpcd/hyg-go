@@ -1,3 +1,5 @@
+import { EntityId } from "./identifier";
+
 export interface AuthToken {
     token: string;
     expiresAt?: string;
@@ -5,7 +7,7 @@ export interface AuthToken {
 
 export interface AuthUser extends AuthToken {
     user?: {
-        userId: number;
+        userId: EntityId;
         email: string;
     };
 }

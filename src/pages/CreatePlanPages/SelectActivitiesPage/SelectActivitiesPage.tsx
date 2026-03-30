@@ -109,8 +109,9 @@ const SelectActivitiesPage: React.FC = () => {
   };
 
   const getPlanInfo = async (): Promise<void> => {
+    if (!locationId) return;
     try {
-      const response = await getPlanById(parseInt(locationId), "detail");
+      const response = await getPlanById(locationId, "detail");
       setPlanInfo(response);
       setTotalTripLength(computeAvailableHoursWithinDates(response.startDate, response.endDate));
     } catch (error) {
@@ -172,7 +173,7 @@ const SelectActivitiesPage: React.FC = () => {
       <main className={`main${page === "basket" ? " main--basket" : ""}`}>
         {page === "activities" && (
           <ListActivitiesSection
-            locationId={planInfo?.locationId || 0}
+            locationId={planInfo?.locationId || ""}
             setSelectedActivity={(activity: BasketActivity) => {
               setSelectedActivity(activity);
               setShowMap(true);
@@ -181,7 +182,7 @@ const SelectActivitiesPage: React.FC = () => {
         )}
         {page === "map" && (
           <MapSection
-            locationId={planInfo?.locationId || 0}
+            locationId={planInfo?.locationId || ""}
             setSelectedActivity={setSelectedActivity}
           />
         )}

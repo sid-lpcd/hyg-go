@@ -1,14 +1,15 @@
 // PassWallet related API request types
 import { 
   EntitlementType, 
+  EntityId,
   ValidationType, 
   ClientInfo, 
   ValidationLocation 
 } from '../../common/passWallet';
 
 export interface GeneratePassRequest {
-  planId: number;
-  userId: number;
+  planId: EntityId;
+  userId: EntityId;
   entitlements: Array<{
     entitlementType: EntitlementType;
     referenceId: string;
@@ -50,7 +51,7 @@ export interface UseEntitlementRequest {
 }
 
 export interface GetPassWalletRequest {
-  userId: number;
+  userId: EntityId;
   status?: 'active' | 'expired' | 'revoked' | 'all';
   limit?: number;
   offset?: number;

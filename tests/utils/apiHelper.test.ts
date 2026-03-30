@@ -78,8 +78,8 @@ describe("apiHelper", () => {
   });
 
   it("queries coordinates even when latitude is 0", async () => {
-    const mappedLocation = { locationId: 12, name: "Greenwich" };
-    getMock.mockResolvedValue({ locationId: 12, name: "Greenwich" });
+    const mappedLocation = { locationId: "12", name: "Greenwich" };
+    getMock.mockResolvedValue({ locationId: "12", name: "Greenwich" });
     mapLocationMock.mockReturnValue(mappedLocation);
 
     const result = await getLocationByCoordinates(0, -0.1);

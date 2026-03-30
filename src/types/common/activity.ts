@@ -1,4 +1,5 @@
 import { PersonType } from './index';
+import { EntityId } from './identifier';
 
 export interface Price {
   minPrice: number;
@@ -10,17 +11,51 @@ export type Prices = Partial<Record<PersonType, Price>> & {
   [PersonType.ADULT]: Price; // Adult is required, others are optional
 };
 
+export type WeekdayKey =
+  | 'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday'
+  | 'sunday';
+
+export interface OpeningHoursTimePoint {
+  day?: number;
+  hour?: number;
+  minute?: number;
+  date?: {
+    year: number;
+    month: number;
+    day: number;
+  };
+}
+
+export interface OpeningHoursPeriod {
+  open?: OpeningHoursTimePoint;
+  close?: OpeningHoursTimePoint;
+}
+
+export interface OpeningHours {
+  openNow?: boolean;
+  weekdayDescriptions?: string[];
+  weekdayText?: Partial<Record<WeekdayKey, string>>;
+  periods?: OpeningHoursPeriod[];
+  rawText?: string;
+  source?: 'google_places' | 'viator' | 'internal';
+}
+
 export interface Activity {
-  activityId: number;
+  activityId: EntityId;
   name: string;
-  locationId: number;
+  locationId: EntityId;
   tags?: string | string[];
   category?: ActivityCategory | ActivityCategory[];
   description?: string;
   prices?: Prices;
   duration?: number;
   imageUrl?: string;
-  openingHours?: string;
+  openingHours?: OpeningHours;
   latitude?: number;
   longitude?: number;
   reviewsAverageRating?: number;

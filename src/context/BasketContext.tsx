@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useEffect, useRef, ReactNode } from 'react';
 import { BasketActivity, BasketState } from '../types/common/basket';
+import { EntityId } from '../types/common/identifier';
 import { setBasket as setBasketStorage, getBasket as getBasketStorage, deleteBasket as deleteBasketStorage } from '../utils/localStorageHelper';
 
 // Action types
@@ -7,22 +8,22 @@ type BasketAction =
   | { type: 'INITIALIZE_BASKET'; payload: BasketState | null }
   | { type: 'SET_BASKET'; payload: BasketState }
   | { type: 'ADD_ACTIVITY'; payload: BasketActivity }
-  | { type: 'REMOVE_ACTIVITY'; payload: number }
+  | { type: 'REMOVE_ACTIVITY'; payload: EntityId }
   | { type: 'UPDATE_GRATUITY'; payload: number }
   | { type: 'CLEAR_BASKET' }
-  | { type: 'UPDATE_PLAN_ID'; payload: number };
+  | { type: 'UPDATE_PLAN_ID'; payload: EntityId };
 
 // Context type
 interface BasketContextType {
   basketState: BasketState | null;
   addActivity: (activity: BasketActivity) => void;
-  removeActivity: (activityId: number) => void;
+  removeActivity: (activityId: EntityId) => void;
   updateGratuity: (gratuity: number) => void;
   clearBasket: () => void;
   setBasketState: (basket: BasketState) => void;
-  updatePlanId: (planId: number) => void;
+  updatePlanId: (planId: EntityId) => void;
   getTotalActivities: () => number;
-  hasActivity: (activityId: number) => boolean;
+  hasActivity: (activityId: EntityId) => boolean;
 }
 
 // Initial state
@@ -135,7 +136,7 @@ export function BasketProvider({ children }: BasketProviderProps) {
     dispatch({ type: 'ADD_ACTIVITY', payload: activity });
   };
 
-  const removeActivity = (activityId: number) => {
+  const removeActivity = (activityId: EntityId) => {
     dispatch({ type: 'REMOVE_ACTIVITY', payload: activityId });
   };
 
@@ -151,7 +152,7 @@ export function BasketProvider({ children }: BasketProviderProps) {
     dispatch({ type: 'SET_BASKET', payload: basket });
   };
 
-  const updatePlanId = (planId: number) => {
+  const updatePlanId = (planId: EntityId) => {
     dispatch({ type: 'UPDATE_PLAN_ID', payload: planId });
   };
 
@@ -159,7 +160,7 @@ export function BasketProvider({ children }: BasketProviderProps) {
     return basketState?.activities?.length || 0;
   };
 
-  const hasActivity = (activityId: number): boolean => {
+  const hasActivity = (activityId: EntityId): boolean => {
     return basketState?.activities?.some(activity => activity.activityId === activityId) || false;
   };
 
@@ -200,7 +201,7 @@ export function useBasketCount(): number {
   return getTotalActivities();
 }
 
-export function useBasketPlanId(): number | null {
+export function useBasketPlanId(): EntityId | null {
   const { basketState } = useBasket();
   return basketState?.planId || null;
 }

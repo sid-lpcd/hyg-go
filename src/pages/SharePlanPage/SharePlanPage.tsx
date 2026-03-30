@@ -9,7 +9,7 @@ import {
   updatePlan,
 } from "../../utils/apiHelper";
 import { PlanMediaDTO, UpdatePlanRequest } from "../../types/contract";
-import { FormLabel, Location, MapMarker, PlanWithDetailedActivities } from "../../types/common";
+import { EntityId, FormLabel, Location, MapMarker, PlanWithDetailedActivities } from "../../types/common";
 import Header from "../../components/sections/Header/Header";
 import Form from "../../components/base/Form/Form";
 import TripPreview from "../../components/sections/TripPreview/TripPreview";
@@ -72,7 +72,7 @@ const SharePlanPage: React.FC = () => {
     if (!planId) return;
     
     try {
-      const planData = await getPlanById(parseInt(planId), "detail");
+      const planData = await getPlanById(planId, "detail");
       setPlan(planData);
       setFormData({
         title: planData.title || "",
@@ -220,7 +220,7 @@ const SharePlanPage: React.FC = () => {
     }
   };
 
-  const uploadImagesForPlan = async (planIdToUpload: number, files: FileList): Promise<PlanMediaDTO[]> => {
+  const uploadImagesForPlan = async (planIdToUpload: EntityId, files: FileList): Promise<PlanMediaDTO[]> => {
     const uploadedMedia: PlanMediaDTO[] = [];
 
     for (const file of Array.from(files)) {
@@ -244,7 +244,6 @@ const SharePlanPage: React.FC = () => {
 
     setSaving(true);
     try {
-      const parsedPlanId = parseInt(planId, 10);
       const updateData: UpdatePlanRequest = {
         title: formData.title,
         description: formData.description,
@@ -252,7 +251,7 @@ const SharePlanPage: React.FC = () => {
       };
 
       if (selectedImages && selectedImages.length > 0) {
-        const uploadedMedia = await uploadImagesForPlan(parsedPlanId, selectedImages);
+        const uploadedMedia = await uploadImagesForPlan(planId, selectedImages);
         const uploadedImageUrls = uploadedMedia
           .map((media) => media.url)
           .filter((url): url is string => Boolean(url));
@@ -262,7 +261,7 @@ const SharePlanPage: React.FC = () => {
         }
       }
 
-      await updatePlan(parsedPlanId, updateData);
+      await updatePlan(planId, updateData);
       toast.success("Plan shared successfully!");
       
       navigate("/");

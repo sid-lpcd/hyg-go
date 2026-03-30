@@ -1,8 +1,10 @@
+import { EntityId } from "./identifier";
+
 export interface Location {
-  locationId: number;
+  locationId: EntityId;
   name: string;
   type: string;
-  parentLocationId?: number;
+  parentLocationId?: EntityId;
   lookupId?: string;
   destinationUrl?: string;
   defaultCurrencyCode?: string;

@@ -17,6 +17,12 @@
 .header__icon--edit path{
     fill: unset
 }
+
+.header__icon--done * {
+  fill: none !important;
+  stroke: $primary-color !important;
+}
+
 .trip-itinerary {
   width: 100%;
   position: relative;
@@ -119,5 +125,10 @@
     height: 50vh;
     color: $nav-color;
     font-size: 1.1rem;
+  }
+
+  &__header-actions {
+    @include flex(flex-end, center);
+    gap: 0.5rem;
   }
 }

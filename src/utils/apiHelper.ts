@@ -35,7 +35,6 @@ import {
   AuthUser,
   Pass,
   PlanView,
-  PlanWithActivities,
   PlanWithDetailedActivities,
   PlanWithSummaryActivities,
 } from "../types/common";
@@ -118,7 +117,7 @@ export const addActivity = async (activity: CreateActivityRequest): Promise<Acti
   }
 };
 
-export const getActivityById = async (id: number): Promise<Activity> => {
+export const getActivityById = async (id: string): Promise<Activity> => {
   try {
     const response: any = await apiClient.get(`/activities/${id}`);
     return ModelMappers.mapActivity(response) as Activity;
@@ -127,7 +126,7 @@ export const getActivityById = async (id: number): Promise<Activity> => {
   }
 };
 
-export const updateActivity = async (id: number, updatedActivity: UpdateActivityRequest): Promise<Activity> => {
+export const updateActivity = async (id: string, updatedActivity: UpdateActivityRequest): Promise<Activity> => {
   try {
     const response: any = await apiClient.patch(
       `/activities/${id}`,
@@ -139,7 +138,7 @@ export const updateActivity = async (id: number, updatedActivity: UpdateActivity
   }
 };
 
-export const deleteActivity = async (id: number): Promise<{ success: boolean }> => {
+export const deleteActivity = async (id: string): Promise<{ success: boolean }> => {
   try {
     await apiClient.delete(`/activities/${id}`);
     return { success: true };
@@ -169,7 +168,7 @@ export const addLocation = async (location: CreateLocationRequest): Promise<Loca
   }
 };
 
-export const getLocationById = async (id: number): Promise<Location> => {
+export const getLocationById = async (id: string): Promise<Location> => {
   try {
     const response: any = await apiClient.get(`/locations/${id}`);
     return ModelMappers.mapLocation(response);
@@ -190,7 +189,7 @@ export const getLocationByCoordinates = async (lat: number, lng: number): Promis
   }
 };
 
-export const updateLocation = async (id: number, updatedLocation: UpdateLocationRequest): Promise<Location> => {
+export const updateLocation = async (id: string, updatedLocation: UpdateLocationRequest): Promise<Location> => {
   try {
     const response: any = await apiClient.patch(
       `/locations/${id}`,
@@ -202,7 +201,7 @@ export const updateLocation = async (id: number, updatedLocation: UpdateLocation
   }
 };
 
-export const deleteLocation = async (id: number): Promise<{ success: boolean }> => {
+export const deleteLocation = async (id: string): Promise<{ success: boolean }> => {
   try {
     await apiClient.delete(`/locations/${id}`);
     return { success: true };
@@ -211,7 +210,7 @@ export const deleteLocation = async (id: number): Promise<{ success: boolean }> 
   }
 };
 
-export const getAllCategoriesForLocation = async (locationId: number): Promise<string[]> => {
+export const getAllCategoriesForLocation = async (locationId: string): Promise<string[]> => {
   try {
     const response: string[] = await apiClient.get(
       `${API_BASE_URL}/locations/${locationId}/categories`
@@ -223,7 +222,7 @@ export const getAllCategoriesForLocation = async (locationId: number): Promise<s
 };
 
 export const getAllActivitiesForLocation = async (
-  locationId: number,
+  locationId: string,
   offset: number = 0,
   limit: number = 10
 ): Promise<Activity[]> => {
@@ -243,7 +242,7 @@ export const getAllActivitiesForLocation = async (
   }
 };
 
-export const getAllActivitiesForBounds = async (locationId: number, bounds: BoundingBox): Promise<Activity[]> => {
+export const getAllActivitiesForBounds = async (locationId: string, bounds: BoundingBox): Promise<Activity[]> => {
   try {
     const response: any = await apiClient.post(
       `${API_BASE_URL}/locations/${locationId}/activities/bounds`,
@@ -257,7 +256,7 @@ export const getAllActivitiesForBounds = async (locationId: number, bounds: Boun
   }
 };
 
-export const getAllPlansForLocation = async (locationId: number): Promise<Plan[]> => {
+export const getAllPlansForLocation = async (locationId: string): Promise<Plan[]> => {
   try {
     const response: any = await apiClient.get(
       `${API_BASE_URL}/locations/${locationId}/plans`
@@ -268,7 +267,7 @@ export const getAllPlansForLocation = async (locationId: number): Promise<Plan[]
   }
 };
 
-export const createAIPlan = async (planId: number): Promise<Plan | PlanWithActivities> => {
+export const createAIPlan = async (planId: string): Promise<Plan | PlanWithDetailedActivities> => {
   try {
     const response: any = await apiClient.post(
       `${API_BASE_URL}/plans/${planId}/AI-plan`
@@ -280,7 +279,7 @@ export const createAIPlan = async (planId: number): Promise<Plan | PlanWithActiv
 };
 
 export const getAllActivitiesForCategoryForLocation = async (
-  locationId: number,
+  locationId: string,
   category: string
 ): Promise<Activity[]> => {
   try {
@@ -328,23 +327,23 @@ export const addPlan = async (plan: CreatePlanRequest): Promise<Plan> => {
   }
 };
 
-export async function getPlanById(id: number, view: "detail"): Promise<PlanWithDetailedActivities>;
-export async function getPlanById(id: number, view?: "summary"): Promise<PlanWithSummaryActivities>;
+export async function getPlanById(id: string, view: "detail"): Promise<PlanWithDetailedActivities>;
+export async function getPlanById(id: string, view?: "summary"): Promise<PlanWithSummaryActivities>;
 export async function getPlanById(
-  id: number,
+  id: string,
   view: PlanView = "summary"
-): Promise<PlanWithActivities> {
+): Promise<PlanWithDetailedActivities> {
   try {
     const response: any = await apiClient.get(`${API_BASE_URL}/plans/${id}`, {
       params: { view },
     });
-    return ModelMappers.mapPlan(response) as PlanWithActivities;
+    return ModelMappers.mapPlan(response) as PlanWithDetailedActivities;
   } catch (error) {
     throw error as ApiError;
   }
 }
 
-export const updatePlan = async (id: number, updatedPlan: UpdatePlanRequest): Promise<Plan> => {
+export const updatePlan = async (id: string, updatedPlan: UpdatePlanRequest): Promise<Plan> => {
   try {
     //TODO: Request should be prepared on helper
     const response: any = await apiClient.patch(`${API_BASE_URL}/plans/${id}`, {
@@ -358,7 +357,7 @@ export const updatePlan = async (id: number, updatedPlan: UpdatePlanRequest): Pr
   }
 };
 
-export const updatePlanWithActivities = async (id: number, activities: UpdatePlanActivityRequest[]): Promise<Plan> => {
+export const updatePlanWithActivities = async (id: string, activities: UpdatePlanActivityRequest[]): Promise<Plan> => {
   try {
     const response: any = await apiClient.patch(
       `${API_BASE_URL}/plans/${id}/activities`,
@@ -371,7 +370,7 @@ export const updatePlanWithActivities = async (id: number, activities: UpdatePla
 };
 
 export const createPlanMediaUploadIntent = async (
-  planId: number,
+  planId: string,
   body: CreateUploadIntentBody
 ): Promise<UploadIntentDTO> => {
   try {
@@ -408,7 +407,7 @@ export const uploadPlanMediaFile = async (
 };
 
 export const completePlanMediaUpload = async (
-  planId: number,
+  planId: string,
   mediaId: string
 ): Promise<PlanMediaDTO> => {
   try {
@@ -419,7 +418,7 @@ export const completePlanMediaUpload = async (
   }
 };
 
-export const deletePlan = async (id: number): Promise<{ success: boolean }> => {
+export const deletePlan = async (id: string): Promise<{ success: boolean }> => {
   try {
     await apiClient.delete(`${API_BASE_URL}/plans/${id}`);
     return { success: true };
@@ -438,7 +437,7 @@ export const getAllPublicPlans = async (): Promise<Plan[]> => {
   }
 };
 
-export const getPublicPlanById = async (id: number): Promise<Plan> => {
+export const getPublicPlanById = async (id: string): Promise<Plan> => {
   try {
     const response: any = await apiClient.get(`${API_BASE_URL}/public/${id}`);
     return ModelMappers.mapPlan(response);
@@ -525,7 +524,7 @@ export const getUserProfile = async (authToken: string): Promise<User> => {
   }
 };
 
-export const generatePass = async (planId: number): Promise<PassGenerationResponse> => {
+export const generatePass = async (planId: string): Promise<PassGenerationResponse> => {
   try {
     const response = await apiClient.post(`/passes/${planId}`);
     return ModelMappers.mapPassGeneration(response);

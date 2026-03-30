@@ -10,14 +10,14 @@ import { InfinitySpin } from "react-loader-spinner";
 import { PeopleControl } from "../../base/PeopleDropdown/PeopleDropdown";
 import MapGL from "../../base/MapGL/MapGL";
 import { useBasket } from "../../../context/BasketContext";
-import { PersonType, Activity, Plan, TicketCount, BasketActivity } from "../../../types/common";
+import { PersonType, Activity, Plan, TicketCount, BasketActivity, EntityId } from "../../../types/common";
 import "swiper/css";
 import "swiper/css/pagination";
 import "./ActivityModal.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface ActivityModalProps {
-  activityId?: number;
+  activityId?: EntityId;
   planInfo: Plan | undefined;
   onClose: () => void;
   showMap: boolean;
@@ -188,6 +188,29 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
     }
   };
 
+  const resolveImageSrc = (image: unknown): string | undefined => {
+    if (!image) return undefined;
+    if (typeof image === "string") return image;
+    if (typeof image === "object" && "url" in image) {
+      const value = (image as { url?: unknown }).url;
+      return typeof value === "string" ? value : undefined;
+    }
+    return undefined;
+  };
+
+  const formatOpeningHours = (value: unknown): string[] | undefined => {
+    if (!value) return undefined;
+    if (typeof value === "string") return [value];
+    if (typeof value === "object") {
+      const openingHours = value as { weekdayDescriptions?: string[]; rawText?: string };
+      if (openingHours.weekdayDescriptions?.length) {
+        return openingHours.weekdayDescriptions;
+      }
+      if (openingHours.rawText) return [openingHours.rawText];
+    }
+    return undefined;
+  };
+
   useEffect(() => {
     if (!activity) return;
     checkBasket(activity);
@@ -228,26 +251,27 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
 
       <article className="activity__images">
         <Swiper slidesPerView={1} pagination={true} modules={[Pagination]}>
-          {activity.images?.map((image: any, index: number) => (
-            <SwiperSlide key={index}>
-              <img
-                src={image.url}
-                alt={`${activity.name} image`}
-                className="activity__image"
-              />
-            </SwiperSlide>
-          ))}
+          {activity.images?.map((image: any, index: number) => {
+            const imageSrc = resolveImageSrc(image);
+            return (
+              <SwiperSlide key={index}>
+                {imageSrc && (
+                  <img
+                    src={imageSrc}
+                    alt={`${activity.name} image`}
+                    className="activity__image"
+                  />
+                )}
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </article>
 
-      <article className="activity__details">
-        <h2 className="activity__subtitle">Details</h2>
-        {(activity as any).freeAttraction && (
-          <p className="activity__info">
-            <strong>Free</strong>
-          </p>
-        )}
-        <p className="activity__info">Reviews</p>
+      <article className="activity__content">
+        <h2 className="activity__subtitle">Overview</h2>
+        <p>{activity.description}</p>
+        <p className="activity__section-label activity__section-label--center">Reviews</p>
         <div className="activity__reviews">
           <div className="activity-card__stars">
             {renderStars(activity?.reviewsAverageRating)}
@@ -256,49 +280,29 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
             {activity?.reviewsTotalCount}
           </p>
         </div>
-        <p className="activity__info"> Expected Duration </p>
-        {activity.duration && (
-          <p className="activity__duration">
-            {activity.duration
-              ?.toString()
-              ?.match(/\d+\.?\d*/g)
-              ?.map(Number)
-              ?.map(Math.floor)[0] +
-              " - " +
-              activity.duration
-                ?.toString()
-                ?.match(/\d+\.?\d*/g)
-                ?.map(Number)
-                ?.map(Math.floor)[1] +
-              " hrs"}
-          </p>
+        {activity.duration != null && (
+          <>
+            <p className="activity__section-label activity__section-label--center">Expected Duration</p>
+            <p className="activity__text activity__text--center">{activity.duration} hrs</p>
+          </>
         )}
-        {(activity as any).openingHours && (
-          <p className="activity__info">
-            <strong>Opening Hours:</strong> {(activity as any)?.openingHours}
-          </p>
-        )}
-        <p className="activity__info">
-          <strong>Address:</strong>
-          {(activity as any).address?.street && `${(activity as any)?.address?.street}, `}
-          {(activity as any)?.address?.city && `${(activity as any)?.address?.city}, `}
-          {(activity as any)?.address?.state && `${(activity as any)?.address?.state}, `}
-          {(activity as any)?.address?.postcode && (activity as any)?.address?.postcode}
-        </p>
-      </article>
-
-      <article className="activity__content">
-        <h2 className="activity__subtitle">Introduction</h2>
-        <p>{(activity as any)?.viatorUniqueContent?.introduction}</p>
-        <h3 className="activity__section-title">Overview</h3>
-        {(activity as any)?.viatorUniqueContent?.overview?.sections?.map(
-          (section: any, index: number) => (
-            <div key={index} className="activity__overview">
-              <h4>{section.title}</h4>
-              <p>{section.text}</p>
+        {(() => {
+          const openingHoursLines = formatOpeningHours(activity.openingHours);
+          if (!openingHoursLines?.length) return null;
+          return (
+            <div className="activity__opening-hours">
+              <p className="activity__section-label activity__section-label--center">Opening Hours</p>
+              <p className="activity__text activity__text--left">
+                {openingHoursLines.map((line, index) => (
+                  <React.Fragment key={`${line}-${index}`}>
+                    {line}
+                    {index < openingHoursLines.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </p>
             </div>
-          )
-        )}
+          );
+        })()}
       </article>
 
       {activity?.latitude && activity?.longitude && showMap && (

@@ -10,6 +10,7 @@ export * from './auth';
 export * from './form';
 export * from './calendar';
 export * from './navigation';
+export * from './identifier';
 
 // Person types enum for consistent keys across pricing and ticket interfaces
 export enum PersonType {
